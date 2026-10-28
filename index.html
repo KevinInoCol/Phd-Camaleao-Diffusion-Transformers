@@ -367,6 +367,18 @@
   .grow .icards .card2 b { font-size: 23px; }
   .grow .qcards .card2 { font-size: 27px; }
   .grow .qcards .card2 > b:first-child { font-size: 30px; }
+  /* blocos DiT interativos */
+  .slide .anim.astack > svg.blk-svg { background: var(--bg); }
+  .blk-svg text { font-family: inherit; font-size: 17px; fill: var(--ink); }
+  .blk-svg text.glab { font-size: 19px; font-style: italic; font-weight: 600; fill: var(--accent); }
+  .blk-svg text.ptitle { font-size: 16.5px; font-weight: 700; fill: var(--accent); }
+  .blk-svg text.pline { font-size: 15px; fill: var(--muted); }
+  .blk-svg .pc { transition: opacity .45s ease; }
+  .blk-svg .pc.hot .bx { stroke: var(--accent); stroke-width: 3.5; }
+  .blk-svg .pc.flow .ln { stroke: var(--accent); stroke-width: 3; stroke-dasharray: 9 6; animation: blkflow .7s linear infinite; }
+  @keyframes blkflow { to { stroke-dashoffset: -15; } }
+  .anim.blk .ectext { font-size: 19px; line-height: 1.5; max-height: 125px; }
+  .anim.blk .ecchips button { font-size: 13px; padding: 4px 11px; }
   .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: 3px; }
 
 </style>
@@ -684,53 +696,36 @@
   <p class="vide"><b>Vide</b> W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
 </section>
 
-<!-- adaLN-Zero -->
+<!-- Bloco DiT: adaLN-Zero -->
 <section class="slide">
   <header class="sh"><span class="kick">Arquitetura do modelo · bloco 1</span><h2><span class="snum">4</span>Bloco DiT: adaLN-Zero</h2></header>
-  <div class="split blk">
-    <figure class="fig"><img src="img/bloco-adaln.webp" alt="Bloco DiT com adaLN-Zero" style="max-height:540px"></figure>
-    <div class="col">
-      <p class="lead sm" style="margin:0">Adapta dinamicamente a informação condicional e modifica diretamente a <b>camada normalizada</b> da entrada por meio de parâmetros.</p>
-      <ol class="steps">
-        <li><b>Conditioning:</b> recebe informação adicional (<i>timestep</i>, rótulos) que influencia a geração.</li>
-        <li><b>MLP:</b> processa o condicionamento e gera os parâmetros γ, α (escala) e β (deslocamento, <i>shift</i>).</li>
-        <li><b>γ e β:</b> após a normalização, ajustam os tokens normalizados às condições específicas.</li>
-      </ol>
-      <div class="note"><b>adaLN</b> = <i>Adaptive Layer Normalization</i>. “Zero”: os α começam em zero, e cada bloco começa como a identidade.</div>
-    </div>
+  <div class="anim astack blk">
+    <div class="ecchips" id="ada-chips"></div>
+    <svg id="ada-svg" class="blk-svg" viewBox="0 0 1000 480" role="img" aria-label="Bloco DiT com adaLN-Zero, passo a passo"></svg>
+    <div class="a-row"><div class="ectext" id="ada-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="ada-prev">◀</button><button type="button" id="ada-play">▶ Reproduzir tudo</button><button type="button" id="ada-next">▶</button></div></div>
   </div>
 </section>
 
-<!-- Cross-Attention -->
+<!-- Bloco DiT: Cross-Attention -->
 <section class="slide">
   <header class="sh"><span class="kick">Arquitetura do modelo · bloco 2</span><h2><span class="snum">4</span>Bloco DiT: Cross-Attention</h2></header>
-  <div class="split blk">
-    <figure class="fig"><img src="img/bloco-cross.webp" alt="Bloco DiT com atenção cruzada" style="max-height:540px"></figure>
-    <div class="col">
-      <p class="lead sm" style="margin:0">O modelo presta atenção não só aos próprios tokens (autoatenção), mas também à informação de <b>condicionamento</b> (atenção cruzada).</p>
-      <ol class="steps">
-        <li><b>Input Tokens e Conditioning:</b> os tokens entram junto com a informação condicional.</li>
-        <li><b>Self-Attention:</b> atenção entre os tokens, capturando relações internas.</li>
-        <li><b>Cross-Attention:</b> os tokens prestam atenção à informação condicional externa (texto, rótulos etc.).</li>
-        <li><b>Feedforward:</b> cada token é transformado de forma independente para melhorar sua representação.</li>
-      </ol>
-    </div>
+  <div class="anim astack blk">
+    <div class="ecchips" id="cra-chips"></div>
+    <svg id="cra-svg" class="blk-svg" viewBox="0 0 1000 480" role="img" aria-label="Bloco DiT com atenção cruzada, passo a passo"></svg>
+    <div class="a-row"><div class="ectext" id="cra-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="cra-prev">◀</button><button type="button" id="cra-play">▶ Reproduzir tudo</button><button type="button" id="cra-next">▶</button></div></div>
   </div>
 </section>
 
-<!-- In-Context -->
+<!-- Bloco DiT: In-Context Conditioning -->
 <section class="slide">
   <header class="sh"><span class="kick">Arquitetura do modelo · bloco 3</span><h2><span class="snum">4</span>Bloco DiT: In-Context Conditioning</h2></header>
-  <div class="split blk">
-    <figure class="fig"><img src="img/bloco-incontext.webp" alt="Bloco DiT com condicionamento em contexto" style="max-height:540px"></figure>
-    <div class="col">
-      <p class="lead sm" style="margin:0">Mecanismo eficiente: <b>concatena</b> a informação condicional diretamente aos tokens, sem processamento adicional custoso.</p>
-      <ol class="steps">
-        <li><b>Input Tokens e Conditioning:</b> os tokens de entrada são concatenados com a informação condicional na dimensão da sequência.</li>
-        <li><b>Self-Attention:</b> atenção sobre os tokens concatenados, capturando relações entre tokens e condições.</li>
-        <li><b>Feedforward:</b> cada token é transformado individualmente.</li>
-      </ol>
-    </div>
+  <div class="anim astack blk">
+    <div class="ecchips" id="inc-chips"></div>
+    <svg id="inc-svg" class="blk-svg" viewBox="0 0 1000 480" role="img" aria-label="Bloco DiT com condicionamento em contexto, passo a passo"></svg>
+    <div class="a-row"><div class="ectext" id="inc-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="inc-prev">◀</button><button type="button" id="inc-play">▶ Reproduzir tudo</button><button type="button" id="inc-next">▶</button></div></div>
   </div>
 </section>
 
@@ -993,28 +988,244 @@
 
 <div class="hud"><button type="button" id="hud-prev" aria-label="Anterior">◀</button><span id="hud-n">1 / 1</span><button type="button" id="hud-next" aria-label="Próximo">▶</button></div>
 <script>
-  // ===== Navegação das diapositivas (mesmo motor do deck DiEmo-TTS, sem animações) =====
+  // ===== Blocos DiT interativos (adaLN-Zero, Cross-Attention, In-Context) =====
+  // Cada diagrama é desenhado em SVG; cada passo acende só as peças daquele passo.
+  const ANIMS = new Map();
+  (function () {
+    const NS = "http://www.w3.org/2000/svg";
+    const C = {
+      norm: ["#dbe4ff", "#91a7ff"], attn: ["#ffe3bf", "#f0a04b"], ff: ["#d3f9d8", "#69c37b"],
+      cross: ["#ffd8d8", "#e8787a"], tok: ["#e9ecef", "#adb5bd"], cond: ["#dbe4ff", "#91a7ff"],
+    };
+    const el = (tag, attrs, parent) => {
+      const e = document.createElementNS(NS, tag);
+      for (const k in attrs) e.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(e);
+      return e;
+    };
+    const label = (g, x, y, txt, extra = {}) => {
+      const lines = String(txt).split("\n");
+      lines.forEach((ln, i) => {
+        const t = el("text", Object.assign({ x, y: y + (i - (lines.length - 1) / 2) * 19, "text-anchor": "middle", "dominant-baseline": "central" }, extra), g);
+        t.textContent = ln;
+      });
+    };
+    // Sequência de quadradinhos (tokens)
+    const squares = (g, x, y, cols, size, gap) => cols.forEach((c, i) =>
+      el("rect", { x: x + i * (size + gap), y, width: size, height: size, rx: 3, fill: c, stroke: "#868e96", "stroke-width": 1 }, g));
+    const TOK = ["#c5d0e6", "#e6c9c5", "#d2e6c5", "#e6dfc5", "#cfc5e6", "#c5e2e6"];
+    const COND = ["#4c6ef5", "#f76707"];
+
+    function draw(svg, comps) {
+      const defs = el("defs", {}, svg);
+      const mk = el("marker", { id: svg.id + "-ah", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+      el("path", { d: "M0 0 L10 5 L0 10 z", fill: "#495057" }, mk);
+      const byId = {};
+      for (const c of comps) {
+        const g = el("g", { "data-id": c.id, class: "pc" }, svg);
+        if (c.t === "box") {
+          const [fill, stroke] = C[c.k];
+          el("rect", { x: c.x, y: c.y, width: c.w, height: c.h, rx: 9, fill, stroke, "stroke-width": 1.5, class: "bx" }, g);
+          label(g, c.x + c.w / 2, c.y + c.h / 2, c.label);
+        } else if (c.t === "plus") {
+          el("circle", { cx: c.cx, cy: c.cy, r: 13, fill: "#fff", stroke: "#495057", "stroke-width": 2, class: "bx" }, g);
+          label(g, c.cx, c.cy - 1, "+", { style: "font-size:22px;font-weight:700" });
+        } else if (c.t === "path") {
+          el("path", Object.assign({ d: c.d, fill: "none", stroke: "#495057", "stroke-width": 2.2, class: "ln" },
+            c.arrow ? { "marker-end": `url(#${svg.id}-ah)` } : {}), g);
+          if (c.label) label(g, c.lx, c.ly, c.label, { class: "glab" });
+        } else if (c.t === "raw") {
+          c.draw(g);
+        }
+        byId[c.id] = g;
+      }
+      return byId;
+    }
+
+    // Painel lateral com título e linhas de texto
+    const panel = (g, x, y, w, h, title, lines, accent) => {
+      el("rect", { x, y, width: w, height: h, rx: 10, fill: "#fff", stroke: accent || "#3b5bdb", "stroke-width": 1.5, "stroke-dasharray": "5 4" }, g);
+      const t = el("text", { x: x + 12, y: y + 22, class: "ptitle" }, g); t.textContent = title;
+      lines.forEach((ln, i) => { const s = el("text", { x: x + 12, y: y + 46 + i * 21, class: "pline" }, g); s.textContent = ln; });
+    };
+
+    function makeBlock(pfx, comps, stages) {
+      const svg = document.getElementById(pfx + "-svg");
+      if (!svg) return;
+      const chips = document.getElementById(pfx + "-chips");
+      const text = document.getElementById(pfx + "-text");
+      const playBtn = document.getElementById(pfx + "-play");
+      const byId = draw(svg, comps);
+      const btns = stages.map((s, i) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = `${i + 1}. ${s.chip}`;
+        b.addEventListener("click", () => { stop(); show(i); });
+        chips.appendChild(b); return b;
+      });
+      let cur = 0, timer = null;
+      function show(i) {
+        cur = i;
+        const s = stages[i];
+        const on = s.on === "*" ? null : new Set(s.on.concat(s.hot || [], s.flow || []));
+        for (const id in byId) {
+          const g = byId[id];
+          // Na visão geral, os painéis explicativos (v*) ficam ocultos, exceto tokens e condição
+          const vis = on ? on.has(id) : (!id.startsWith("v") || id === "vtok" || id === "vcond");
+          g.style.opacity = vis ? 1 : on && !id.startsWith("v") ? 0.12 : 0;
+          g.classList.toggle("hot", (s.hot || []).includes(id));
+          g.classList.toggle("flow", (s.flow || []).includes(id));
+        }
+        btns.forEach((b, j) => { b.classList.toggle("on", j === i); b.classList.toggle("done", j < i); });
+        text.innerHTML = s.text;
+      }
+      function stop() { clearTimeout(timer); timer = null; playBtn.textContent = "▶ Reproduzir tudo"; }
+      function playFrom(i) { show(i); timer = setTimeout(() => (i < stages.length - 1 ? playFrom(i + 1) : stop()), 4200); }
+      playBtn.addEventListener("click", () => {
+        if (timer) { stop(); return; }
+        playBtn.textContent = "⏸ Pausar";
+        playFrom(cur === stages.length - 1 ? 0 : cur);
+      });
+      document.getElementById(pfx + "-prev").addEventListener("click", () => { stop(); show(Math.max(0, cur - 1)); });
+      document.getElementById(pfx + "-next").addEventListener("click", () => { stop(); show(Math.min(stages.length - 1, cur + 1)); });
+      ANIMS.set(svg, { n: () => stages.length, cur: () => cur, go: i => { stop(); show(i); }, stop });
+      show(0);
+    }
+
+    // Peças comuns: entradas, tokens e condição
+    const box = (id, y, h, label, k, x = 330, w = 200) => ({ t: "box", id, x, y, w, h, label, k });
+    const plus = (id, cy) => ({ t: "plus", id, cx: 430, cy });
+    const path = (id, d, arrow, lab) => Object.assign({ t: "path", id, d, arrow }, lab || {});
+    const vizTok = { t: "raw", id: "vtok", draw: g => {
+      squares(g, 40, 446, TOK, 26, 6);
+      const t = el("text", { x: 40, y: 432, class: "pline" }, g); t.textContent = "T tokens (patches) × d";
+      el("path", { d: "M232 459 H322", fill: "none", stroke: "#adb5bd", "stroke-width": 1.5, "stroke-dasharray": "4 4" }, g);
+    } };
+    const vizCond = { t: "raw", id: "vcond", draw: g => {
+      el("path", { d: "M748 455 H770", fill: "none", stroke: "#adb5bd", "stroke-width": 1.5, "stroke-dasharray": "4 4" }, g);
+      panel(g, 766, 395, 228, 78, "Condicionamento", ["t = 500 (timestep)", "y = “cacatua” (rótulo)"]);
+    } };
+
+    // ---------- 1 · adaLN-Zero ----------
+    makeBlock("ada", [
+      path("res1", "M430 432 H300 V240 H415", true), path("res2", "M430 223.5 H300 V33 H415", true),
+      path("sp1", "M430 440 V425 M430 395 V385 M430 355 V345 M430 300 V290 M430 260 V253"),
+      path("sp2", "M430 227 V220 M430 190 V180 M430 150 V140 M430 95 V85 M430 55 V46"),
+      path("out", "M430 20 V4", true),
+      path("mlpIn", "M650 440 V427"), path("mlpUp", "M650 395 V70"),
+      path("g1", "M650 370 H534", true, { label: "γ₁, β₁", lx: 600, ly: 358 }),
+      path("a1", "M650 275 H534", true, { label: "α₁", lx: 600, ly: 263 }),
+      path("g2", "M650 165 H534", true, { label: "γ₂, β₂", lx: 600, ly: 153 }),
+      path("a2", "M650 70 H534", true, { label: "α₂", lx: 600, ly: 58 }),
+      box("in", 440, 30, "Input Tokens", "tok"), box("cond", 440, 30, "Conditioning", "cond", 560, 180),
+      box("mlp", 395, 32, "MLP", "norm", 560, 180),
+      box("ln1", 395, 30, "Layer Norm", "norm"), box("ss1", 355, 30, "Scale, Shift", "norm"),
+      box("mhsa", 300, 45, "Multi-Head\nSelf-Attention", "attn"), box("sc1", 260, 30, "Scale", "norm"), plus("p1", 240),
+      box("ln2", 190, 30, "Layer Norm", "norm"), box("ss2", 150, 30, "Scale, Shift", "norm"),
+      box("ff", 95, 45, "Pointwise\nFeedforward", "ff"), box("sc2", 55, 30, "Scale", "norm"), plus("p2", 33),
+      vizTok, vizCond,
+      { t: "raw", id: "vpar", draw: g => panel(g, 766, 150, 228, 120, "A MLP gera 6 vetores", ["γ₁, β₁, α₁  → atenção", "γ₂, β₂, α₂  → feedforward", "um conjunto por imagem,", "igual para todos os tokens"]) },
+      { t: "raw", id: "vss", draw: g => panel(g, 20, 330, 260, 75, "Scale, Shift", ["x̂ = γ₁ · LayerNorm(x) + β₁", "a condição “ajusta” os tokens"], "#91a7ff") },
+      { t: "raw", id: "vsc", draw: g => panel(g, 20, 225, 260, 75, "Scale + soma residual", ["x ← x + α₁ · Atenção(x̂)", "α decide quanto o bloco muda"], "#f0a04b") },
+      { t: "raw", id: "vzero", draw: g => panel(g, 766, 150, 228, 120, "“Zero”", ["no início do treino:", "α₁ = α₂ = 0", "⇒ saída = entrada", "(bloco = identidade)"], "#2b8a3e") },
+    ], [
+      { chip: "Visão geral", on: "*", text: "O bloco <b>adaLN-Zero</b> (<i>Adaptive Layer Normalization</i>) não junta a condição aos tokens: ele a usa para <b>modificar diretamente a normalização</b> dos tokens, por meio de parâmetros." },
+      { chip: "Entradas", on: ["in", "cond", "vtok", "vcond"], hot: ["in", "cond"], text: "<b>Input Tokens</b>: os patches do latente com ruído (T tokens de dimensão d). <b>Conditioning</b>: o <i>timestep</i> t e o rótulo y, que influenciam a geração." },
+      { chip: "MLP", on: ["cond", "vpar", "g1", "a1", "g2", "a2"], hot: ["mlp"], flow: ["mlpIn", "mlpUp"], text: "Uma <b>MLP</b> processa o condicionamento e gera os parâmetros <b>γ, α</b> (escala) e <b>β</b> (deslocamento, <i>shift</i>): um par γ, β e um α para cada sub-bloco." },
+      { chip: "Norm + γ₁, β₁", on: ["in", "mlpUp", "vss"], hot: ["ln1", "ss1"], flow: ["sp1", "g1"], text: "<b>Layer Norm</b> normaliza os tokens; depois <b>Scale, Shift</b> aplica γ₁ e β₁: os tokens normalizados se ajustam à condição (qual passo de ruído, qual classe)." },
+      { chip: "Atenção + α₁", on: ["in", "ln1", "ss1", "mlpUp", "vsc"], hot: ["mhsa", "sc1", "p1"], flow: ["sp1", "a1", "res1"], text: "<b>Multi-Head Self-Attention</b>: cada token olha para todos os outros. <b>Scale</b> multiplica o resultado por α₁ antes da <b>soma residual</b> (⊕)." },
+      { chip: "Feedforward", on: ["in", "ln1", "ss1", "mhsa", "sc1", "p1", "mlpUp", "res1", "sp1"], hot: ["ln2", "ss2", "ff", "sc2", "p2"], flow: ["sp2", "g2", "a2", "res2", "out"], text: "Mesma receita na segunda metade: Layer Norm → γ₂, β₂ → <b>Pointwise Feedforward</b> (cada token sozinho) → α₂ → soma residual." },
+      { chip: "Por que “Zero”?", on: ["in", "out", "vzero", "sp1", "sp2"], hot: ["sc1", "sc2", "p1", "p2"], flow: ["res1", "res2"], text: "A MLP começa com <b>α = 0</b>: os ramos de atenção e feedforward são multiplicados por zero e cada bloco começa como a <b>identidade</b> (só passa o residual). Isso estabiliza o treino; no artigo, foi a variante com <b>menor FID</b>." },
+    ]);
+
+    // ---------- 2 · Cross-Attention ----------
+    makeBlock("cra", [
+      path("res1", "M430 433 H300 V318 H415", true), path("res2", "M430 302.5 H300 V187 H415", true), path("res3", "M430 170 H300 V57 H415", true),
+      path("sp1", "M430 440 V425 M430 395 V385 M430 340 V331"),
+      path("sp2", "M430 305 V300 M430 270 V255 M430 210 V200"),
+      path("sp3", "M430 174 V165 M430 135 V125 M430 80 V70"),
+      path("out", "M430 44 V6", true),
+      path("kv", "M650 440 V232 H534", true, { label: "K, V", lx: 600, ly: 220 }),
+      box("in", 440, 30, "Input Tokens", "tok"), box("cond", 440, 30, "Conditioning", "cond", 560, 180),
+      box("ln1", 395, 30, "Layer Norm", "norm"), box("mhsa", 340, 45, "Multi-Head\nSelf-Attention", "attn"), plus("p1", 318),
+      box("ln2", 270, 30, "Layer Norm", "norm"), box("mhca", 210, 45, "Multi-Head\nCross-Attention", "cross"), plus("p2", 187),
+      box("ln3", 135, 30, "Layer Norm", "norm"), box("ff", 80, 45, "Pointwise\nFeedforward", "ff"), plus("p3", 57),
+      vizTok, vizCond,
+      { t: "raw", id: "vself", draw: g => panel(g, 20, 300, 260, 75, "Autoatenção", ["Q, K, V vêm dos tokens", "relações internas da imagem"], "#f0a04b") },
+      { t: "raw", id: "vq", draw: g => panel(g, 20, 195, 260, 75, "Atenção cruzada", ["Q vem dos tokens (pergunta)", "K, V vêm da condição"], "#e8787a") },
+      { t: "raw", id: "vcost", draw: g => panel(g, 766, 150, 228, 100, "Custo", ["a atenção cruzada soma", "≈ 15% de Gflops:", "a variante mais cara"], "#d9480f") },
+    ], [
+      { chip: "Visão geral", on: "*", text: "No bloco <b>Cross-Attention</b>, o modelo presta atenção não só aos próprios tokens (<b>autoatenção</b>), mas também à informação de <b>condicionamento</b> (<b>atenção cruzada</b>)." },
+      { chip: "Entradas", on: ["in", "cond", "vtok", "vcond"], hot: ["in", "cond"], text: "<b>Input Tokens e Conditioning</b>: os tokens entram junto com a informação condicional. A condição (t e y) fica como uma <b>sequência separada</b>, de 2 tokens." },
+      { chip: "Self-Attention", on: ["in", "vself"], hot: ["ln1", "mhsa", "p1"], flow: ["sp1", "res1"], text: "<b>Self-Attention</b>: o modelo aplica atenção entre os tokens da imagem, capturando relações internas. Depois, soma residual (⊕)." },
+      { chip: "Cross-Attention", on: ["in", "ln1", "mhsa", "p1", "sp1", "res1", "cond", "vq"], hot: ["ln2", "mhca", "p2"], flow: ["sp2", "kv", "res2"], text: "<b>Cross-Attention</b>: os tokens (consultas, Q) prestam atenção à informação condicional externa (chaves e valores, K e V): texto, rótulos etc." },
+      { chip: "Feedforward", on: ["in", "ln1", "mhsa", "p1", "sp1", "res1", "ln2", "mhca", "p2", "sp2", "res2", "kv", "cond"], hot: ["ln3", "ff", "p3"], flow: ["sp3", "res3", "out"], text: "<b>Feedforward</b>: cada token é transformado de forma independente, para melhorar sua representação." },
+      { chip: "Custo", on: ["in", "cond", "kv", "vcost", "sp1", "sp2", "sp3", "out", "ln1", "mhsa", "p1", "ln2", "p2", "ln3", "ff", "p3"], hot: ["mhca"], text: "Flexível (a condição pode ser uma sequência longa, como um texto), mas é a variante que mais <b>aumenta os Gflops</b>: cerca de 15% a mais." },
+    ]);
+
+    // ---------- 3 · In-Context Conditioning ----------
+    makeBlock("inc", [
+      path("res1", "M430 355 H300 V225 H415", true), path("res2", "M430 206 H300 V80 H415", true),
+      path("sp0", "M430 440 V415"),
+      path("sp1", "M430 365 V345 M430 315 V300 M430 250 V238"),
+      path("sp2", "M430 212 V200 M430 170 V155 M430 105 V93"),
+      path("out", "M430 67 V8", true),
+      path("cc", "M650 440 V390 H534", true),
+      box("in", 440, 30, "Input Tokens", "tok"), box("cond", 440, 30, "Conditioning", "cond", 560, 180),
+      box("cat", 365, 50, "Concatenate on\nSequence Dimension", "cond"),
+      box("ln1", 315, 30, "Layer Norm", "norm"), box("mhsa", 250, 50, "Multi-Head\nSelf-Attention", "attn"), plus("p1", 225),
+      box("ln2", 170, 30, "Layer Norm", "norm"), box("ff", 105, 50, "Pointwise\nFeedforward", "ff"), plus("p2", 80),
+      vizTok, vizCond,
+      { t: "raw", id: "vseq", draw: g => {
+        squares(g, 30, 340, TOK, 26, 6); squares(g, 30 + 6 * 32, 340, COND, 26, 6);
+        el("rect", { x: 30 + 6 * 32 - 4, y: 336, width: 66, height: 34, rx: 6, fill: "none", stroke: "#3b5bdb", "stroke-width": 2 }, g);
+        const t = el("text", { x: 30, y: 326, class: "pline" }, g); t.textContent = "T + 2 tokens na sequência";
+        const u = el("text", { x: 30, y: 392, class: "pline" }, g); u.textContent = "+ t e y viram 2 tokens extras";
+      } },
+      { t: "raw", id: "vatt", draw: g => {
+        const xs = [0, 1, 2, 3, 4, 5, 6, 7].map(i => 43 + i * 32);
+        squares(g, 30, 270, TOK, 26, 6); squares(g, 30 + 6 * 32, 270, COND, 26, 6);
+        [6, 7].forEach(j => [0, 2, 4, 5].forEach(i => el("path", { d: `M${xs[j]} 270 Q ${(xs[i] + xs[j]) / 2} ${236 - Math.abs(j - i) * 3} ${xs[i]} 270`, fill: "none", stroke: COND[j - 6], "stroke-width": 1.4, opacity: .75 }, g)));
+        const t = el("text", { x: 30, y: 312, class: "pline" }, g); t.textContent = "condição e imagem se atendem";
+      } },
+      { t: "raw", id: "vout", draw: g => panel(g, 766, 150, 228, 120, "Saída", ["depois do último bloco,", "os 2 tokens condicionais", "são removidos → T tokens", "custo extra: desprezível"], "#2b8a3e") },
+    ], [
+      { chip: "Visão geral", on: "*", text: "Mecanismo eficiente: o bloco <b>In-Context Conditioning</b> <b>concatena</b> a informação condicional diretamente aos tokens, sem processamento adicional custoso. O resto é um bloco Transformer padrão (como no ViT)." },
+      { chip: "Entradas", on: ["in", "cond", "vtok", "vcond"], hot: ["in", "cond"], text: "<b>Input Tokens</b> (patches do latente) e <b>Conditioning</b> (timestep t e rótulo y)." },
+      { chip: "Concatenar", on: ["in", "cond", "vseq"], hot: ["cat"], flow: ["sp0", "cc"], text: "Os tokens de entrada são <b>concatenados</b> com a informação condicional <b>na dimensão da sequência</b>: os embeddings de t e y viram 2 tokens a mais (T → T + 2)." },
+      { chip: "Self-Attention", on: ["in", "cond", "cat", "sp0", "cc", "vatt"], hot: ["ln1", "mhsa", "p1"], flow: ["sp1", "res1"], text: "<b>Self-Attention</b> sobre os tokens concatenados: captura relações entre os tokens da imagem e os tokens condicionais, sem um módulo novo." },
+      { chip: "Feedforward", on: ["in", "cond", "cat", "sp0", "cc", "ln1", "mhsa", "p1", "sp1", "res1"], hot: ["ln2", "ff", "p2"], flow: ["sp2", "res2", "out"], text: "<b>Feedforward</b>: cada token é transformado individualmente. Depois, soma residual (⊕)." },
+      { chip: "Saída", on: ["in", "cond", "cat", "sp0", "cc", "ln1", "mhsa", "p1", "sp1", "res1", "ln2", "ff", "p2", "sp2", "res2", "vout"], flow: ["out"], text: "Depois do último bloco, os <b>tokens condicionais são removidos</b> da sequência. Como são só 2 tokens a mais, o custo extra em Gflops é <b>desprezível</b>." },
+    ]);
+  })();
+
+  // ===== Navegação das diapositivas (mesmo motor do deck DiEmo-TTS) =====
   (function () {
     const MAIN = [...document.querySelectorAll(".slide")];
     const counter = document.getElementById("hud-n");
     const bar = document.querySelector(".progress");
     let idx = 0, current = null;
     const fit = () => document.documentElement.style.setProperty("--s", Math.min(innerWidth / 1280, innerHeight / 720));
-    function show(n) {
+    const animOf = s => { for (const svg of s.querySelectorAll("svg")) { const a = ANIMS.get(svg); if (a) return a; } return null; };
+    function show(n, fromBack) {
       n = Math.max(0, Math.min(MAIN.length - 1, n));
-      if (current) current.classList.remove("active");
+      if (current) { const oa = animOf(current); if (oa) oa.stop(); current.classList.remove("active"); }
       idx = n; current = MAIN[idx];
       current.classList.add("active");
+      const a = animOf(current);
+      if (a) a.go(fromBack ? a.n() - 1 : 0);
       counter.textContent = `${idx + 1} / ${MAIN.length}`;
       bar.style.width = `${(idx + 1) / MAIN.length * 100}%`;
       history.replaceState(null, "", "#" + (idx + 1));
     }
-    const next = () => show(idx + 1);
-    const prev = () => show(idx - 1);
+    // Com animação na lâmina, as setas percorrem os passos antes de mudar de lâmina
+    function next() { const a = animOf(current); if (a && a.cur() < a.n() - 1) a.go(a.cur() + 1); else show(idx + 1); }
+    function prev() { const a = animOf(current); if (a && a.cur() > 0) a.go(a.cur() - 1); else if (idx > 0) show(idx - 1, true); }
     document.addEventListener("keydown", e => {
       const k = e.key;
-      if (k === "ArrowRight" || k === " " || k === "Enter" || k === "PageDown" || k === "ArrowDown") { e.preventDefault(); next(); }
-      else if (k === "ArrowLeft" || k === "Backspace" || k === "PageUp" || k === "ArrowUp") { e.preventDefault(); prev(); }
+      if (k === "ArrowRight" || k === " " || k === "Enter") { e.preventDefault(); next(); }
+      else if (k === "ArrowLeft" || k === "Backspace") { e.preventDefault(); prev(); }
+      else if (k === "PageDown" || k === "ArrowDown") { e.preventDefault(); show(idx + 1); }
+      else if (k === "PageUp" || k === "ArrowUp") { e.preventDefault(); show(idx - 1); }
       else if (k === "Home") show(0);
       else if (k === "End") show(MAIN.length - 1);
       else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
