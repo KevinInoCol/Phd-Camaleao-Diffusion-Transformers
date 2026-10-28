@@ -379,6 +379,46 @@
   @keyframes blkflow { to { stroke-dashoffset: -15; } }
   .anim.blk .ectext { font-size: 19px; line-height: 1.5; max-height: 125px; }
   .anim.blk .ecchips button { font-size: 13px; padding: 4px 11px; }
+  /* ===== lâminas novas (out/2026) ===== */
+  .old-tag { position: absolute; top: 14px; right: 18px; z-index: 3; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+    color: #868e96; border: 1.5px dashed #adb5bd; border-radius: 999px; padding: 2px 10px; background: var(--bg); }
+  .h1-long { font-size: 58px !important; line-height: 1.08 !important; max-width: 1100px; }
+  .slide .agenda10 { font-size: 26px; line-height: 1.3; }
+  .slide .agenda10 li { margin: 3px 0; }
+  .ovs .ovbox { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  .ovl { position: relative; display: inline-block; line-height: 0; }
+  .ovl img { display: block; max-width: 100%; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+  .ovl .hl { position: absolute; border: 3px solid var(--emo); border-radius: 8px; background: rgba(217, 72, 15, .08);
+    box-shadow: 0 0 0 3px rgba(255,255,255,.7), 0 0 14px rgba(217, 72, 15, .45); opacity: 0; transition: opacity .35s ease; pointer-events: none; }
+  .ovl .hl.show { opacity: 1; }
+  .ovl.dim img { filter: saturate(.55) opacity(.75); transition: filter .35s; }
+  .split.tfb { grid-template-columns: 400px 1fr; gap: 34px; }
+  .split.tfb .ovbox { display: flex; justify-content: center; }
+  .ectext.big { font-size: 21px; line-height: 1.55; min-height: 8em; }
+  .ectext .map { font-family: ui-monospace, Menlo, monospace; background: var(--accent-soft); color: var(--accent); padding: 1px 7px; border-radius: 6px; font-size: .92em; }
+  .dn { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-content: center; position: relative; }
+  .dn figure { margin: 0; text-align: center; }
+  .dn canvas { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); }
+  .dn figcaption { font-size: 15px; color: var(--muted); margin-top: 6px; }
+  .dn .live figcaption { display: flex; gap: 6px; align-items: center; justify-content: center; flex-wrap: wrap; }
+  .dn .live input { width: 110px; }
+  .dn .live button { font: inherit; font-size: 13px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
+  .dn .live canvas { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .dn .ans { margin: 6px 0 0; font-size: 15px; font-weight: 700; color: var(--emo); opacity: 0; transition: opacity .4s; }
+  .dn.reveal .ans { opacity: 1; }
+  .dn-q { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 82%; text-align: center; font-size: 28px; line-height: 1.35;
+    background: rgba(255,255,255,.95); border: 2px solid var(--accent); border-radius: 14px; padding: 18px 26px; box-shadow: 0 12px 40px rgba(0,0,0,.18); opacity: 0; pointer-events: none; transition: opacity .35s; }
+  .dn.ask .dn-q { opacity: 1; }
+  .cit { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
+  .cit-row { display: grid; grid-template-columns: 80px 1fr 70px; gap: 10px; align-items: center; margin: 10px 0; font-size: 19px; }
+  .cit-row span { color: var(--muted); font-size: 15px; }
+  .cit-bar { height: 26px; border-radius: 0 4px 4px 0; background: #adb5bd; }
+  .cit-bar.now { background: var(--accent); }
+  .cards.sig .card2 { font-size: 20px; }
+  .cards.sig .card2 small { font-size: 14px; }
+  .grow .cards.sig .card2 { font-size: 20px; }
+  #lat-res { margin: 0 0 4px; }
+  #lat-svg { width: 100%; height: auto; max-height: 300px; }
   .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: 3px; }
 
 </style>
@@ -387,6 +427,7 @@
 <div class="progress"></div>
 <!-- Capa -->
 <section class="slide title-slide">
+  <span class="old-tag">versão anterior</span>
   <div class="t-brand"><div class="aims-logo" role="img" aria-label="Logo AIMS"></div><div class="t-kicker">[AIMS] Artificial Intelligence through<br>Multimodal Signal Processing</div></div>
   <h1>Diffusion Transformers</h1>
   <p class="t-sub">Introdução aos <b>DiTs</b>: modelos de difusão que trocam a U-Net por um Transformer</p>
@@ -397,8 +438,20 @@
   <p class="t-hint">→ / espaço: avançar · ← voltar · F: tela cheia</p>
 </section>
 
+<!-- Capa (nova) -->
+<section class="slide title-slide">
+  <div class="t-brand"><div class="aims-logo" role="img" aria-label="Logo AIMS"></div><div class="t-kicker">[AIMS] Artificial Intelligence through<br>Multimodal Signal Processing</div></div>
+  <h1 class="h1-long">Introdução ao “Diffusion Transformers (DiTs)”</h1>
+  <p class="t-sub">Inspirado no artigo: <i>Scalable Diffusion Models with Transformers</i></p>
+  <p class="t-authors">William Peebles, Saining Xie</p>
+  <p class="t-ref">ICCV 2023, pp. 4195–4205 · UC Berkeley · New York University · Meta AI (FAIR)</p>
+  <div class="t-presenters"><span>Apresentação</span><b>Johsac Isbac Gomez Sanchez</b></div>
+  <p class="t-hint">→ / espaço: avançar · ← voltar · F: tela cheia</p>
+</section>
+
 <!-- Roteiro -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><h2>Roteiro</h2></header>
   <div class="agenda-wrap">
     <ol class="agenda">
@@ -416,6 +469,23 @@
   </div>
 </section>
 
+<!-- Conteúdo -->
+<section class="slide">
+  <header class="sh"><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li><b>Problemas em aberto</b></li>
+    <li><b>Revisão da literatura</b></li>
+    <li><b>Motivação e impacto dos DiTs</b></li>
+    <li><b>Arquitetura do modelo</b></li>
+    <li><b>Resultados obtidos</b></li>
+    <li><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b></li>
+  </ol>
+</section>
+
 <!-- 1 · Problemas em aberto -->
 <section class="slide">
   <header class="sh"><span class="kick">Problemas em aberto</span><h2><span class="snum">1</span>Problemas em aberto em modelos de geração</h2></header>
@@ -429,19 +499,20 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 2 -->
+<!-- Conteúdo · seção 2 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 2 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="now"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Seção 2 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="now"><b>Revisão da literatura</b></li>
+    <li><b>Motivação e impacto dos DiTs</b></li>
+    <li><b>Arquitetura do modelo</b></li>
+    <li><b>Resultados obtidos</b></li>
+    <li><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
@@ -471,6 +542,7 @@
 
 <!-- Difusão -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · Difusão</span><h2><span class="snum">2</span>Geração de imagens com modelos de difusão</h2></header>
   <p class="lead sm"><b>Modelo de difusão (2020)</b>: modelo generativo que adiciona ruído progressivamente às imagens e usa uma U-Net para aprender a reverter o ruído, passo a passo.</p>
   <div class="grow"><img src="img/difusao-forward-reverse.webp" alt="Difusão direta e reversa" style="max-height:330px"></div>
@@ -483,6 +555,7 @@
 
 <!-- Difusão: geração -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · Difusão</span><h2><span class="snum">2</span>Gerando uma amostra por remoção de ruído</h2></header>
   <div class="grow"><img src="img/difusao-geracao.webp" alt="Geração por difusão reversa a partir do ruído" style="max-height:280px"><p class="cap">Reverse diffusion</p></div>
   <div class="cards c2">
@@ -492,8 +565,27 @@
   <p class="vide"><b>Vide</b> J. Ho, A. Jain, P. Abbeel. <i>Denoising Diffusion Probabilistic Models.</i> NeurIPS 2020.</p>
 </section>
 
+<!-- Denoising interativo -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Difusão</span><h2><span class="snum">2</span>Denoising interativo: o que o modelo decide em cada passo?</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="dn-chips"></div>
+    <div class="dn" id="dn-host" data-anim data-src="data:image/webp;base64,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">
+      <figure><canvas width="480" height="258" data-s="0.9"></canvas><figcaption><b>90%</b> de ruído · t alto</figcaption><p class="ans">composição global: onde está a pessoa?</p></figure>
+      <figure><canvas width="480" height="258" data-s="0.5"></canvas><figcaption><b>50%</b> de ruído</figcaption><p class="ans">formas e cores principais</p></figure>
+      <figure><canvas width="480" height="258" data-s="0.1"></canvas><figcaption><b>10%</b> de ruído · t baixo</figcaption><p class="ans">texturas finas: rosto, cabelo, reflexos</p></figure>
+      <figure class="live"><canvas id="dn-live" width="480" height="258"></canvas>
+        <figcaption><span id="dn-live-lab">ruído: 100%</span> <input type="range" id="dn-slider" min="0" max="100" value="100" aria-label="nível de ruído"> <button type="button" id="dn-anim">▶ Animar</button></figcaption></figure>
+      <div class="dn-q">Em qual passo o modelo decide a <b>composição global</b>? E em qual decide as <b>texturas finas</b>?</div>
+    </div>
+    <div class="a-row"><div class="ectext" id="dn-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="dn-prev">◀</button><button type="button" id="dn-play">▶ Reproduzir tudo</button><button type="button" id="dn-next">▶</button></div></div>
+  </div>
+</section>
+
 <!-- Transformer -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Transformer em Processamento de Linguagem Natural</h2></header>
   <p class="lead sm"><b>Transformer (2017)</b> revolucionou o NLP ao processar longas sequências de texto com <b>autoatenção</b>, eliminando a necessidade de redes recorrentes.</p>
   <div class="split wl">
@@ -508,6 +600,7 @@
 
 <!-- RNN x autoatenção -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>RNNs × mecanismo de autoatenção</h2></header>
   <div class="split">
     <div class="col" style="align-items:center">
@@ -527,6 +620,7 @@
 
 <!-- Encoder / decoder -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Encoder e decoder: aplicações</h2></header>
   <div class="split wr">
     <figure class="fig"><img src="img/transformer.webp" alt="Arquitetura do Transformer: encoder à esquerda, decoder à direita" style="max-height:540px"><figcaption>Encoder (esquerda) · Decoder (direita)</figcaption></figure>
@@ -537,29 +631,91 @@
   </div>
 </section>
 
+<!-- Transformer por dentro: posição, Q, K, V e atenção -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Transformer por dentro: posição, Q, K, V e atenção</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="tfa-chips"></div>
+    <svg id="tfa-svg" class="blk-svg" viewBox="0 0 1000 400" data-solo role="img" aria-label="Animação do mecanismo de atenção"></svg>
+    <div class="a-row"><div class="ectext" id="tfa-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="tfa-prev">◀</button><button type="button" id="tfa-play">▶ Reproduzir tudo</button><button type="button" id="tfa-next">▶</button></div></div>
+  </div>
+</section>
+
+<!-- Encoder, decoder ou os dois -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Encoder, decoder ou os dois? Depende da tarefa</h2></header>
+  <div class="split tfb">
+    <div class="ovbox"><div class="ovl" id="tfb-host" data-anim><img src="img/transformer.webp" alt="Arquitetura do Transformer com destaques" style="max-height:540px"><div class="hl" data-hl="enc" style="left:9%;top:36%;width:39%;height:56%"></div><div class="hl" data-hl="dec" style="left:51%;top:6%;width:40%;height:87%"></div><div class="hl" data-hl="xatt" style="left:55%;top:39.5%;width:32%;height:10%"></div><div class="hl" data-hl="mask" style="left:55%;top:57%;width:32%;height:10%"></div></div></div>
+    <div class="col" style="align-self:stretch;justify-content:center">
+      <div class="ecchips" id="tfb-chips"></div>
+      <div class="ectext big" id="tfb-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl"><button type="button" id="tfb-prev">◀</button><button type="button" id="tfb-play">▶ Reproduzir tudo</button><button type="button" id="tfb-next">▶</button></div>
+    </div>
+  </div>
+</section>
+
 <!-- ViT -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · ViT</span><h2><span class="snum">2</span>Transformers em visão computacional (ViT)</h2></header>
   <p class="lead sm"><b>ViTs (2020)</b> aplicam Transformers às imagens: dividem a imagem em fragmentos (<i>patches</i>), processam cada um como um token e usam atenção para capturar relações espaciais de longo alcance.</p>
   <div class="grow"><img src="img/vit.webp" alt="Arquitetura do Vision Transformer" style="max-height:410px"></div>
   <p class="vide"><b>Vide</b> A. Dosovitskiy et al. <i>An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.</i> ICLR 2021.</p>
 </section>
 
+<!-- ViT: só o encoder do Transformer -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · ViT</span><h2><span class="snum">2</span>ViT: só o encoder do Transformer</h2></header>
+  <div class="anim astack blk ovs">
+    <div class="ecchips" id="vit-chips"></div>
+    <div class="ovbox"><div class="ovl" id="vit-host" data-anim><img src="img/vit.webp" alt="Vision Transformer com destaques" style="max-height:330px"><div class="hl" data-hl="img" style="left:0%;top:63%;width:17%;height:37%"></div><div class="hl" data-hl="flat" style="left:23%;top:84%;width:45%;height:16%"></div><div class="hl" data-hl="proj" style="left:27%;top:63%;width:42%;height:13%"></div><div class="hl" data-hl="pos" style="left:1%;top:44%;width:68%;height:18%"></div><div class="hl" data-hl="enc" style="left:31%;top:26%;width:38%;height:13%"></div><div class="hl" data-hl="encd" style="left:77%;top:0%;width:23%;height:100%"></div><div class="hl" data-hl="head" style="left:8%;top:0%;width:35%;height:22%"></div></div></div>
+    <div class="a-row"><div class="ectext" id="vit-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="vit-prev">◀</button><button type="button" id="vit-play">▶ Reproduzir tudo</button><button type="button" id="vit-next">▶</button></div></div>
+  </div>
+  <p class="vide"><b>Vide</b> A. Dosovitskiy et al. <i>An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.</i> ICLR 2021.</p>
+</section>
+
 <!-- LDM -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>Modelos de difusão latente (LDM)</h2></header>
   <p class="lead sm"><b>LDM (2022)</b> treinam a difusão num <b>espaço latente comprimido</b>, em vez do espaço de pixels, e introduzem um mecanismo de <b>condicionamento</b> para controlar a geração com informações adicionais.</p>
   <div class="grow"><img src="img/ldm.webp" alt="Difusão no espaço latente com condicionamento" style="max-height:400px"></div>
   <p class="vide"><b>Vide</b> R. Rombach et al. <i>High-Resolution Image Synthesis with Latent Diffusion Models.</i> CVPR 2022.</p>
 </section>
 
+<!-- Por que o espaço latente -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>Por que o DiT precisa do espaço latente?</h2></header>
+  <p class="lead sm">A autoatenção compara <b>todos os tokens com todos</b>: custo <b>O(N²)</b> no número de tokens N. Escolha a resolução:</p>
+  <div class="audio-ctrl" id="lat-res" role="group" aria-label="Resolução">
+    <button type="button" data-r="256" aria-pressed="false">256 × 256</button><button type="button" data-r="512" aria-pressed="true">512 × 512</button><button type="button" data-r="1024" aria-pressed="false">1024 × 1024</button>
+  </div>
+  <svg id="lat-svg" class="blk-svg" viewBox="0 0 1000 290" role="img" aria-label="Comparação do número de tokens em pixels e no latente"></svg>
+  <div class="note" id="lat-out" style="margin:6px 0 0"></div>
+</section>
+
 <!-- LDM condicionamento -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>Gerando uma amostra com condicionamento</h2></header>
   <p class="lead sm">Com o condicionamento, o modelo gera imagens a partir de entradas adicionais específicas, usando técnicas de amostragem como o <i>Classifier-Free Diffusion Guidance</i>.</p>
   <div class="grow"><img src="img/ldm-condicionamento.webp" alt="U-Net com atenção cruzada para condicionamento" style="max-height:340px"></div>
   <div class="note">Para permitir o condicionamento, a U-Net usa <b>atenção cruzada</b> (<i>cross-attention</i>) durante o <i>denoising</i>.</div>
   <p class="vide"><b>Vide</b> J. Ho, T. Salimans. <i>Classifier-Free Diffusion Guidance.</i> 2021.</p>
+</section>
+
+<!-- LDM: como a condição entra na U-Net -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>LDM: como a condição entra na U-Net</h2></header>
+  <div class="anim astack blk ovs">
+    <div class="ecchips" id="ldc-chips"></div>
+    <div class="ovbox"><div class="ovl" id="ldc-host" data-anim><img src="img/ldm-condicionamento.webp" alt="U-Net do LDM com destaques" style="max-height:330px"><div class="hl" data-hl="zt" style="left:64%;top:30%;width:9%;height:24%"></div><div class="hl" data-hl="time" style="left:58%;top:0%;width:13%;height:20%"></div><div class="hl" data-hl="cond" style="left:80%;top:0%;width:20%;height:52%"></div><div class="hl" data-hl="tau" style="left:77%;top:58%;width:14%;height:42%"></div><div class="hl" data-hl="switch" style="left:55%;top:80%;width:12%;height:19%"></div><div class="hl" data-hl="concat" style="left:57%;top:66%;width:12%;height:14%"></div><div class="hl" data-hl="qkv" style="left:15%;top:16%;width:42%;height:40%"></div><div class="hl" data-hl="out" style="left:0%;top:30%;width:9%;height:26%"></div></div></div>
+    <div class="a-row"><div class="ectext" id="ldc-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="ldc-prev">◀</button><button type="button" id="ldc-play">▶ Reproduzir tudo</button><button type="button" id="ldc-next">▶</button></div></div>
+  </div>
+  <p class="vide"><b>Vide</b> R. Rombach et al. <i>High-Resolution Image Synthesis with Latent Diffusion Models.</i> CVPR 2022 · J. Ho, T. Salimans. <i>Classifier-Free Diffusion Guidance.</i> 2021.</p>
 </section>
 
 <!-- Perguntas em aberto -->
@@ -573,24 +729,26 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 3 -->
+<!-- Conteúdo · seção 3 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 3 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="now"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Seção 3 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="now"><b>Motivação e impacto dos DiTs</b></li>
+    <li><b>Arquitetura do modelo</b></li>
+    <li><b>Resultados obtidos</b></li>
+    <li><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
 <!-- Impacto -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>O artigo e seu impacto</h2></header>
   <div class="split">
     <figure class="fig"><img src="img/dit-artigo.webp" alt="Cabeçalho do artigo Scalable Diffusion Models with Transformers" style="max-width:560px"></figure>
@@ -605,8 +763,32 @@
   </div>
 </section>
 
+<!-- O artigo em 2026 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto · atualizado</span><h2><span class="snum">3</span>O artigo e seu impacto, em outubro de 2026</h2></header>
+  <div class="split">
+    <div class="col">
+      <figure class="fig"><img src="img/dit-artigo.webp" alt="Cabeçalho do artigo" style="max-width:520px"></figure>
+      <table class="tbl big">
+        <tr><td><b>Publicado em</b></td><td>ICCV 2023, Paris · pp. 4195–4205</td></tr>
+        <tr><td><b>Qualis CAPES</b></td><td>A1</td></tr>
+        <tr><td><b>Organização</b></td><td>Meta AI (FAIR), UC Berkeley, NYU</td></tr>
+      </table>
+    </div>
+    <div class="col">
+      <div class="cit">
+        <div class="cit-row"><span>set/2024</span><div class="cit-bar" style="width:10%"></div><b>800</b></div>
+        <div class="cit-row"><span>out/2026</span><div class="cit-bar now" style="width:100%"></div><b>7.914</b></div>
+        <p class="cap">Citações. 2024: Google Scholar (versão anterior desta apresentação). 2026: Semantic Scholar, consultado em 28/10/2026.</p>
+      </div>
+      <div class="note">Em dois anos, quase <b>10× mais citações</b>: o DiT virou a base de SD3, FLUX, Sora, Wan, HunyuanVideo e de modelos de movimento.</div>
+    </div>
+  </div>
+</section>
+
 <!-- Autores -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>Os autores</h2></header>
   <div class="grow">
   <div class="cards c2" style="width:100%">
@@ -614,6 +796,28 @@
     <div class="card2" style="display:flex;flex-direction:column;gap:14px;align-items:center"><img src="img/autor-xie.webp" alt="Saining Xie, Assistant Professor no Courant Institute, NYU" style="max-width:520px"><img src="img/cit-xie.webp" alt="Citações de Saining Xie" style="max-width:300px"></div>
   </div>
   <p class="cap">Perfis do Google Scholar no momento da preparação da apresentação (setembro de 2024).</p>
+  </div>
+</section>
+
+<!-- Os autores em 2026 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto · atualizado</span><h2><span class="snum">3</span>Os autores, em 2026</h2></header>
+  <div class="grow">
+  <div class="cards c2" style="width:100%">
+    <div class="card2"><b>William (Bill) Peebles</b>
+      <ul>
+        <li>Doutorado em UC Berkeley; o DiT nasceu num estágio na Meta AI (FAIR)</li>
+        <li>Entrou na OpenAI em 2023 e <b>liderou o Sora</b>, construído sobre DiT</li>
+        <li>Mar/2026: a OpenAI descontinua o Sora; abr/2026: Peebles <b>deixa a OpenAI</b></li>
+      </ul></div>
+    <div class="card2"><b>Saining Xie</b>
+      <ul>
+        <li>Professor assistente no Courant Institute, <b>New York University</b></li>
+        <li>2026: <b>cofundador e Chief Science Officer da AMI Labs</b>, startup de “world models” de Yann LeCun</li>
+        <li>Coautor de ResNeXt, ConvNeXt, SiT e DiT</li>
+      </ul></div>
+  </div>
+  <p class="cap">Fontes: TechCrunch (17/04/2026) sobre a saída de Peebles; anúncio da AMI Labs (2026) sobre Saining Xie.</p>
   </div>
 </section>
 
@@ -641,19 +845,20 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 4 -->
+<!-- Conteúdo · seção 4 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 4 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="now"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Seção 4 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="now"><b>Arquitetura do modelo</b></li>
+    <li><b>Resultados obtidos</b></li>
+    <li><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
@@ -667,14 +872,27 @@
 
 <!-- Arquitetura interna -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Arquitetura interna dos DiTs</h2></header>
   <p class="lead sm">Substituição da U-Net pelo Transformer: o ruído latente é fragmentado, recebe <i>positional encoding</i> e passa por N blocos DiT, condicionados pelo <i>timestep</i> e pelo rótulo.</p>
   <div class="grow"><img src="img/dit-espaco-latente.webp" alt="Fluxo do DiT no espaço latente" style="max-height:380px"></div>
   <p class="vide"><b>Vide</b> W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
 </section>
 
+<!-- Arquitetura interna dos DiTs (versão corrigida) -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo · revisada</span><h2><span class="snum">4</span>Arquitetura interna dos DiTs (versão corrigida)</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="arq-chips"></div>
+    <svg id="arq-svg" class="blk-svg" viewBox="0 0 1000 480" role="img" aria-label="Fluxo do DiT passo a passo"></svg>
+    <div class="a-row"><div class="ectext" id="arq-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="arq-prev">◀</button><button type="button" id="arq-play">▶ Reproduzir tudo</button><button type="button" id="arq-next">▶</button></div></div>
+  </div>
+</section>
+
 <!-- Patchify -->
 <section class="slide">
+  <span class="old-tag">versão anterior</span>
   <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Fragmentação da imagem: o bloco “fragment or patch”</h2></header>
   <figure class="fig"><img src="img/patches-imagem.webp" alt="Imagem original e versões fragmentadas com patches cada vez menores" style="max-height:210px"></figure>
   <div class="patch-row" style="margin-top:14px">
@@ -686,6 +904,17 @@
     </div>
   </div>
   <div class="note" style="margin-bottom:0">Patches menores (p menor) → <b>mais tokens</b>: T = (I/p)². Mais tokens = mais custo, mas também mais detalhe.</div>
+</section>
+
+<!-- Patchify passo a passo: do latente aos tokens -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo · revisada</span><h2><span class="snum">4</span>Patchify passo a passo: do latente aos tokens</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="pat-chips"></div>
+    <svg id="pat-svg" class="blk-svg" viewBox="0 0 1000 410" data-solo role="img" aria-label="Patchify passo a passo"></svg>
+    <div class="a-row"><div class="ectext" id="pat-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="pat-prev">◀</button><button type="button" id="pat-play">▶ Reproduzir tudo</button><button type="button" id="pat-next">▶</button></div></div>
+  </div>
 </section>
 
 <!-- Três blocos -->
@@ -744,19 +973,20 @@
   <p class="vide"><b>Fonte</b> Tabela 1 de W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
 </section>
 
-<!-- Roteiro · seção 5 -->
+<!-- Conteúdo · seção 5 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 5 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li class="now"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Seção 5 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="now"><b>Resultados obtidos</b></li>
+    <li><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
@@ -805,32 +1035,57 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 6 -->
+<!-- Conteúdo · seção 6 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 6 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li class="now"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Seção 6 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="done"><b>Resultados obtidos</b></li>
+    <li class="now"><b>A revolução DiT (2024–2026)</b></li>
+    <li><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
-<!-- Perguntas filosóficas -->
+<!-- De um artigo à espinha dorsal da IA generativa -->
 <section class="slide">
-  <header class="sh"><span class="kick">Extensão para outras áreas</span><h2><span class="snum">6</span>Perguntas filosóficas</h2></header>
-  <div class="grow">
-  <div class="cards c3" style="width:100%">
-    <div class="card2"><b>Outras áreas</b>Podemos aplicar os DiTs a outras áreas, como áudio, vídeo e gestos?</div>
-    <div class="card2"><b>Modificações</b>Que modificações ou extensões à arquitetura DiT seriam necessárias para alcançar desempenho comparável ou superior aos métodos existentes nessas áreas?</div>
-    <div class="card2"><b>Condicionamento</b>Qual seria o papel do condicionamento na geração de áudio ou gestos, onde as condições mudam ao longo do tempo? Ex.: tom, estilo, prosódia e ritmo no áudio; postura, expressões e movimentos nos gestos.</div>
+  <header class="sh"><span class="kick">A revolução DiT</span><h2><span class="snum">6</span>De um artigo à espinha dorsal da IA generativa</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="tl-chips"></div>
+    <svg id="tl-svg" class="blk-svg" viewBox="0 0 1000 480" data-solo role="img" aria-label="Linha do tempo dos DiTs de 2022 a 2026"></svg>
+    <div class="a-row"><div class="ectext" id="tl-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="tl-prev">◀</button><button type="button" id="tl-play">▶ Reproduzir tudo</button><button type="button" id="tl-next">▶</button></div></div>
   </div>
+</section>
+
+<!-- Do DDPM ao Flow Matching -->
+<section class="slide">
+  <header class="sh"><span class="kick">A revolução DiT</span><h2><span class="snum">6</span>Do DDPM ao Flow Matching</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="fm-chips"></div>
+    <svg id="fm-svg" class="blk-svg" viewBox="0 0 1000 470" data-solo role="img" aria-label="Partículas indo do ruído aos dados"></svg>
+    <div class="a-row"><div class="ectext" id="fm-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="fm-prev">◀</button><button type="button" id="fm-play">▶ Reproduzir tudo</button><button type="button" id="fm-next">▶</button></div></div>
   </div>
+</section>
+
+<!-- DiT além das imagens -->
+<section class="slide">
+  <header class="sh"><span class="kick">A revolução DiT</span><h2><span class="snum">6</span>O mesmo bloco, muitos sinais</h2></header>
+  <p class="lead sm">Muda o que é um <b>token</b>; o Transformer de difusão continua o mesmo.</p>
+  <div class="grow"><div class="cards c3 sig" style="width:100%">
+    <div class="card2"><b>Imagem</b>token = patch 2D do latente<small>DiT, SD3 e FLUX (MMDiT)</small></div>
+    <div class="card2"><b>Vídeo</b>token = patch espaço-temporal<small>Sora, Movie Gen, HunyuanVideo, Wan</small></div>
+    <div class="card2"><b>Áudio</b>token = quadro do latente de áudio<small>ex.: Stable Audio Open</small></div>
+    <div class="card2"><b>Forma 3D</b>token = patch de voxels<small>DiT-3D (próximas lâminas)</small></div>
+    <div class="card2"><b>Movimento</b>token = instante de pose<small>HY-Motion 1.0: DiT + flow matching, &gt;1B</small></div>
+    <div class="card2"><b>Gestos com fala</b>token = instante de gesto<small>DyaDiT, GestureHYDRA, Flow-DiT UNICAMP</small></div>
+  </div></div>
 </section>
 
 <!-- DiT-3D -->
@@ -848,25 +1103,65 @@
   <p class="vide"><b>Vide</b> S. Mo et al. <i>DiT-3D: Exploring Plain Diffusion Transformers for 3D Shape Generation.</i> NeurIPS 2023.</p>
 </section>
 
+<!-- Conteúdo · seção 7 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 7 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="done"><b>Resultados obtidos</b></li>
+    <li class="done"><b>A revolução DiT (2024–2026)</b></li>
+    <li class="now"><b>DiTs para gestos 3D</b></li>
+    <li><b>Conclusões</b></li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b></li>
+  </ol>
+</section>
+
+<!-- Perguntas filosóficas -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas</span><h2><span class="snum">7</span>Perguntas filosóficas</h2></header>
+  <div class="grow">
+  <div class="cards c3" style="width:100%">
+    <div class="card2"><b>Outras áreas</b>Podemos aplicar os DiTs a outras áreas, como áudio, vídeo e gestos?</div>
+    <div class="card2"><b>Modificações</b>Que modificações ou extensões à arquitetura DiT seriam necessárias para alcançar desempenho comparável ou superior aos métodos existentes nessas áreas?</div>
+    <div class="card2"><b>Condicionamento</b>Qual seria o papel do condicionamento na geração de áudio ou gestos, onde as condições mudam ao longo do tempo? Ex.: tom, estilo, prosódia e ritmo no áudio; postura, expressões e movimentos nos gestos.</div>
+  </div>
+  </div>
+</section>
+
+<!-- DiT: um framework para sequências contínuas -->
+<section class="slide">
+  <header class="sh"><span class="kick">DiTs para gestos 3D</span><h2><span class="snum">7</span>DiT: um framework para sequências contínuas</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="seq-chips"></div>
+    <svg id="seq-svg" class="blk-svg" viewBox="0 0 1000 480" role="img" aria-label="Imagem e gesto como sequências de tokens"></svg>
+    <div class="a-row"><div class="ectext" id="seq-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="seq-prev">◀</button><button type="button" id="seq-play">▶ Reproduzir tudo</button><button type="button" id="seq-next">▶</button></div></div>
+  </div>
+</section>
+
 <!-- Pergunta gestos -->
 <section class="slide">
   <div class="big-q"><span class="kick">Extensão para outras áreas</span><p>E os DiTs para <span style="color:var(--accent)">gestos corporais</span>, como seriam?</p></div>
 </section>
 
-<!-- Gestos corporais -->
+<!-- Como se parametriza um gesto? -->
 <section class="slide">
-  <header class="sh"><span class="kick">Extensão para outras áreas · gestos</span><h2><span class="snum">6</span>Gestos corporais: o corpo fala através dos gestos!</h2></header>
-  <div class="split">
-    <div class="col">
-      <div class="card2"><b>O que são gestos corporais?</b>São conjuntos de gestos, expressões faciais, olhares, posturas e outros movimentos, conscientes ou não, sutis ou explícitos, que transmitem informações relevantes num diálogo <b>sem palavras</b>.</div>
-    </div>
-    <figure class="fig"><img src="img/gestos.webp" alt="Ilustração de comunicação não verbal" class="photo" style="max-height:470px"><figcaption>Figura obtida em: pnliafi/comunicacion-no-verbal</figcaption></figure>
+  <header class="sh"><span class="kick">DiTs para gestos 3D</span><h2><span class="snum">7</span>Como se parametriza um gesto?</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="gst-chips"></div>
+    <svg id="gst-svg" class="blk-svg" viewBox="0 0 1000 480" data-solo role="img" aria-label="Esqueleto animado e representação da pose"></svg>
+    <div class="a-row"><div class="ectext" id="gst-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="gst-prev">◀</button><button type="button" id="gst-play">▶ Reproduzir tudo</button><button type="button" id="gst-next">▶</button></div></div>
   </div>
 </section>
 
 <!-- Persona-Gestor -->
 <section class="slide">
-  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">6</span>DiT para gestos guiados pela fala</h2></header>
+  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">7</span>DiT para gestos guiados pela fala</h2></header>
   <div class="split wr">
     <div class="col"><p class="lead sm" style="margin:0"><b>DiT Gesture Synthesis (2024)</b> gera gestos <b>personalizados</b> a partir da fala, usando inferência automática de características <i>fuzzy</i> para sincronizar os movimentos do corpo com o áudio em tempo real.</p></div>
     <figure class="fig"><img src="img/persona-gestor.webp" alt="Persona-Gestor: áudio de fala, extrator de características fuzzy e AdaLN Transformer gerando gestos" style="max-height:500px"></figure>
@@ -876,30 +1171,90 @@
 
 <!-- Persona-Gestor arquitetura -->
 <section class="slide">
-  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">6</span>Arquitetura do Persona-Gestor</h2></header>
+  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">7</span>Arquitetura do Persona-Gestor</h2></header>
   <div class="grow"><img src="img/persona-gestor-arq.webp" alt="Esquema geral, extrator de características fuzzy e bloco AdaLN Transformer" style="max-height:500px"></div>
   <p class="vide"><b>Vide</b> F. Zhang et al. <i>Speech-Driven Personalized Gesture Synthetics: Harnessing Automatic Fuzzy Feature Inference.</i> 2024.</p>
 </section>
 
-<!-- Roteiro · seção 7 -->
+<!-- DiffuseStyleGesture+: Transformer como denoiser de gestos -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 7 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li class="now"><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">DiTs para gestos 3D · GENEA 2023</span><h2><span class="snum">7</span>DiffuseStyleGesture+: Transformer como denoiser de gestos</h2></header>
+  <div class="anim astack blk ovs">
+    <div class="ecchips" id="dsg-chips"></div>
+    <div class="ovbox"><div class="ovl" id="dsg-host" data-anim><img src="img/dsg-plus.webp" alt="Arquitetura do DiffuseStyleGesture+" style="max-height:400px"><div class="hl" data-hl="in" style="left:2%;top:20%;width:46%;height:52%"></div><div class="hl" data-hl="z" style="left:44%;top:18%;width:23%;height:16%"></div><div class="hl" data-hl="cat" style="left:63%;top:47%;width:23%;height:14%"></div><div class="hl" data-hl="cla" style="left:69%;top:33%;width:28%;height:18%"></div><div class="hl" data-hl="sa" style="left:67%;top:21%;width:27%;height:9%"></div><div class="hl" data-hl="out" style="left:27%;top:3%;width:69%;height:16%"></div><div class="hl" data-hl="smp" style="left:1%;top:74%;width:98%;height:25%"></div></div></div>
+    <div class="a-row"><div class="ectext" id="dsg-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="dsg-prev">◀</button><button type="button" id="dsg-play">▶ Reproduzir tudo</button><button type="button" id="dsg-next">▶</button></div></div>
+  </div>
+  <p class="vide"><b>Vide</b> S. Yang, H. Xue, Z. Wu et al. <i>The DiffuseStyleGesture+ entry to the GENEA Challenge 2023.</i> ICMI 2023.</p>
+</section>
+
+<!-- Flow-DiT da UNICAMP: o pipeline -->
+<section class="slide">
+  <header class="sh"><span class="kick">DiTs para gestos 3D · GENEA 2026</span><h2><span class="snum">7</span>Flow-DiT da UNICAMP: o pipeline</h2></header>
+  <div class="anim astack blk ovs">
+    <div class="ecchips" id="fdp-chips"></div>
+    <div class="ovbox"><div class="ovl" id="fdp-host" data-anim><img src="img/flowdit-pipeline.webp" alt="Pipeline do Flow-DiT da UNICAMP" style="max-height:400px"><div class="hl" data-hl="enc" style="left:1%;top:16%;width:21%;height:23%"></div><div class="hl" data-hl="rvq" style="left:23%;top:3%;width:51%;height:37%"></div><div class="hl" data-hl="dec" style="left:77%;top:17%;width:22%;height:21%"></div><div class="hl" data-hl="mono" style="left:1%;top:78%;width:40%;height:22%"></div><div class="hl" data-hl="dya" style="left:1%;top:44%;width:34%;height:35%"></div><div class="hl" data-hl="dit" style="left:34%;top:56%;width:22%;height:27%"></div><div class="hl" data-hl="out" style="left:57%;top:62%;width:24%;height:24%"></div></div></div>
+    <div class="a-row"><div class="ectext" id="fdp-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="fdp-prev">◀</button><button type="button" id="fdp-play">▶ Reproduzir tudo</button><button type="button" id="fdp-next">▶</button></div></div>
+  </div>
+  <p class="vide"><b>Vide</b> J. I. G. Sanchez, P. D. P. Costa. <i>A Unified Flow-Matching DiT with Direct Continuous Decoding for Co-Speech Gesture Generation.</i> GENEA Challenge 2026 · github.com/AI-Unicamp/UNICAMP-Gesture-Generation</p>
+</section>
+
+<!-- Flow-DiT da UNICAMP: um bloco por dentro -->
+<section class="slide">
+  <header class="sh"><span class="kick">DiTs para gestos 3D · GENEA 2026</span><h2><span class="snum">7</span>Flow-DiT da UNICAMP: um bloco por dentro</h2></header>
+  <div class="anim astack blk ovs">
+    <div class="ecchips" id="fdb-chips"></div>
+    <div class="ovbox"><div class="ovl" id="fdb-host" data-anim><img src="img/flowdit-bloco.webp" alt="Bloco do Flow-DiT" style="max-height:380px"><div class="hl" data-hl="time" style="left:1%;top:0%;width:66%;height:26%"></div><div class="hl" data-hl="m1" style="left:25%;top:15%;width:4.5%;height:47%"></div><div class="hl" data-hl="m2" style="left:43.3%;top:15%;width:4.5%;height:47%"></div><div class="hl" data-hl="m3" style="left:62.5%;top:15%;width:4.5%;height:47%"></div><div class="hl" data-hl="sa" style="left:30%;top:15%;width:4.5%;height:47%"></div><div class="hl" data-hl="ca" style="left:49.3%;top:11%;width:6%;height:56%"></div><div class="hl" data-hl="perc" style="left:1%;top:62%;width:60%;height:38%"></div><div class="hl" data-hl="ff" style="left:68.4%;top:19%;width:5.2%;height:37%"></div><div class="hl" data-hl="inl" style="left:1%;top:25%;width:12%;height:40%"></div><div class="hl" data-hl="outl" style="left:79%;top:25%;width:18%;height:40%"></div></div></div>
+    <div class="a-row"><div class="ectext" id="fdb-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="fdb-prev">◀</button><button type="button" id="fdb-play">▶ Reproduzir tudo</button><button type="button" id="fdb-next">▶</button></div></div>
+  </div>
+  <p class="vide"><b>Vide</b> J. I. G. Sanchez, P. D. P. Costa. GENEA Challenge 2026, Figura 2.</p>
+</section>
+
+<!-- Inferência: Euler, CFG desacoplado e VAD -->
+<section class="slide">
+  <header class="sh"><span class="kick">DiTs para gestos 3D · GENEA 2026</span><h2><span class="snum">7</span>Inferência: Euler, CFG desacoplado e VAD</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="cfg-chips"></div>
+    <svg id="cfg-svg" class="blk-svg" viewBox="0 0 1000 440" data-solo role="img" aria-label="Pesos de guidance modulados por atividade de voz"></svg>
+    <div class="a-row"><div class="ectext" id="cfg-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="cfg-prev">◀</button><button type="button" id="cfg-play">▶ Reproduzir tudo</button><button type="button" id="cfg-next">▶</button></div></div>
+  </div>
+</section>
+
+<!-- Resultados oficiais do GENEA 2026 -->
+<section class="slide">
+  <header class="sh"><span class="kick">DiTs para gestos 3D · GENEA 2026</span><h2><span class="snum">7</span>Resultados oficiais do GENEA 2026</h2></header>
+  <div class="anim astack blk">
+    <div class="ecchips" id="res-chips"></div>
+    <svg id="res-svg" class="blk-svg" viewBox="0 0 1000 470" data-solo role="img" aria-label="Resultados por tarefa"></svg>
+    <div class="a-row"><div class="ectext" id="res-text" aria-live="polite"></div>
+      <div class="kctrl ecctrl col"><button type="button" id="res-prev">◀</button><button type="button" id="res-play">▶ Reproduzir tudo</button><button type="button" id="res-next">▶</button></div></div>
+  </div>
+</section>
+
+<!-- Conteúdo · seção 8 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 8 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="done"><b>Resultados obtidos</b></li>
+    <li class="done"><b>A revolução DiT (2024–2026)</b></li>
+    <li class="done"><b>DiTs para gestos 3D</b></li>
+    <li class="now"><b>Conclusões</b></li>
     <li><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
 <!-- Limitações -->
 <section class="slide">
-  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">7</span>Limitações</h2></header>
+  <span class="old-tag">versão anterior</span>
+  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">8</span>Limitações</h2></header>
   <div class="grow">
   <div class="cards c2" style="width:100%">
     <div class="card2"><b>Foco em imagens</b>A maioria das pesquisas com DiTs se concentra na geração de imagens e não se aprofunda em áudio, vídeo e gestos.</div>
@@ -910,9 +1265,25 @@
   </div>
 </section>
 
+<!-- Limitações 2026 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Conclusões · atualizado</span><h2><span class="snum">8</span>Limitações, em outubro de 2026</h2></header>
+  <div class="grow">
+  <div class="cards c3 sig" style="width:100%">
+    <div class="card2"><b>Custo O(N²)</b>Vídeo longo e alta resolução ainda são caros; o Sora foi descontinuado em 2026 em parte pelo custo de computação.</div>
+    <div class="card2"><b>Muitos passos</b>Mesmo com flow matching, gerar exige dezenas de avaliações da rede (o CFG multiplica isso).</div>
+    <div class="card2"><b>Dados de movimento</b>Imagens: bilhões. Movimento: milhares de horas (HY-Motion ≈ 3.000 h; Seamless ≈ 147 h no GENEA 2026).</div>
+    <div class="card2"><b>Diádico e semântico</b>No GENEA 2026, todos os sistemas ficam muito abaixo da captura real em reação ao interlocutor e em gestos semânticos.</div>
+    <div class="card2"><b>Métricas</b>FID e FGD nem sempre concordam com a percepção humana; avaliação subjetiva continua indispensável.</div>
+    <div class="card2"><b>Reprodutibilidade</b>Melhorou: Wan, HunyuanVideo, HY-Motion e o Flow-DiT da UNICAMP são abertos, mas os maiores sistemas seguem fechados.</div>
+  </div>
+  </div>
+</section>
+
 <!-- Conclusões -->
 <section class="slide">
-  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">7</span>Conclusões</h2></header>
+  <span class="old-tag">versão anterior</span>
+  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">8</span>Conclusões</h2></header>
   <div class="grow">
   <div class="cards c3" style="width:100%">
     <div class="card2"><b>Arquitetura padrão</b>Os DiTs podem se tornar a arquitetura padrão em modelos de difusão, pela adaptabilidade e pelo desempenho em áreas multimodais.</div>
@@ -922,25 +1293,40 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 8 -->
+<!-- Conclusões 2026 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 8 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li class="done"><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Conclusões · atualizado</span><h2><span class="snum">8</span>Conclusões, em outubro de 2026</h2></header>
+  <div class="grow">
+  <div class="cards c2" style="width:100%">
+    <div class="card2"><b>O DiT virou o padrão</b>A previsão do artigo se confirmou: imagem (SD3, FLUX), vídeo (Sora, Wan, HunyuanVideo) e movimento (HY-Motion) usam Transformers de difusão.</div>
+    <div class="card2"><b>Do DDPM ao flow matching</b>Os DiTs de 2024–2026 trocaram o objetivo: caminhos retos, menos passos, treino mais simples.</div>
+    <div class="card2"><b>Um framework para sequências contínuas</b>Trocando “patch” por “instante de tempo”, o mesmo bloco modela gestos 3D condicionados por fala e texto.</div>
+    <div class="card2"><b>Flow-DiT UNICAMP</b>Só dois modelos e ajustes de inferência: realismo empatado com o melhor (Elo 1109) e o melhor alinhamento com a fala (0,33) no GENEA 2026.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Conteúdo · seção 9 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 9 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="done"><b>Resultados obtidos</b></li>
+    <li class="done"><b>A revolução DiT (2024–2026)</b></li>
+    <li class="done"><b>DiTs para gestos 3D</b></li>
+    <li class="done"><b>Conclusões</b></li>
     <li class="now"><b>Trabalhos futuros</b></li>
-    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
 <!-- Trabalhos futuros -->
 <section class="slide">
-  <header class="sh"><span class="kick">Trabalhos futuros</span><h2><span class="snum">8</span>Trabalhos futuros</h2></header>
+  <span class="old-tag">versão anterior</span>
+  <header class="sh"><span class="kick">Trabalhos futuros</span><h2><span class="snum">9</span>Trabalhos futuros</h2></header>
   <div class="grow">
   <div class="cards c3" style="width:100%">
     <div class="card2"><b>Tempo real</b>Melhorar os tempos de processamento de dados sequenciais e multimodais, como áudio e gestos, para geração em tempo real.</div>
@@ -950,25 +1336,41 @@
   </div>
 </section>
 
-<!-- Roteiro · seção 9 -->
+<!-- Trabalhos futuros 2026 -->
 <section class="slide">
-  <header class="sh"><span class="kick">Seção 9 de 9</span><h2>Roteiro</h2></header>
-  <ol class="agenda">
-    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
-    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
-    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
-    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
-    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
-    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
-    <li class="done"><b>Conclusões</b> — e limitações</li>
+  <header class="sh"><span class="kick">Trabalhos futuros · atualizado</span><h2><span class="snum">9</span>Trabalhos futuros, em outubro de 2026</h2></header>
+  <div class="grow">
+  <div class="cards c3 sig" style="width:100%">
+    <div class="card2"><b>Diádico reativo</b>Atenção cruzada com memória e menos perda que o Perceiver de 256 tokens, para captar acenos e espelhamento.</div>
+    <div class="card2"><b>Gestos semânticos</b>Perdas adversariais por junta para preservar formas de mão específicas, que a regressão média apaga.</div>
+    <div class="card2"><b>Poucos passos</b>Destilação e modelos “shortcut” (como GestureLSM) para gerar em 1–4 passos.</div>
+    <div class="card2"><b>Tempo real e streaming</b>Geração causal por janelas (como LiveGesture) para agentes conversacionais.</div>
+    <div class="card2"><b>Escala</b>Pré-treino em milhares de horas de movimento, como o HY-Motion fez para texto → movimento.</div>
+    <div class="card2"><b>MoE e agentes</b>Experts por nível de ruído (como o Wan 2.2) e planejamento com LLMs/agentes do que gesticular.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Conteúdo · seção 10 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 10 de 10</span><h2>Conteúdo</h2></header>
+  <ol class="agenda agenda10">
+    <li class="done"><b>Problemas em aberto</b></li>
+    <li class="done"><b>Revisão da literatura</b></li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b></li>
+    <li class="done"><b>Arquitetura do modelo</b></li>
+    <li class="done"><b>Resultados obtidos</b></li>
+    <li class="done"><b>A revolução DiT (2024–2026)</b></li>
+    <li class="done"><b>DiTs para gestos 3D</b></li>
+    <li class="done"><b>Conclusões</b></li>
     <li class="done"><b>Trabalhos futuros</b></li>
-    <li class="now"><b>Dificuldades encontradas</b> — na pesquisa</li>
+    <li class="now"><b>Dificuldades encontradas</b></li>
   </ol>
 </section>
 
 <!-- Dificuldades -->
 <section class="slide">
-  <header class="sh"><span class="kick">Dificuldades encontradas</span><h2><span class="snum">9</span>Dificuldades que encontrei na pesquisa</h2></header>
+  <header class="sh"><span class="kick">Dificuldades encontradas</span><h2><span class="snum">10</span>Dificuldades que encontrei na pesquisa</h2></header>
   <div class="grow">
   <div class="cards c2 qcards" style="width:100%">
     <div class="card2"><b>Rigor</b>Muitos artigos técnicos, com pouco rigor matemático e estatístico, o que dificultou entender a fundo os diferentes modelos.</div>
@@ -1049,13 +1451,15 @@
       lines.forEach((ln, i) => { const s = el("text", { x: x + 12, y: y + 46 + i * 21, class: "pline" }, g); s.textContent = ln; });
     };
 
-    function makeBlock(pfx, comps, stages) {
+    function makeBlock(pfx, comps, stages, hook) {
       const svg = document.getElementById(pfx + "-svg");
       if (!svg) return;
       const chips = document.getElementById(pfx + "-chips");
       const text = document.getElementById(pfx + "-text");
       const playBtn = document.getElementById(pfx + "-play");
       const byId = draw(svg, comps);
+      // data-solo: peças fora do passo somem por completo (diagramas que se sobrepõem)
+      const solo = svg.hasAttribute("data-solo");
       const btns = stages.map((s, i) => {
         const b = document.createElement("button");
         b.type = "button"; b.textContent = `${i + 1}. ${s.chip}`;
@@ -1071,12 +1475,13 @@
           const g = byId[id];
           // Na visão geral, os painéis explicativos (v*) ficam ocultos, exceto tokens e condição
           const vis = on ? on.has(id) : (!id.startsWith("v") || id === "vtok" || id === "vcond");
-          g.style.opacity = vis ? 1 : on && !id.startsWith("v") ? 0.12 : 0;
+          g.style.opacity = vis ? 1 : on && !id.startsWith("v") && !solo ? 0.12 : 0;
           g.classList.toggle("hot", (s.hot || []).includes(id));
           g.classList.toggle("flow", (s.flow || []).includes(id));
         }
         btns.forEach((b, j) => { b.classList.toggle("on", j === i); b.classList.toggle("done", j < i); });
         text.innerHTML = s.text;
+        if (hook) hook(i, s);
       }
       function stop() { clearTimeout(timer); timer = null; playBtn.textContent = "▶ Reproduzir tudo"; }
       function playFrom(i) { show(i); timer = setTimeout(() => (i < stages.length - 1 ? playFrom(i + 1) : stop()), 4200); }
@@ -1196,6 +1601,617 @@
       { chip: "Feedforward", on: ["in", "cond", "cat", "sp0", "cc", "ln1", "mhsa", "p1", "sp1", "res1"], hot: ["ln2", "ff", "p2"], flow: ["sp2", "res2", "out"], text: "<b>Feedforward</b>: cada token é transformado individualmente. Depois, soma residual (⊕)." },
       { chip: "Saída", on: ["in", "cond", "cat", "sp0", "cc", "ln1", "mhsa", "p1", "sp1", "res1", "ln2", "ff", "p2", "sp2", "res2", "vout"], flow: ["out"], text: "Depois do último bloco, os <b>tokens condicionais são removidos</b> da sequência. Como são só 2 tokens a mais, o custo extra em Gflops é <b>desprezível</b>." },
     ]);
+
+    // ===================================================================
+    // Interativos novos (observações do Johsac, out/2026)
+    // ===================================================================
+
+    // Laço de animação que só roda enquanto a lâmina estiver ativa
+    function loop(host, fn) {
+      let running = false, t0 = 0;
+      return function start() {
+        if (running) return;
+        running = true; t0 = performance.now();
+        const step = now => {
+          const slide = host.closest(".slide");
+          if (!slide || !slide.classList.contains("active")) { running = false; return; }
+          fn((now - t0) / 1000);
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
+    }
+    const txt = (g, x, y, s, cls, extra) => { const t = el("text", Object.assign({ x, y, class: cls || "pline" }, extra || {}), g); t.textContent = s; return t; };
+
+    // Passo a passo genérico para figuras com marcações (overlays) e canvas
+    function makeStepper(pfx, stages, render) {
+      const host = document.getElementById(pfx + "-host");
+      if (!host) return;
+      const chips = document.getElementById(pfx + "-chips");
+      const text = document.getElementById(pfx + "-text");
+      const playBtn = document.getElementById(pfx + "-play");
+      const hls = [...host.querySelectorAll("[data-hl]")];
+      const btns = stages.map((s, i) => {
+        const b = document.createElement("button");
+        b.type = "button"; b.textContent = `${i + 1}. ${s.chip}`;
+        b.addEventListener("click", () => { stop(); show(i); });
+        chips.appendChild(b); return b;
+      });
+      let cur = 0, timer = null;
+      function show(i) {
+        cur = i;
+        const s = stages[i];
+        hls.forEach(h => h.classList.toggle("show", (s.hl || []).includes(h.dataset.hl)));
+        host.classList.toggle("dim", !!(s.hl && s.hl.length));
+        btns.forEach((b, j) => { b.classList.toggle("on", j === i); b.classList.toggle("done", j < i); });
+        text.innerHTML = s.text;
+        if (render) render(i, s);
+      }
+      function stop() { clearTimeout(timer); timer = null; if (playBtn) playBtn.textContent = "▶ Reproduzir tudo"; }
+      function playFrom(i) { show(i); timer = setTimeout(() => (i < stages.length - 1 ? playFrom(i + 1) : stop()), 5000); }
+      if (playBtn) playBtn.addEventListener("click", () => {
+        if (timer) { stop(); return; }
+        playBtn.textContent = "⏸ Pausar";
+        playFrom(cur === stages.length - 1 ? 0 : cur);
+      });
+      document.getElementById(pfx + "-prev").addEventListener("click", () => { stop(); show(Math.max(0, cur - 1)); });
+      document.getElementById(pfx + "-next").addEventListener("click", () => { stop(); show(Math.min(stages.length - 1, cur + 1)); });
+      ANIMS.set(host, { n: () => stages.length, cur: () => cur, go: i => { stop(); show(i); }, stop });
+      show(0);
+    }
+
+    // ---------- Denoising interativo (ruído real calculado no navegador) ----------
+    (function () {
+      const host = document.getElementById("dn-host");
+      if (!host) return;
+      const src = new Image();
+      const W = 480, H = 258;
+      let x0 = null, eps = null;
+      const paint = (cv, s) => {
+        if (!x0) return;
+        const ctx = cv.getContext("2d"), im = ctx.createImageData(W, H);
+        const a = Math.sqrt(1 - s), b = Math.sqrt(s);
+        for (let i = 0, j = 0; i < W * H * 4; i += 4, j += 3) {
+          for (let c = 0; c < 3; c++) im.data[i + c] = Math.max(0, Math.min(255, ((a * x0[j + c] + b * eps[j + c]) + 1) * 127.5));
+          im.data[i + 3] = 255;
+        }
+        ctx.putImageData(im, 0, 0);
+      };
+      const cvs = [...host.querySelectorAll("canvas[data-s]")];
+      const live = document.getElementById("dn-live");
+      const slider = document.getElementById("dn-slider");
+      const lab = document.getElementById("dn-live-lab");
+      const setLive = s => { slider.value = Math.round(s * 100); lab.textContent = `ruído: ${Math.round(s * 100)}%`; paint(live, s); };
+      src.onload = () => {
+        const c = document.createElement("canvas"); c.width = W; c.height = H;
+        const ctx = c.getContext("2d"); ctx.drawImage(src, 0, 0, W, H);
+        const d = ctx.getImageData(0, 0, W, H).data;
+        x0 = new Float32Array(W * H * 3); eps = new Float32Array(W * H * 3);
+        let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+        for (let i = 0, j = 0; i < d.length; i += 4, j += 3) for (let k = 0; k < 3; k++) {
+          x0[j + k] = d[i + k] / 127.5 - 1;
+          eps[j + k] = Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
+        }
+        cvs.forEach(cv => paint(cv, +cv.dataset.s));
+        setLive(+slider.value / 100);
+      };
+      src.src = host.dataset.src;
+      slider.addEventListener("input", () => { anim = false; setLive(+slider.value / 100); });
+      let anim = false;
+      const run = loop(host, t => {
+        if (!anim) return;
+        const s = Math.max(0, 1 - (t % 6) / 4.5);   // de x_T (100%) até x_0, depois pausa
+        setLive(s);
+      });
+      document.getElementById("dn-anim").addEventListener("click", () => { anim = true; run(); });
+      makeStepper("dn", [
+        { chip: "Três níveis de ruído", text: "Mesma imagem com <b>90%</b>, <b>50%</b> e <b>10%</b> de ruído (fração da variância): x<sub>t</sub> = √ᾱ<sub>t</sub> · x<sub>0</sub> + √(1 − ᾱ<sub>t</sub>) · ε, com 1 − ᾱ<sub>t</sub> = 0,9 · 0,5 · 0,1. O modelo gera percorrendo esse caminho ao contrário." },
+        { chip: "Pergunta", text: "<b>Pergunta para vocês:</b> em qual passo o modelo decide a <b>composição global</b> (onde está a pessoa, onde fica a rua)? E em qual decide as <b>texturas finas</b> (rosto, cabelo, reflexos no chão)?" },
+        { chip: "Resposta", text: "<b>Timesteps altos</b> (muito ruído) → semântica e geometria global: só as <b>baixas frequências</b> sobrevivem ao ruído. <b>Timesteps baixos</b> (pouco ruído) → <b>altas frequências</b> e detalhes. O Wan 2.2 (2025) usa isso: um expert para alto ruído (estrutura) e outro para baixo ruído (detalhes)." },
+        { chip: "Animação", text: "Deslize o controle ou clique em <b>▶ Animar</b> para ver x<sub>t</sub> indo de t = T (100% de ruído) até t = 0. A estrutura aparece primeiro; os detalhes, por último." },
+      ], i => {
+        host.classList.toggle("reveal", i >= 2);
+        host.classList.toggle("ask", i === 1);
+        if (i === 3) { anim = true; run(); } else anim = false;
+      });
+    })();
+
+    // ---------- Transformer: tokens, posição, Q/K/V, atenção ----------
+    (function () {
+      const X = [170, 420, 670], WORDS = ["Eu", "sou", "estudante"];
+      const strip = (g, cx, y, n, colors, w = 22) => colors.slice(0, n).forEach((c, i) =>
+        el("rect", { x: cx - n * w / 2 + i * w, y, width: w - 2, height: 16, rx: 3, fill: c, stroke: "#868e96", "stroke-width": .8 }, g));
+      const EMB = [["#f6d365", "#fda085", "#c3cfe2", "#a1c4fd", "#d4fc79", "#f5f7fa"], ["#fbc2eb", "#a6c1ee", "#fdcbf1", "#e0c3fc", "#8fd3f4", "#84fab0"], ["#ffecd2", "#fcb69f", "#c2e9fb", "#a1c4fd", "#d4fc79", "#96e6a1"]];
+      const PE = ["#dbe4ff", "#91a7ff", "#4c6ef5", "#91a7ff", "#dbe4ff", "#edf2ff"];
+      const PE2 = ["#91a7ff", "#4c6ef5", "#91a7ff", "#dbe4ff", "#edf2ff", "#dbe4ff"];
+      const PE3 = ["#4c6ef5", "#91a7ff", "#dbe4ff", "#edf2ff", "#dbe4ff", "#91a7ff"];
+      const Q = ["#ffd8a8", "#ffa94d", "#ffe8cc", "#fd7e14"], K = ["#b2f2bb", "#69db7c", "#d3f9d8", "#40c057"], V = ["#d0bfff", "#9775fa", "#e5dbff", "#7048e8"];
+      const M = [[.60, .30, .10], [.25, .55, .20], [.10, .35, .55]];
+      makeBlock("tfa", [
+        { t: "raw", id: "tok", draw: g => X.forEach((x, i) => { el("rect", { x: x - 70, y: 8, width: 140, height: 36, rx: 9, fill: "#e9ecef", stroke: "#adb5bd", "stroke-width": 1.5 }, g); label(g, x, 26, WORDS[i]); }) },
+        { t: "raw", id: "emb", draw: g => X.forEach((x, i) => { strip(g, x, 60, 6, EMB[i]); txt(g, x + 75, 73, "embedding"); }) },
+        { t: "raw", id: "pe", draw: g => X.forEach((x, i) => { label(g, x, 94, "⊕", { style: "font-size:20px" }); strip(g, x, 106, 6, [PE, PE2, PE3][i]); txt(g, x + 75, 119, `PE${"₁₂₃"[i]}`, "glab"); }) },
+        { t: "raw", id: "qkv", draw: g => X.forEach((x, i) => {
+          [["q", Q, 150], ["k", K, 180], ["v", V, 210]].forEach(([n, c, y]) => { strip(g, x, y, 4, c); txt(g, x - 70, y + 13, `${n}${"₁₂₃"[i]}`, "glab"); });
+          el("path", { d: `M${x} 126 V146`, stroke: "#868e96", "stroke-width": 1.5, fill: "none" }, g);
+        }) },
+        { t: "raw", id: "mat", draw: g => {
+          txt(g, 800, 30, "pesos = softmax(QKᵀ / √d)", "ptitle");
+          M.forEach((row, r) => row.forEach((w, c) => {
+            el("rect", { x: 820 + c * 52, y: 44 + r * 52, width: 48, height: 48, rx: 6, fill: "#3b5bdb", "fill-opacity": .12 + w * .85, stroke: r === 1 ? "#d9480f" : "#adb5bd", "stroke-width": r === 1 ? 2.5 : 1 }, g);
+            label(g, 844 + c * 52, 68 + r * 52, w.toFixed(2), { style: `font-size:14px;fill:${w > .45 ? "#fff" : "#1d1d1f"}` });
+          }));
+          WORDS.forEach((w, i) => { txt(g, 812, 72 + i * 52, w, "pline", { "text-anchor": "end" }); txt(g, 844 + i * 52, 214, w.slice(0, 4), "pline", { "text-anchor": "middle" }); });
+          txt(g, 800, 240, "linha “sou”: a quem “sou” presta atenção", "pline");
+          txt(g, 800, 260, "(valores ilustrativos)", "pline");
+        } },
+        { t: "raw", id: "out", draw: g => {
+          X.forEach((x, i) => { strip(g, x, 290, 4, ["#c5f6fa", "#66d9e8", "#99e9f2", "#22b8cf"]); txt(g, x - 70, 303, `z${"₁₂₃"[i]}`, "glab"); el("path", { d: `M${x} 230 V284`, stroke: "#868e96", "stroke-width": 1.5, fill: "none", "stroke-dasharray": "4 4" }, g); });
+          txt(g, 100, 345, "z₂ = 0,25·v₁ + 0,55·v₂ + 0,20·v₃  →  “sou” agora carrega contexto de “Eu” e “estudante”", "pline", { style: "font-size:16px" });
+        } },
+        { t: "raw", id: "sc", draw: g => {
+          txt(g, 60, 30, "Autoatenção (self-attention)", "ptitle"); txt(g, 560, 30, "Atenção cruzada (cross-attention)", "ptitle");
+          const xs = [90, 170, 250, 330];
+          xs.forEach(x => el("rect", { x: x - 28, y: 210, width: 56, height: 32, rx: 7, fill: "#ffe3bf", stroke: "#f0a04b" }, g));
+          xs.forEach((a, i) => xs.forEach((b, j) => { if (i < j) el("path", { d: `M${a} 210 Q ${(a + b) / 2} ${170 - (j - i) * 28} ${b} 210`, fill: "none", stroke: "#f0a04b", "stroke-width": 1.6 }, g); }));
+          txt(g, 60, 280, "Q, K e V vêm da MESMA sequência", "pline", { style: "font-size:16px" });
+          txt(g, 60, 302, "cada token olha para todos os outros", "pline");
+          const qa = [610, 690, 770, 850], kb = [650, 730, 810];
+          qa.forEach(x => el("rect", { x: x - 28, y: 80, width: 56, height: 32, rx: 7, fill: "#ffe3bf", stroke: "#f0a04b" }, g));
+          kb.forEach(x => el("rect", { x: x - 28, y: 220, width: 56, height: 32, rx: 7, fill: "#dbe4ff", stroke: "#91a7ff" }, g));
+          qa.forEach(a => kb.forEach(b => el("path", { d: `M${a} 112 L${b} 220`, stroke: "#e8787a", "stroke-width": 1.3, fill: "none" }, g)));
+          txt(g, 900, 101, "Q: imagem / decoder", "pline"); txt(g, 860, 241, "K, V: texto / condição", "pline");
+          txt(g, 560, 290, "Q de uma sequência; K e V de OUTRA", "pline", { style: "font-size:16px" });
+          txt(g, 560, 312, "ex.: LDM e bloco DiT Cross-Attention", "pline");
+        } },
+        { t: "raw", id: "rnn", draw: g => {
+          txt(g, 60, 30, "RNN: um token por vez (N passos em sequência)", "ptitle");
+          const xs = [140, 260, 380, 500, 620];
+          xs.forEach((x, i) => { el("circle", { cx: x, cy: 90, r: 22, fill: "#d0ebff", stroke: "#4dabf7", "stroke-width": 1.5 }, g); label(g, x, 140, `x${"₁₂₃₄₅"[i]}`); el("path", { d: `M${x} 128 V112`, stroke: "#495057", "stroke-width": 1.5 }, g); if (i) el("path", { d: `M${xs[i - 1] + 22} 90 H${x - 22}`, stroke: "#495057", "stroke-width": 2, "marker-end": `url(#tfa-svg-ah)` }, g); });
+          txt(g, 680, 95, "informação de x₁ chega a x₅", "pline"); txt(g, 680, 115, "depois de 4 passos: esquece", "pline");
+          txt(g, 60, 205, "Autoatenção: todos com todos, em paralelo (1 passo)", "ptitle");
+          xs.forEach((x, i) => { el("circle", { cx: x, cy: 300, r: 22, fill: "#d0ebff", stroke: "#4dabf7", "stroke-width": 1.5 }, g); label(g, x, 360, `x${"₁₂₃₄₅"[i]}`); });
+          xs.forEach((a, i) => xs.forEach((b, j) => { if (i < j) el("path", { d: `M${a} 278 Q ${(a + b) / 2} ${262 - (j - i) * 14} ${b} 278`, fill: "none", stroke: "#4dabf7", "stroke-width": 1.2 }, g); }));
+          txt(g, 680, 295, "relações distantes: 1 passo", "pline"); txt(g, 680, 315, "custo: N² pares (!)", "pline");
+        } },
+      ], [
+        { chip: "Tokens", on: ["tok", "emb"], text: "Cada palavra vira um <b>token</b> e cada token vira um vetor (<b>embedding</b>). Exemplo: “Eu sou estudante” → 3 vetores." },
+        { chip: "Positional encoding", on: ["tok", "emb", "pe"], hot: [], text: "A atenção não sabe a ordem: sem posição, “sou eu estudante” = “eu sou estudante”. O <b>positional encoding</b> soma (⊕) a cada token um vetor que codifica sua posição." },
+        { chip: "Q, K, V", on: ["tok", "emb", "pe", "qkv"], text: "Cada token gera três vetores por projeções aprendidas: <b>Q</b> (<i>query</i>: o que eu procuro), <b>K</b> (<i>key</i>: o que eu ofereço) e <b>V</b> (<i>value</i>: o conteúdo que eu passo adiante)." },
+        { chip: "Pesos", on: ["tok", "qkv", "mat"], text: "Comparando cada Q com todas as K obtemos os pesos: <b>Attention(Q, K, V) = softmax(QKᵀ / √d) · V</b>. A linha “sou” diz quanto “sou” presta atenção a cada palavra." },
+        { chip: "Saída", on: ["tok", "qkv", "mat", "out"], text: "A saída de cada token é a <b>média ponderada dos V</b>. Agora cada token “sabe” do contexto da frase inteira." },
+        { chip: "Self × Cross", on: ["sc"], text: "<b>Self-attention</b>: Q, K e V vêm da mesma sequência. <b>Cross-attention</b>: Q vem de uma sequência (ex.: a imagem) e K, V de outra (ex.: o texto). É assim que o LDM e o bloco DiT Cross-Attention recebem a condição." },
+        { chip: "RNN × atenção", on: ["rnn"], text: "A <b>RNN</b> processa um token por vez: lenta e esquece relações distantes. A <b>atenção</b> conecta todos com todos em paralelo, mas o custo cresce com <b>N²</b>, e isso vai importar para imagens." },
+      ]);
+    })();
+
+    // ---------- Transformer: encoder, decoder ou os dois ----------
+    makeStepper("tfb", [
+      { chip: "Completo", hl: ["enc", "dec", "xatt"], text: "<b>Encoder-decoder</b> (Transformer original): <span class='map'>(x, y<sub>1..t</sub>) → ŷ<sub>t+1</sub></span>. O encoder lê a frase inteira; o decoder gera a saída token a token, olhando para o encoder. Ex.: tradução, T5, Whisper (fala → texto)." },
+      { chip: "Só encoder", hl: ["enc"], text: "<b>Só encoder</b> (bidirecional, sem máscara): <span class='map'>x → ŷ</span> (rótulo) ou <span class='map'>x<sub>1..N</sub> → h<sub>1..N</sub></span> (um vetor por token). Ex.: BERT (classificação), <b>ViT</b> (imagens) e o <b>DiT</b>." },
+      { chip: "Só decoder", hl: ["dec", "mask"], text: "<b>Só decoder</b> (máscara causal: cada token só vê o passado): <span class='map'>x<sub>1..t</sub> → x̂<sub>t+1</sub></span>, autorregressivo. Sem atenção cruzada. Ex.: GPT, LLaMA." },
+      { chip: "Atenção cruzada", hl: ["xatt", "enc"], text: "A conexão entre os dois é a <b>atenção cruzada</b>: Q vem do decoder, K e V vêm da saída do encoder. A mesma peça reaparece no LDM e no bloco DiT Cross-Attention." },
+      { chip: "E o DiT?", hl: ["enc"], text: "O <b>DiT é “só encoder”</b>: entram T tokens (patches com ruído) e saem T tokens (ruído previsto), <b>sem máscara causal</b> e sem gerar token a token: <span class='map'>(x<sub>t</sub>, t, y) → ε̂</span>. A condição entra por adaLN, não por um decoder." },
+    ]);
+
+    // ---------- ViT ----------
+    makeStepper("vit", [
+      { chip: "Visão geral", hl: [], text: "O <b>ViT</b> (2020) trata uma imagem como uma frase: cada pedaço vira um token. E usa <b>só o encoder</b> do Transformer." },
+      { chip: "Patches", hl: ["img", "flat"], text: "A imagem é cortada em <b>patches</b> (ex.: 16 × 16 pixels) e cada patch é achatado em um vetor." },
+      { chip: "Projeção linear", hl: ["proj"], text: "Uma <b>projeção linear</b> leva cada patch achatado à dimensão D do modelo: agora cada patch é um token." },
+      { chip: "Posição + [class]", hl: ["pos"], text: "Somamos o <b>embedding de posição</b> (de qual lugar da imagem veio o patch) e acrescentamos um token extra aprendível <b>[class]</b> (o “0*”)." },
+      { chip: "Encoder", hl: ["enc", "encd"], text: "<b>Transformer Encoder</b> (L blocos: Norm → Multi-Head Attention → Norm → MLP, com residuais). <b>Não há decoder</b>: ninguém gera token a token." },
+      { chip: "MLP Head", hl: ["head"], text: "Só a saída do token <b>[class]</b> vai para a <b>MLP Head</b>, que dá a classe (ex.: “Amanita”)." },
+      { chip: "ViT → DiT", hl: ["enc", "proj", "pos"], text: "O DiT herda <b>patchify + posição + encoder</b> do ViT. Muda o fim: em vez de um [class] → classe, <b>todos os tokens</b> voltam a ser patches (Linear + Reshape) com o ruído previsto." },
+    ]);
+
+    // ---------- Por que o espaço latente: custo O(N²) ----------
+    (function () {
+      const svg = document.getElementById("lat-svg");
+      if (!svg) return;
+      const out = document.getElementById("lat-out");
+      const fmt = n => n.toLocaleString("pt-BR");
+      const bytes = b => b >= 2 ** 30 ? (b / 2 ** 30).toFixed(1).replace(".", ",") + " GiB" : b >= 2 ** 20 ? (b / 2 ** 20).toFixed(0) + " MiB" : (b / 2 ** 10).toFixed(0) + " KiB";
+      function render(R) {
+        svg.innerHTML = "";
+        const p = 2, Np = (R / p) ** 2, L = R / 8, Nl = (L / p) ** 2;
+        const g = el("g", {}, svg);
+        // grades: pixels (densa) × latente
+        const box = (x, title, sub, cells, fill) => {
+          txt(g, x, 26, title, "ptitle"); txt(g, x, 46, sub, "pline");
+          el("rect", { x, y: 60, width: 200, height: 200, fill, stroke: "#868e96", "stroke-width": 1.5, rx: 4 }, g);
+          const n = Math.min(cells, 64), s = 200 / n;
+          for (let i = 1; i < n; i++) {
+            el("path", { d: `M${x + i * s} 60 V260 M${x} ${60 + i * s} H${x + 200}`, stroke: "#fff", "stroke-width": n > 40 ? .5 : 1, opacity: .9 }, g);
+          }
+        };
+        box(30, `Pixels ${R}×${R}×3`, `patches 2×2 → ${fmt(Np)} tokens`, R / p, "#f08c00");
+        box(300, `Latente ${L}×${L}×4 (VAE, ÷8)`, `patches 2×2 → ${fmt(Nl)} tokens`, L / p, "#4c6ef5");
+        txt(g, 238, 165, "VAE", "glab"); el("path", { d: "M236 172 H292", stroke: "#495057", "stroke-width": 2, "marker-end": "url(#lat-ah)" }, g);
+        // barras log10 de N²
+        const base = 560, top = 60, h = 200;
+        txt(g, base, 26, "pares de atenção N² (escala log)", "ptitle");
+        const lg = v => Math.log10(v), maxL = 12;
+        [["pixels", Np * Np, "#f08c00"], ["latente", Nl * Nl, "#4c6ef5"]].forEach(([n, v, c], i) => {
+          const y = top + 30 + i * 90, w = 360 * lg(v) / maxL;
+          el("rect", { x: base, y, width: w, height: 34, rx: 4, fill: c }, g);
+          txt(g, base, y - 6, n, "pline");
+          txt(g, base + w + 8, y + 23, `${v.toExponential(1).replace(".", ",").replace("e+", "·10^")}`, "pline", { style: "fill:#1d1d1f;font-size:15px" });
+        });
+        txt(g, base, 270, `razão: ${fmt((Np / Nl) ** 2)}× menos pares no latente`, "glab");
+        out.innerHTML = `Com patches 2×2, <b>${R}×${R} pixels</b> viram <b>${fmt(Np)} tokens</b>: a matriz de atenção teria ${fmt(Np)}² ≈ ${(Np * Np).toExponential(1).replace(".", ",").replace("e+", "·10^")} entradas (≈ <b>${bytes(Np * Np * 2)}</b> em fp16, para <i>uma</i> cabeça de <i>uma</i> camada). No latente do VAE (${L}×${L}), são <b>${fmt(Nl)} tokens</b> e ≈ ${bytes(Nl * Nl * 2)}. É o latente que torna o DiT viável.`;
+        const defs = el("defs", {}, svg); const mk = el("marker", { id: "lat-ah", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto" }, defs); el("path", { d: "M0 0 L10 5 L0 10 z", fill: "#495057" }, mk);
+      }
+      const btns = [...document.querySelectorAll("#lat-res button")];
+      btns.forEach(b => b.addEventListener("click", () => { btns.forEach(x => x.setAttribute("aria-pressed", x === b)); render(+b.dataset.r); }));
+      render(512);
+    })();
+
+    // ---------- LDM: condicionamento passo a passo ----------
+    makeStepper("ldc", [
+      { chip: "Visão geral", hl: [], text: "A <b>U-Net</b> do LDM remove ruído no espaço latente e pode receber uma <b>condição</b> y (texto, mapa semântico, imagem…)." },
+      { chip: "Entrada", hl: ["zt", "time"], text: "Entram o latente com ruído <b>z<sub>T</sub></b> e o <b>timestep</b> t (via embedding), que diz quanto ruído há." },
+      { chip: "Codificar y", hl: ["cond", "tau"], text: "A condição y passa por um encoder específico <b>τ<sub>θ</sub></b> (ex.: um encoder de texto como CLIP), que a transforma em uma sequência de vetores." },
+      { chip: "Duas rotas", hl: ["switch", "concat"], text: "O <b>switch</b> escolhe a rota: <b>concatenar</b> com z<sub>T</sub> (condições espaciais, alinhadas à imagem: mapas, imagem de baixa resolução) ou <b>atenção cruzada</b> (condições não espaciais: texto, rótulo)." },
+      { chip: "Q, K, V", hl: ["qkv"], text: "Na atenção cruzada: <b>Q = features da U-Net</b> (a imagem), <b>K, V = τ<sub>θ</sub>(y)</b> (o texto). Cada região da imagem “pergunta” ao texto o que deve conter." },
+      { chip: "Saída", hl: ["out"], text: "Sai <b>z<sub>T−1</sub></b>, um pouco menos ruidoso. Repete-se o processo T vezes até z<sub>0</sub>, e o decoder do VAE devolve a imagem." },
+      { chip: "Guidance", hl: ["cond"], text: "<b>Classifier-Free Guidance</b>: treina-se às vezes sem condição (∅) e, na geração, ε̂ = ε(∅) + w · (ε(y) − ε(∅)). Com w &gt; 1 a imagem segue melhor o texto. O Flow-DiT da UNICAMP usa uma versão <b>desacoplada</b> disso." },
+    ]);
+
+    // ---------- Arquitetura interna dos DiTs (versão corrigida) ----------
+    makeBlock("arq", [
+      path("p1", "M150 215 H178", true), path("p2", "M298 215 H326", true), path("p3", "M374 215 H402", true),
+      path("p4", "M588 215 H614", true), path("p5", "M712 215 H738", true),
+      path("p6", "M856 200 V138 H872", true), path("p7", "M856 230 V287 H872", true),
+      path("pc", "M495 362 V268", true), path("pe", "M936 113 V51 H812", true),
+      path("loop", "M600 52 H85 V170", true, { label: "zₜ₋₁: repete de t = T até 0", lx: 330, ly: 40 }),
+      { t: "raw", id: "lat", draw: g => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) el("rect", { x: 40 + j * 22, y: 172 + i * 22, width: 20, height: 20, fill: ["#ffd8a8", "#ffc078", "#ffa94d", "#ffe8cc"][(i + j) % 4], stroke: "#e67700", "stroke-width": .8 }, g); txt(g, 30, 290, "zₜ: 32×32×4", "pline"); txt(g, 30, 310, "(latente com ruído)", "pline"); } },
+      box("pat", 185, 60, "Patchify", "tok", 180, 118),
+      { t: "raw", id: "pos", draw: g => { el("circle", { cx: 350, cy: 215, r: 22, fill: "#fff", stroke: "#495057", "stroke-width": 2 }, g); label(g, 350, 214, "+", { style: "font-size:24px;font-weight:700" }); txt(g, 300, 268, "posição 2D", "pline"); txt(g, 300, 288, "(sin-cos)", "pline"); } },
+      { t: "raw", id: "blk", draw: g => { [12, 6, 0].forEach(o => el("rect", { x: 404 + o, y: 165 - o, width: 180, height: 100, rx: 10, fill: "#ffe3bf", stroke: "#f0a04b", "stroke-width": 1.5 }, g)); label(g, 500, 205, "N × DiT Block"); label(g, 500, 230, "(adaLN-Zero)", { class: "pline" }); } },
+      box("ln", 185, 60, "Layer Norm", "norm", 616, 94), box("lin", 185, 60, "Linear +\nReshape", "norm", 740, 114),
+      box("eps", 113, 50, "ε̂ (ruído)\n32×32×4", "ff", 874, 124), box("sig", 262, 50, "Σ (covariância)\n32×32×4", "ff", 874, 124),
+      box("cond", 362, 42, "Embed(t) + Embed(y) → c", "cond", 395, 200),
+      box("smp", 30, 42, "Amostrador (DDPM)", "cross", 610, 206),
+      { t: "raw", id: "vold", draw: g => panel(g, 20, 330, 330, 120, "Correção da versão anterior", ["a rede NÃO devolve zₜ₋₁:", "ela prevê o ruído ε̂ (e Σ);", "zₜ₋₁ é calculado pelo amostrador,", "para qualquer t (não só t = T)"], "#d9480f") },
+    ], [
+      { chip: "Visão geral", on: "*", text: "Arquitetura interna do DiT (Figura 3 do artigo), redesenhada. Um passo de geração: recebe o latente com ruído z<sub>t</sub> e devolve o <b>ruído previsto</b>." },
+      { chip: "Entrada", on: ["lat"], hot: ["pat"], flow: ["p1"], text: "Entrada: <b>z<sub>t</sub></b>, o latente do VAE com ruído (32×32×4 para imagens de 256×256), em <b>qualquer</b> passo t." },
+      { chip: "Tokens", on: ["lat", "p1"], hot: ["pat", "pos"], flow: ["p2"], text: "<b>Patchify</b> corta o latente em patches p×p e os projeta em tokens; soma-se o <b>embedding de posição 2D</b> (sin-cos, como no ViT)." },
+      { chip: "Condição", on: ["lat", "p1", "pat", "pos", "p2"], hot: ["cond", "blk"], flow: ["pc", "p3"], text: "<b>t</b> (timestep) e <b>y</b> (rótulo de classe) viram embeddings que, somados, formam o vetor de condição <b>c</b>. Ele modula cada bloco via adaLN-Zero." },
+      { chip: "Saída", on: ["lat", "p1", "pat", "pos", "p2", "cond", "pc", "blk", "p3"], hot: ["ln", "lin", "eps", "sig"], flow: ["p4", "p5", "p6", "p7"], text: "Layer Norm → <b>Linear + Reshape</b> devolve os tokens ao formato do latente: saem <b>ε̂</b> (ruído previsto) e <b>Σ</b> (covariância), ambos 32×32×4." },
+      { chip: "Amostrador", on: ["lat", "eps", "sig", "blk", "pat", "pos", "ln", "lin"], hot: ["smp"], flow: ["pe", "loop"], text: "O <b>amostrador</b> (DDPM) usa ε̂ e Σ para calcular <b>z<sub>t−1</sub></b>, que volta como entrada. Repete-se de t = T até t = 0." },
+      { chip: "O que mudou", on: ["lat", "eps", "sig", "smp", "pe", "loop", "vold"], text: "<b>Correção da versão anterior:</b> a saída da rede não é “Noise z<sub>t−1</sub>”, mas o <b>ruído previsto ε̂</b> (e Σ). E o timestep é um t qualquer, não só t = T." },
+    ]);
+
+    // ---------- Patchify passo a passo ----------
+    (function () {
+      const CH = ["#ffa94d", "#69db7c", "#4dabf7", "#da77f2"];
+      const shade = (c, k) => { const n = parseInt(c.slice(1), 16); const f = .55 + .45 * k; return `rgb(${(n >> 16) * f | 0},${(n >> 8 & 255) * f | 0},${(n & 255) * f | 0})`; };
+      const val = (ch, i, j) => (Math.sin(i * 1.7 + ch) * Math.cos(j * 1.3 - ch) + 1) / 2;
+      const CELL = 24, X0 = 60, Y0 = 92;
+      makeBlock("pat", [
+        { t: "raw", id: "lat", draw: g => {
+          [3, 2, 1, 0].forEach(ch => { const o = ch * 12; for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) el("rect", { x: X0 + o + j * CELL, y: Y0 - o + i * CELL, width: CELL - 1, height: CELL - 1, fill: shade(CH[ch], val(ch, i, j)) }, g); });
+          txt(g, 40, 30, "Z ∈ ℝᶜˣᴴˣᵂ", "ptitle"); txt(g, 40, 50, "aqui 4×8×8 (no DiT: 4×32×32)", "pline");
+          txt(g, 60, 304, "C = 4 canais", "pline");
+        } },
+        { t: "raw", id: "grid", draw: g => { for (let k = 0; k <= 4; k++) el("path", { d: `M${X0 + k * 2 * CELL} ${Y0} V${Y0 + 8 * CELL} M${X0} ${Y0 + k * 2 * CELL} H${X0 + 8 * CELL}`, stroke: "#1d1d1f", "stroke-width": 2.5 }, g); txt(g, 40, 326, "corte em blocos p×p (p = 2)", "glab"); } },
+        { t: "raw", id: "sel", draw: g => [0, 1, 2, 3].forEach(ch => el("rect", { x: X0 + ch * 12 + 2 * CELL, y: Y0 - ch * 12, width: 2 * CELL, height: 2 * CELL, fill: "none", stroke: "#d9480f", "stroke-width": 3 }, g)) },
+        { t: "raw", id: "flat", draw: g => {
+          let k = 0; [0, 1, 2, 3].forEach(ch => [[0, 2], [0, 3], [1, 2], [1, 3]].forEach(([i, j]) => { el("rect", { x: 330 + k * 15, y: 110, width: 14, height: 28, fill: shade(CH[ch], val(ch, i, j)), stroke: "#fff" }, g); k++; }));
+          txt(g, 330, 98, "achatar: p·p·C = 2·2·4 = 16 números", "pline");
+          el("path", { d: `M${X0 + 3 * CELL + 40} 95 Q 300 70 326 118`, stroke: "#d9480f", "stroke-width": 2, fill: "none", "marker-end": "url(#pat-svg-ah)" }, g);
+        } },
+        { t: "raw", id: "proj", draw: g => {
+          el("rect", { x: 580, y: 100, width: 100, height: 48, rx: 9, fill: "#dbe4ff", stroke: "#91a7ff", "stroke-width": 1.5 }, g); label(g, 630, 115, "Linear"); label(g, 630, 136, "W: 16 → D", { class: "pline" });
+          el("path", { d: "M572 124 H578", stroke: "#495057", "stroke-width": 2 }, g);
+          el("path", { d: "M682 124 H700", stroke: "#495057", "stroke-width": 2, "marker-end": "url(#pat-svg-ah)" }, g);
+          for (let i = 0; i < 26; i++) el("rect", { x: 704 + i * 10.5, y: 110, width: 9.5, height: 28, fill: `hsl(${200 + i * 7},60%,${55 + 20 * Math.sin(i)}%)` }, g);
+          txt(g, 704, 98, "token de dimensão D (DiT-XL: 1152)", "pline");
+        } },
+        { t: "raw", id: "pos", draw: g => {
+          label(g, 840, 162, "+", { style: "font-size:24px;font-weight:700" });
+          for (let i = 0; i < 26; i++) el("rect", { x: 704 + i * 10.5, y: 176, width: 9.5, height: 22, fill: `hsl(225,70%,${50 + 35 * Math.sin(i * .9 + 1)}%)` }, g);
+          txt(g, 704, 218, "posição 2D sin-cos (fixa): linha i e coluna j", "pline");
+          txt(g, 704, 238, "do patch, não um índice 1D", "pline");
+        } },
+        { t: "raw", id: "seq", draw: g => {
+          for (let k = 0; k < 16; k++) { el("rect", { x: 330 + k * 40, y: 330, width: 34, height: 34, rx: 6, fill: k === 1 ? "#ffd8a8" : "#e9ecef", stroke: k === 1 ? "#d9480f" : "#adb5bd", "stroke-width": k === 1 ? 2.5 : 1.2 }, g); label(g, 347 + k * 40, 347, String(k + 1), { class: "pline" }); }
+          txt(g, 330, 318, "sequência: T = (H/p)² = (8/2)² = 16 tokens", "ptitle");
+          txt(g, 330, 392, "no DiT: (32/2)² = 256 tokens com p = 2 · 64 com p = 4 · 16 com p = 8", "pline");
+        } },
+      ], [
+        { chip: "Latente Z", on: ["lat"], text: "O ponto de partida é o latente <b>Z ∈ ℝ<sup>C×H×W</sup></b> do VAE: no DiT, 4 canais de 32×32 para imagens de 256×256 (aqui, 4×8×8 para caber na tela)." },
+        { chip: "Cortar p×p", on: ["lat", "grid"], hot: [], text: "Cortamos Z em blocos <b>p×p</b> (aqui p = 2). Cada bloco atravessa os C canais." },
+        { chip: "Achatar", on: ["lat", "grid", "sel", "flat"], text: "Um bloco (em laranja) tem <b>p·p·C = 16</b> números. Achatamos esses números em um vetor." },
+        { chip: "Projetar", on: ["lat", "grid", "sel", "flat", "proj"], text: "Uma <b>projeção linear</b> (a mesma para todos os patches) leva o vetor de 16 números à dimensão <b>D</b> do Transformer." },
+        { chip: "Posição", on: ["lat", "grid", "sel", "flat", "proj", "pos"], text: "Somamos o <b>embedding de posição</b>. No DiT ele é <b>2D sin-cos</b> (como no ViT): codifica linha e coluna do patch, não só um índice 1D." },
+        { chip: "Sequência", on: ["lat", "grid", "sel", "proj", "pos", "seq"], text: "Resultado: uma sequência de <b>T = (H/p)²</b> tokens. Patches menores → mais tokens → mais Gflops → melhor FID, como vimos nos resultados." },
+      ]);
+    })();
+
+    // ---------- Linha do tempo: a revolução DiT ----------
+    (function () {
+      const X = d => 70 + (d - 2022.8) * 250;
+      const EV = [
+        [2022.95, "DiT", 0], [2024.12, "Sora", 1], [2024.2, "SD3", 1], [2024.6, "FLUX.1", 1], [2024.8, "Movie Gen", 1], [2024.95, "HunyuanVideo", 1],
+        [2025.12, "Wan 2.1", 2], [2025.55, "Wan 2.2", 2], [2025.75, "Sora 2", 2], [2025.9, "FLUX.2", 2], [2025.97, "HY-Motion", 2],
+        [2026.23, "fim do Sora", 3], [2026.4, "DyaDiT", 3], [2026.6, "GENEA 2026", 3],
+      ];
+      const LIST = [
+        ["dez/2022 · DiT (Peebles & Xie): Transformer no lugar da U-Net", "ICCV 2023 · base de tudo o que vem depois"],
+        ["fev/2024 · Sora (OpenAI): DiT sobre patches espaço-temporais de vídeo", "mar/2024 · Stable Diffusion 3: MMDiT + rectified flow", "ago/2024 · FLUX.1 (Black Forest Labs): 12B, rectified flow transformer", "out/2024 · Movie Gen (Meta): Transformer de 30B com flow matching", "dez/2024 · HunyuanVideo (Tencent): 13B, código aberto"],
+        ["fev/2025 · Wan 2.1 (Alibaba): vídeo aberto, DiT + flow matching", "jul/2025 · Wan 2.2: MoE com experts de alto e baixo ruído", "set/2025 · Sora 2 (OpenAI): vídeo com áudio", "nov/2025 · FLUX.2: 32B, edição com várias referências", "dez/2025 · HY-Motion 1.0: DiT + flow matching, >1B, movimento 3D"],
+        ["mar/2026 · OpenAI descontinua o Sora; abr/2026 · Peebles deixa a OpenAI", "2026 · DyaDiT (CVPR): DiT multimodal para gestos diádicos", "2026 · GENEA Challenge: Flow-DiT da UNICAMP (este trabalho)", "e Saining Xie: cofundador e CSO da AMI Labs (Yann LeCun)"],
+      ];
+      const comps = [{ t: "raw", id: "axis", draw: g => {
+        el("path", { d: "M50 170 H960", stroke: "#495057", "stroke-width": 2, "marker-end": "url(#tl-svg-ah)" }, g);
+        [2023, 2024, 2025, 2026].forEach(y => { el("path", { d: `M${X(y)} 162 V178`, stroke: "#495057", "stroke-width": 2 }, g); label(g, X(y), 196, String(y), { style: "font-weight:700" }); });
+      } }];
+      [0, 1, 2, 3].forEach(k => comps.push({ t: "raw", id: "e" + k, draw: g => EV.filter(e => e[2] === k).forEach(([d, n], i) => {
+        el("circle", { cx: X(d), cy: 170, r: 8, fill: ["#3b5bdb", "#f76707", "#2b8a3e", "#ae3ec9"][k], stroke: "#fff", "stroke-width": 2 }, g);
+        const up = i % 2 === 0, y = up ? 140 - (i % 4 === 2 ? 0 : 0) : 150;
+        el("path", { d: `M${X(d)} ${up ? 160 : 180} V${up ? 120 - (i % 3) * 26 : 214 + (i % 3) * 22}`, stroke: "#adb5bd", "stroke-width": 1 }, g);
+        txt(g, X(d), up ? 114 - (i % 3) * 26 : 232 + (i % 3) * 22, n, "pline", { "text-anchor": "middle", style: "font-size:14.5px;fill:#1d1d1f;font-weight:600" });
+      }) }));
+      [0, 1, 2, 3].forEach(k => comps.push({ t: "raw", id: "L" + k, draw: g => {
+        el("rect", { x: 40, y: 300, width: 920, height: 26 + LIST[k].length * 26, rx: 10, fill: "#fff", stroke: ["#3b5bdb", "#f76707", "#2b8a3e", "#ae3ec9"][k], "stroke-width": 1.5 }, g);
+        LIST[k].forEach((s, i) => txt(g, 60, 330 + i * 26, s, "pline", { style: "font-size:16px;fill:#1d1d1f" }));
+      } }));
+      makeBlock("tl", comps, [
+        { chip: "Visão geral", on: ["axis", "e0", "e1", "e2", "e3"], text: "Em menos de quatro anos, o DiT passou de um artigo de ICCV à <b>espinha dorsal</b> da geração de imagem, vídeo e movimento." },
+        { chip: "2022–23", on: ["axis", "e0", "L0"], text: "O ponto de partida: <b>DiT</b>, em classes do ImageNet, mostra que um Transformer escala melhor que a U-Net." },
+        { chip: "2024", on: ["axis", "e0", "e1", "L1"], text: "<b>Vídeo</b> (Sora, Movie Gen, HunyuanVideo) e <b>MMDiT</b> (SD3, FLUX): texto e imagem na mesma atenção. E a troca do DDPM por <b>flow matching / rectified flow</b>." },
+        { chip: "2025", on: ["axis", "e0", "e1", "e2", "L2"], text: "Modelos <b>abertos</b> de vídeo (Wan) chegam perto dos fechados; aparecem <b>MoE</b> por nível de ruído e o DiT chega ao <b>movimento 3D</b> com mais de 1B de parâmetros." },
+        { chip: "2026", on: ["axis", "e0", "e1", "e2", "e3", "L3"], text: "O Sora é descontinuado (custo, prioridades), mas a arquitetura continua: DiTs para <b>gestos</b> aparecem no CVPR e no GENEA 2026." },
+      ]);
+    })();
+
+    // ---------- Do DDPM ao Flow Matching (partículas) ----------
+    (function () {
+      const svg = document.getElementById("fm-svg");
+      if (!svg) return;
+      const O = [500, 230], N = 90;
+      let seed = 3; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      const gauss = () => Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
+      const P = [...Array(N)].map((_, i) => {
+        const a = Math.PI * rnd(), up = i % 2;
+        const d = up ? [300 - 40 + 80 * Math.cos(a), 30 - 75 * Math.sin(a)] : [300 + 40 + 80 * Math.cos(a), -30 + 75 * Math.sin(a)];
+        return { n: [gauss() * 55 - 300, gauss() * 60], d: [d[0] + gauss() * 4, d[1] + gauss() * 4], j: [0, 0] };
+      });
+      let mode = "fm", steps = 0;
+      // Flow matching: reta z_t = (1 − s) z0 + s z1. Difusão: caminho curvo e com ruído
+      const pos = (p, s) => {
+        const x = O[0] + (1 - s) * p.n[0] + s * p.d[0], y = O[1] + (1 - s) * p.n[1] + s * p.d[1];
+        return mode === "fm" ? [x, y] : [x + p.j[0], y + 120 * Math.sin(Math.PI * s) * (p.n[1] > 0 ? 1 : -1) + p.j[1]];
+      };
+      let dots = [], trails = null, stepDots = null;
+      const run = loop(svg, t => {
+        const s = Math.min(1, (t % 4.5) / 3.2);
+        dots.forEach((c, k) => { const p = P[k]; p.j = mode === "diff" ? [gauss() * 6 * Math.sin(Math.PI * s), gauss() * 6 * Math.sin(Math.PI * s)] : [0, 0]; const q = pos(p, s); c.setAttribute("cx", q[0].toFixed(1)); c.setAttribute("cy", q[1].toFixed(1)); });
+      });
+      makeBlock("fm", [
+        { t: "raw", id: "lab", draw: g => { txt(g, 90, 40, "ruído z₀ ~ N(0, I)", "ptitle"); txt(g, 730, 40, "dados z₁ (ex.: gestos)", "ptitle"); } },
+        { t: "raw", id: "tr", draw: g => { trails = g; } },
+        { t: "raw", id: "pts", draw: g => { dots = P.map(() => el("circle", { r: 4.5, fill: "#3b5bdb", "fill-opacity": .8 }, g)); } },
+        { t: "raw", id: "eul", draw: g => { stepDots = g; } },
+        { t: "raw", id: "vuse", draw: g => panel(g, 600, 330, 390, 120, "Quem usa flow matching / rectified flow", ["SD3 e FLUX (imagem) · Movie Gen e Wan (vídeo)", "HY-Motion (movimento 3D)", "Flow-DiT UNICAMP (gestos): Euler, 50 passos,", "10 s de gesto em 0,49 s numa L40S"], "#2b8a3e") },
+      ], [
+        { chip: "O problema", on: ["lab", "pts"], text: "Gerar é <b>transportar</b> pontos de ruído (esquerda) até a distribuição dos dados (direita). Cada ponto aqui seria uma imagem ou uma sequência de gestos inteira." },
+        { chip: "Difusão (DDPM)", on: ["lab", "pts", "tr"], text: "<b>Difusão</b>: o caminho ruído → dado é <b>curvo e estocástico</b> (há ruído em cada passo). A rede prevê ε; são precisos muitos passos pequenos (o DiT usa 250 passos de DDPM)." },
+        { chip: "Flow Matching", on: ["lab", "pts", "tr"], text: "<b>Flow Matching</b>: caminho <b>reto</b> z<sub>t</sub> = t·z<sub>1</sub> + (1 − t)·z<sub>0</sub>. A rede aprende a <b>velocidade</b> v<sub>θ</sub>(z<sub>t</sub>, t, C) ≈ z<sub>1</sub> − z<sub>0</sub> com uma perda MSE simples." },
+        { chip: "Euler", on: ["lab", "pts", "tr", "eul"], text: "Para gerar, integra-se uma EDO com <b>Euler</b>: z ← z + Δt · v<sub>θ</sub>(z, t, C). Caminhos retos → <b>menos passos</b>, determinístico." },
+        { chip: "Quem usa", on: ["lab", "pts", "tr", "vuse"], text: "De 2024 em diante, <b>flow matching</b> virou o padrão nos DiTs grandes, e é o objetivo de treino do <b>Flow-DiT</b> da UNICAMP." },
+      ], i => {
+        mode = i === 1 ? "diff" : "fm"; steps = i === 3 ? 8 : 0;
+        if (trails) { trails.innerHTML = ""; P.slice(0, 18).forEach(p => { let d = ""; for (let k = 0; k <= 30; k++) { const q = pos(p, k / 30); d += (k ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1); } el("path", { d, fill: "none", stroke: mode === "fm" ? "#2b8a3e" : "#d9480f", "stroke-width": 1.2, opacity: .45 }, trails); }); }
+        if (stepDots) { stepDots.innerHTML = ""; if (steps) P.slice(0, 18).forEach(p => { for (let k = 1; k < steps; k++) { const q = pos(p, k / steps); el("circle", { cx: q[0], cy: q[1], r: 2.6, fill: "#2b8a3e" }, stepDots); } }); }
+        if (i === 0) dots.forEach((c, k) => { const q = pos(P[k], 0); c.setAttribute("cx", q[0]); c.setAttribute("cy", q[1]); });
+        else run();
+      });
+    })();
+
+    // ---------- DiT como framework para sequências contínuas ----------
+    makeBlock("seq", [
+      { t: "raw", id: "img", draw: g => {
+        txt(g, 30, 40, "Imagem", "ptitle");
+        for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) el("rect", { x: 30 + j * 26, y: 60 + i * 26, width: 24, height: 24, fill: `hsl(${30 + (i + j) * 18},80%,${62 + (i * j) % 3 * 8}%)` }, g);
+        txt(g, 30, 186, "latente 32×32×4", "pline");
+        el("path", { d: "M150 112 H190", stroke: "#495057", "stroke-width": 2, "marker-end": "url(#seq-svg-ah)" }, g);
+        for (let k = 0; k < 8; k++) el("rect", { x: 196 + k * 26, y: 98, width: 22, height: 28, rx: 4, fill: "#ffe8cc", stroke: "#f0a04b" }, g);
+        txt(g, 196, 150, "token = patch espacial", "pline");
+      } },
+      { t: "raw", id: "ges", draw: g => {
+        txt(g, 30, 270, "Gesto", "ptitle");
+        for (let k = 0; k < 6; k++) { const x = 40 + k * 20, a = Math.sin(k) * .6; el("circle", { cx: x, cy: 300, r: 4, fill: "#495057" }, g); el("path", { d: `M${x} 304 V330 M${x} 312 L${x + 9 * Math.cos(a - 1)} ${312 - 9 * Math.sin(a - 1)} M${x} 330 L${x - 4} 346 M${x} 330 L${x + 4} 346`, stroke: "#495057", "stroke-width": 1.5, fill: "none" }, g); }
+        txt(g, 30, 372, "poses T×315 (30 FPS)", "pline");
+        el("path", { d: "M150 322 H190", stroke: "#495057", "stroke-width": 2, "marker-end": "url(#seq-svg-ah)" }, g);
+        for (let k = 0; k < 8; k++) el("rect", { x: 196 + k * 26, y: 308, width: 22, height: 28, rx: 4, fill: "#d3f9d8", stroke: "#69c37b" }, g);
+        txt(g, 196, 360, "token = instante de tempo", "pline"); txt(g, 196, 380, "(latente VAE: T/4 × 512)", "pline");
+      } },
+      path("ai", "M412 112 H440 V200 H470", true), path("ag", "M412 322 H440 V250 H470", true),
+      box("dit", 175, 100, "N × blocos DiT\n(atenção + adaLN)", "attn", 474, 180),
+      path("oi", "M654 205 H700 V112 H730", true), path("og", "M654 245 H700 V322 H730", true),
+      box("outi", 92, 40, "ε̂ (ou v) por patch → imagem", "ff", 734, 250), box("outg", 302, 40, "v por instante → poses", "ff", 734, 250),
+      { t: "raw", id: "vtab", draw: g => panel(g, 474, 360, 516, 100, "O que muda de imagem para gesto", ["posição: 2D (linha, coluna) → 1D (tempo)", "condição: classe / texto → fala + texto (+ interlocutor)", "objetivo: ε̂ (DDPM) → velocidade v (flow matching)"], "#3b5bdb") },
+    ], [
+      { chip: "Imagem", on: ["img", "ai", "dit", "oi", "outi"], flow: ["ai", "oi"], text: "No DiT original, o Transformer não sabe que está vendo uma imagem: recebe uma <b>sequência de tokens</b> (patches) e devolve uma sequência do mesmo tamanho." },
+      { chip: "Gesto", on: ["ges", "ag", "dit", "og", "outg"], flow: ["ag", "og"], text: "Um gesto também é uma <b>sequência contínua</b>: poses ao longo do tempo. Basta trocar “patch espacial” por “instante de tempo” e o mesmo DiT modela a distribuição." },
+      { chip: "O que muda", on: ["img", "ges", "ai", "ag", "dit", "oi", "og", "outi", "outg", "vtab"], text: "<b>DiT não é só um gerador de imagens:</b> é um framework geral para modelar distribuições complexas sobre <b>sequências contínuas</b>. É assim que o aplico na síntese de gestos 3D." },
+    ]);
+
+    // ---------- Como parametrizar um gesto (esqueleto animado) ----------
+    (function () {
+      const svg = document.getElementById("gst-svg");
+      if (!svg) return;
+      let arm = {}, arc = null, plot = null;
+      const P = { pel: [210, 330], chest: [210, 215], neck: [210, 180], sL: [175, 195], sR: [245, 195] };
+      const fk = (s, a1, a2, l1, l2) => { const e = [s[0] + l1 * Math.cos(a1), s[1] + l1 * Math.sin(a1)], w = [e[0] + l2 * Math.cos(a1 + a2), e[1] + l2 * Math.sin(a1 + a2)]; return [e, w]; };
+      const runG = loop(svg, t => {
+        const a1 = .35 - .55 * Math.sin(t * 2.2), a2 = -1.6 + .7 * Math.sin(t * 2.2 + 1.1);
+        const [e, w] = fk(P.sR, a1, a2, 62, 56); const hd = [w[0] + 16 * Math.cos(a1 + a2 - .4), w[1] + 16 * Math.sin(a1 + a2 - .4)];
+        arm.R[0].setAttribute("d", `M${P.sR[0]} ${P.sR[1]} L${e[0]} ${e[1]} L${w[0]} ${w[1]} L${hd[0]} ${hd[1]}`);
+        const [e2, w2] = fk(P.sL, Math.PI - .2 + .12 * Math.sin(t * 1.3), .5 + .1 * Math.sin(t * 1.3), 62, 56);
+        arm.L[0].setAttribute("d", `M${P.sL[0]} ${P.sL[1]} L${e2[0]} ${e2[1]} L${w2[0]} ${w2[1]}`);
+        [P.sR, e, w, hd].forEach((p, i) => { arm.j[i].setAttribute("cx", p[0]); arm.j[i].setAttribute("cy", p[1]); });
+        const r = 24, b0 = a1 + Math.PI, b1 = a1 + a2;
+        arc.setAttribute("d", `M${e[0] + r * Math.cos(b0)} ${e[1] + r * Math.sin(b0)} A${r} ${r} 0 0 0 ${e[0] + r * Math.cos(b1)} ${e[1] + r * Math.sin(b1)}`);
+        // últimos 3 s do ângulo do cotovelo, calculados direto da função (sem histórico)
+        let d = ""; for (let i = 0; i < 180; i++) { const v = -1.6 + .7 * Math.sin((t - (179 - i) / 60) * 2.2 + 1.1); d += `${i ? "L" : "M"}${445 + i * 3} ${(161 - (v + 1.6) * 80).toFixed(1)}`; }
+        plot.setAttribute("d", d);
+      });
+      makeBlock("gst", [
+        { t: "raw", id: "body", draw: g => {
+          const L = (a, b, w = 4) => el("path", { d: `M${a[0]} ${a[1]} L${b[0]} ${b[1]}`, stroke: "#495057", "stroke-width": w, "stroke-linecap": "round" }, g);
+          L(P.pel, P.chest, 6); L(P.chest, P.neck, 5); L(P.sL, P.sR, 5);
+          el("circle", { cx: 210, cy: 152, r: 22, fill: "#e9ecef", stroke: "#495057", "stroke-width": 3 }, g);
+          L(P.pel, [190, 410], 5); L(P.pel, [230, 410], 5); L([190, 410], [185, 460], 5); L([230, 410], [235, 460], 5);
+          arm.R = [el("path", { stroke: "#3b5bdb", "stroke-width": 5, "stroke-linecap": "round", fill: "none" }, g)];
+          arm.L = [el("path", { stroke: "#495057", "stroke-width": 5, "stroke-linecap": "round", fill: "none" }, g)];
+          arm.j = [0, 1, 2, 3].map(() => el("circle", { r: 6, fill: "#d9480f", stroke: "#fff", "stroke-width": 2 }, g));
+          [P.pel, P.chest, P.neck, P.sL, P.sR].forEach(p => el("circle", { cx: p[0], cy: p[1], r: 5, fill: "#d9480f", stroke: "#fff", "stroke-width": 2 }, g));
+        } },
+        { t: "raw", id: "varc", draw: g => { arc = el("path", { fill: "none", stroke: "#d9480f", "stroke-width": 2.5 }, g); txt(g, 330, 140, "θ cotovelo", "glab"); } },
+        { t: "raw", id: "vjoint", draw: g => panel(g, 440, 60, 540, 150, "Esqueleto SMPL-H: 52 juntas", ["pelve + 21 juntas do corpo + 30 dos dedos", "hierarquia: pelve → coluna → ombro → cotovelo → punho → dedos", "cada junta guarda só sua rotação RELATIVA ao pai;", "as posições 3D saem por cinemática direta (FK)"], "#d9480f") },
+        { t: "raw", id: "vrot", draw: g => panel(g, 440, 60, 540, 130, "Rotações em SO(3)", ["R ∈ SO(3): matriz 3×3 ortogonal, det R = 1", "girar o ombro move cotovelo, punho e dedos", "(a rede aprende rotações, não posições soltas)"], "#3b5bdb") },
+        { t: "raw", id: "vrep", draw: g => {
+          panel(g, 440, 60, 540, 175, "Como escrever uma rotação para a rede?", []);
+          [["Euler (3)", "gimbal lock, descontínuo"], ["Quatérnio (4)", "q e −q = mesma rotação"], ["Eixo-ângulo (3)", "salto em ±π"], ["6D (6) ✓", "contínua: 2 colunas de R + Gram-Schmidt"]].forEach(([a, b], i) => { txt(g, 456, 112 + i * 28, a, "pline", { style: `font-weight:700;fill:${i === 3 ? "#2b8a3e" : "#1d1d1f"}` }); txt(g, 600, 112 + i * 28, b, "pline"); });
+        } },
+        { t: "raw", id: "vvec", draw: g => {
+          txt(g, 440, 80, "Vetor de pose por quadro: xₜ ∈ ℝ³¹⁵", "ptitle");
+          let x = 440; [["τ 3", 3, "#adb5bd"], ["pelve 6", 6, "#ffa94d"], ["corpo 21×6 = 126", 126, "#4dabf7"], ["mãos 30×6 = 180", 180, "#69db7c"]].forEach(([n, v, c], i) => {
+            const w = Math.max(14, v * 1.6); el("rect", { x, y: 96, width: w - 2, height: 40, fill: c, rx: 3 }, g);
+            txt(g, x + 2, 156 + (i % 2) * 20, n, "pline", { style: "font-size:14px;fill:#1d1d1f" }); x += w;
+          });
+          txt(g, 440, 210, "translação da pelve (3) + 52 rotações em 6D (312) = 315", "pline");
+        } },
+        { t: "raw", id: "vtime", draw: g => {
+          txt(g, 440, 72, "Um gesto é um sinal no tempo (30 FPS)", "ptitle");
+          el("rect", { x: 440, y: 86, width: 540, height: 150, fill: "#fff", stroke: "#dee2e6", rx: 6 }, g);
+          plot = el("path", { fill: "none", stroke: "#3b5bdb", "stroke-width": 2.2 }, g);
+          txt(g, 450, 104, "θ do cotovelo (últimos 3 s)", "pline");
+          txt(g, 440, 262, "+ velocidade vₜ = xₜ − xₜ₋₁ e aceleração aₜ", "pline");
+          txt(g, 440, 284, "→ entrada do encoder: [xₜ, vₜ, aₜ] ∈ ℝ⁹⁴⁵", "pline");
+        } },
+      ], [
+        { chip: "Esqueleto", on: ["body", "vjoint"], text: "Para gerar gestos, a rede precisa de uma <b>parametrização</b>: um esqueleto (SMPL-H) com <b>52 juntas</b> em hierarquia." },
+        { chip: "Rotações SO(3)", on: ["body", "varc", "vrot"], text: "Cada junta é uma <b>rotação em SO(3)</b> relativa à junta-pai. Ao girar o ombro, todo o braço acompanha (cinemática direta)." },
+        { chip: "6D contínua", on: ["body", "vrep"], text: "Euler, quatérnios e eixo-ângulo têm <b>descontinuidades</b> que atrapalham a rede. A representação <b>6D</b> (Zhou et al., 2019) é contínua: usa as duas primeiras colunas da matriz R." },
+        { chip: "Vetor de pose", on: ["body", "vvec"], text: "Cada quadro vira um vetor <b>x<sub>t</sub> ∈ ℝ<sup>315</sup></b>: 3 de translação + 52 × 6. Esse é o “pixel” do gesto." },
+        { chip: "Sinal no tempo", on: ["body", "varc", "vtime"], text: "Ao longo do tempo, cada número é um <b>sinal contínuo</b>. Velocidade e aceleração completam a entrada de 945 dimensões. É essa sequência que o DiT aprende a gerar." },
+      ], () => runG());
+    })();
+
+    // ---------- DiffuseStyleGesture+ ----------
+    makeStepper("dsg", [
+      { chip: "Visão geral", hl: [], text: "<b>DiffuseStyleGesture+</b> (Yang et al., GENEA 2023): gestos a partir de áudio, texto, identidade do falante e um gesto-semente, com um <b>Transformer como denoiser</b> de difusão." },
+      { chip: "Entradas", hl: ["in"], text: "Gesto: 62 juntas (posição, velocidade, aceleração, rotação…). Áudio: MFCC + Mel + pitch + energia + <b>WavLM</b> + onsets = 1133-D. Texto: <b>FastText</b> (300-D) por palavra, alinhado aos quadros." },
+      { chip: "Token Z", hl: ["z"], text: "O <b>timestep</b> t<sub>d</sub> e o <b>speaker ID</b> viram um vetor <b>Z</b> que entra na sequência: é o condicionamento “<b>In-Context</b>” do DiT (lâmina do bloco 3)." },
+      { chip: "Concat + atenção local", hl: ["cat", "cla"], text: "Semente D, áudio A, texto T e gesto ruidoso G são <b>concatenados</b> por quadro. A <b>Cross-Local Attention</b> olha janelas de 15 quadros (0,5 s), com posição relativa (RPE)." },
+      { chip: "Self-attention", hl: ["sa", "out"], text: "Uma pilha de <b>self-attention</b> (8 camadas, 8 cabeças) prevê diretamente o gesto limpo <b>x̂<sub>0</sub></b> (não o ruído), com perda de Huber." },
+      { chip: "Amostragem", hl: ["smp"], text: "Amostragem <b>DDPM</b> com T<sub>d</sub> = 1000 passos: prevê x̂<sub>0</sub>, volta a difundir até t<sub>d</sub> − 1, repete. Clipes de 150 quadros (5 s) emendados pela semente." },
+      { chip: "E o DiT?", hl: ["z", "sa"], text: "Ficou no <b>primeiro nível</b> em naturalidade no GENEA 2023. Ainda não é um DiT “de livro” (sem patchify nem adaLN), mas já é um Transformer denoiser com condição in-context: o elo entre os DiTs de imagem e os de gesto." },
+    ]);
+
+    // ---------- Flow-DiT UNICAMP: pipeline ----------
+    makeStepper("fdp", [
+      { chip: "Visão geral", hl: [], text: "<b>Flow-DiT da UNICAMP</b> (GENEA 2026): dois estágios e só <b>dois modelos</b> (monádico e diádico). A trilha semântica reusa o monádico, mudando apenas hiperparâmetros de inferência." },
+      { chip: "Fase 1: RVQ-VAE", hl: ["enc", "rvq", "dec"], text: "<b>RVQ-VAE assimétrico</b>: o encoder recebe pose + velocidade + aceleração (945-D) e comprime 4× no tempo (latente T/4 × 512); o decoder reconstrói <b>só a pose</b> (315-D). Perda com máscara cinemática: erra-se menos nos movimentos rápidos." },
+      { chip: "Condição", hl: ["mono"], text: "Áudio (<b>WavLM-Large</b> + MFCC + Mel + prosódia + onset = 1133-D) e texto (<b>LLaMA-3.2 3B</b>, 3072-D + VAD) passam por MLPs e formam o contexto <b>C</b>." },
+      { chip: "Diádico", hl: ["dya"], text: "No diádico entram também o áudio, o texto e o <b>movimento do interlocutor</b> (latente z<sub>B</sub>, pelo encoder congelado): cinco ramos fundidos em C." },
+      { chip: "Flow-DiT", hl: ["dit"], text: "O <b>Flow-DiT</b> (12 camadas, 12 cabeças, d = 768, 116M parâmetros) recebe ruído + timestep e prevê a <b>velocidade</b> no latente contínuo, condicionado por C." },
+      { chip: "Decodificação contínua", hl: ["out"], text: "<b>Decodificação contínua direta:</b> na inferência pula-se a quantização do RVQ e a trajetória contínua vai direto ao decoder congelado, com uma suavização leve no latente (κ). Menos <i>jitter</i>." },
+    ]);
+
+    // ---------- Flow-DiT UNICAMP: bloco ----------
+    makeStepper("fdb", [
+      { chip: "Visão geral", hl: [], text: "Um <b>bloco do Flow-DiT</b>: self-attention, atenção cruzada (Perceiver) e feed-forward, cada um modulado por <b>AdaLN</b> e com conexão residual. Repete-se 12 vezes." },
+      { chip: "Timestep → AdaLN", hl: ["time", "m1", "m2", "m3"], text: "O <b>timestep</b> (embedding sinusoidal + MLP) modula os três sub-blocos via <b>AdaLN</b>: a mesma ideia do bloco adaLN-Zero do DiT." },
+      { chip: "Self-attention", hl: ["sa", "inl"], text: "<b>Self-attention</b> entre os instantes do latente de movimento: coerência temporal do gesto inteiro (bidirecional, não autorregressivo)." },
+      { chip: "Perceiver", hl: ["perc"], text: "<b>256 tokens latentes aprendidos (Q)</b> consultam o contexto multimodal C (K, V) e o comprimem. O custo deixa de depender do tamanho do contexto." },
+      { chip: "Cross-attention", hl: ["ca"], text: "<b>Atenção cruzada</b>: o movimento (Q) consulta o contexto comprimido (K, V). É o bloco <b>Cross-Attention</b> do DiT, com um Perceiver na frente." },
+      { chip: "Feed-forward", hl: ["ff", "outl"], text: "<b>Feed-forward</b> por instante e residual: sai o latente atualizado, que vai para o próximo bloco." },
+      { chip: "Limitação", hl: ["perc"], text: "<b>Gargalo:</b> comprimir todo o histórico do interlocutor em 256 tokens suaviza pistas rápidas (acenos, espelhamento). Por isso o comportamento diádico reativo ainda é um desafio." },
+    ]);
+
+    // ---------- Inferência: Euler + CFG desacoplado + VAD ----------
+    (function () {
+      const svg = document.getElementById("cfg-svg");
+      if (!svg) return;
+      const X = s => 90 + s * 86, Y = w => 400 - w * 42;
+      const SEG = [[0.6, 3.2], [4.6, 7.0], [8.2, 9.7]];
+      const m = s => { let v = 0; SEG.forEach(([a, b]) => { const r = .35; v = Math.max(v, Math.min(1, Math.max(0, Math.min((s - a) / r + .5, (b - s) / r + .5)))); }); return v; };
+      const PRE = { mono: { aud: 2.0, txt: 4.0 }, dya: { aud: 2.0, txt: 4.0, ctx: 3.0 }, sem: { aud: 1.2, txt: 6.0 } };
+      const curve = (fn) => { let d = ""; for (let k = 0; k <= 200; k++) { const s = k / 20; d += (k ? "L" : "M") + X(s).toFixed(1) + " " + Y(fn(s)).toFixed(1); } return d; };
+      const lines = {};
+      const comps = [
+        { t: "raw", id: "axes", draw: g => {
+          el("path", { d: `M${X(0)} ${Y(0)} H${X(10)} M${X(0)} ${Y(0)} V${Y(7)}`, stroke: "#495057", "stroke-width": 1.5 }, g);
+          [0, 2, 4, 6].forEach(w => { el("path", { d: `M${X(0)} ${Y(w)} H${X(10)}`, stroke: "#e9ecef", "stroke-width": 1 }, g); txt(g, X(0) - 10, Y(w) + 5, String(w), "pline", { "text-anchor": "end" }); });
+          [0, 2, 4, 6, 8, 10].forEach(s => txt(g, X(s), Y(0) + 20, s + " s", "pline", { "text-anchor": "middle" }));
+          txt(g, X(0), 70, "peso de guidance w(t)", "pline");
+          SEG.forEach(([a, b]) => el("rect", { x: X(a), y: 92, width: X(b) - X(a), height: 18, rx: 4, fill: "#ffe8cc" }, g));
+          txt(g, X(0) - 10, 106, "fala", "pline", { "text-anchor": "end" });
+        } },
+        { t: "raw", id: "vad", draw: g => { el("path", { d: (() => { let d = ""; for (let k = 0; k <= 200; k++) { const s = k / 20; d += (k ? "L" : "M") + X(s).toFixed(1) + " " + (128 - m(s) * 16).toFixed(1); } return d; })(), fill: "none", stroke: "#e67700", "stroke-width": 2 }, g); txt(g, X(10) + 8, 124, "m(t): VAD suavizado", "pline"); } },
+        { t: "raw", id: "laud", draw: g => { lines.aud = el("path", { fill: "none", stroke: "#3b5bdb", "stroke-width": 2.5 }, g); lines.audL = txt(g, X(10) + 8, 0, "w_aud", "pline", { style: "fill:#1d1d1f;font-weight:700" }); } },
+        { t: "raw", id: "ltxt", draw: g => { lines.txt = el("path", { fill: "none", stroke: "#d9480f", "stroke-width": 2.5 }, g); lines.txtL = txt(g, X(10) + 8, 0, "w_txt", "pline", { style: "fill:#1d1d1f;font-weight:700" }); } },
+        { t: "raw", id: "lctx", draw: g => { lines.ctx = el("path", { fill: "none", stroke: "#2b8a3e", "stroke-width": 2.5, "stroke-dasharray": "7 4" }, g); lines.ctxL = txt(g, X(10) + 8, 0, "w_ctx", "pline", { style: "fill:#1d1d1f;font-weight:700" }); } },
+        { t: "raw", id: "veul", draw: g => panel(g, 90, 140, 800, 150, "Geração = integrar uma EDO com Euler (50 passos)", ["z ← z + Δt · v_final(z, t, C),   Δt = 1/50,   t: 0 → 1", "v_final = v_∅ + w_aud (v_audio − v_∅) + w_txt (v_text − v_∅)   (3 passadas)", "diádico: + w_ctx (v_context − v_∅)   (4 passadas)", "10 s de gesto: 0,49 s (monádico) · 0,66 s (diádico) numa NVIDIA L40S"], "#3b5bdb") },
+      ];
+      // rótulo direto no meio de um trecho de fala (aud, txt) ou de silêncio (ctx)
+      const set = (k, fn) => { const s0 = k === "ctx" ? 3.9 : k === "txt" ? 5.8 : 1.9; lines[k].setAttribute("d", curve(fn)); lines[k + "L"].setAttribute("x", X(s0)); lines[k + "L"].setAttribute("y", Y(fn(s0)) - 10); lines[k + "L"].setAttribute("text-anchor", "middle"); };
+      makeBlock("cfg", comps, [
+        { chip: "Euler + CFG", on: ["veul"], text: "Na inferência, o Flow-DiT integra a velocidade com <b>Euler</b> e combina <b>três passadas</b> por passo: sem condição, só áudio e só texto (<b>CFG desacoplado</b>)." },
+        { chip: "Monádico", on: ["axes", "vad", "laud", "ltxt"], preset: "mono", text: "<b>Modulação por VAD:</b> w(t) = 1 + (w<sup>base</sup> − 1) · m(t). Enquanto o agente <b>fala</b> (m ≈ 1), áudio (2,0) e texto (4,0) guiam forte; em silêncio, os pesos voltam a 1 e o modelo para de gesticular." },
+        { chip: "Diádico", on: ["axes", "vad", "laud", "ltxt", "lctx"], preset: "dya", text: "No <b>diádico</b>, o peso do interlocutor faz o contrário: w<sub>ctx</sub>(t) = w<sup>base</sup> · (1 − m) + m. Em <b>silêncio</b>, o contexto do outro (3,0) domina e gera gestos de <b>escuta</b>." },
+        { chip: "Semântico", on: ["axes", "vad", "laud", "ltxt"], preset: "sem", text: "<b>Trilha semântica</b> sem re-treino: o mesmo modelo monádico com <b>texto 6,0</b> e <b>áudio 1,2</b>, que prioriza o significado (LLaMA-3.2) sobre o ritmo." },
+      ], i => {
+        const pre = [null, "mono", "dya", "sem"][i]; if (!pre) return;
+        const p = PRE[pre];
+        set("aud", s => 1 + (p.aud - 1) * m(s)); set("txt", s => 1 + (p.txt - 1) * m(s));
+        if (p.ctx) set("ctx", s => p.ctx * (1 - m(s)) + m(s));
+      });
+    })();
+
+    // ---------- Resultados GENEA 2026 ----------
+    (function () {
+      const DATA = [
+        ["T1 · Realismo", "Elo (Bradley-Terry)", 600, 1250, [["Mocap (referência)", 1211], ["UNICAMP", 1109], ["UM-FERI", 1107], ["MTAvatar-sem", 1012], ["MTAvatar", 933], ["flow-matching (baseline)", 628]], v => String(v)],
+        ["T2 · Fala", "preferência pelo movimento pareado", -0.2, 0.8, [["Mocap (referência)", .62], ["UNICAMP", .33], ["UM-FERI", .16], ["MTAvatar-sem", .09], ["MTAvatar", .08], ["flow-matching (baseline)", .06]]],
+        ["T3 · Interlocutor", "preferência pelo movimento pareado", -0.2, 0.8, [["Mocap (referência)", .65], ["flow-matching (baseline)", .08], ["UNICAMP", .06], ["MTAvatar-sem", .01], ["MTAvatar", -.05], ["UM-FERI", -.10]]],
+        ["T4 · Semântica", "preferência pelo movimento pareado", -0.2, 0.8, [["Mocap (referência)", .77], ["UNICAMP", .08], ["MTAvatar-sem", .04], ["MTAvatar", .01], ["flow-matching (baseline)", .00], ["UM-FERI", -.00]]],
+      ];
+      const comps = DATA.map(([title, unit, lo, hi, rows, f], k) => ({ t: "raw", id: "c" + k, draw: g => {
+        const X = v => 290 + (v - lo) / (hi - lo) * 620;
+        txt(g, 290, 34, unit, "pline");
+        if (lo < 0) { el("path", { d: `M${X(0)} 50 V410`, stroke: "#868e96", "stroke-width": 1.2 }, g); txt(g, X(0), 430, "0", "pline", { "text-anchor": "middle" }); }
+        [lo, (lo + hi) / 2, hi].forEach(v => txt(g, X(v), 450, (Math.round(v * 100) / 100).toString().replace(".", ","), "pline", { "text-anchor": "middle" }));
+        rows.forEach(([n, v], i) => {
+          const y = 80 + i * 58, me = n === "UNICAMP", ref = n.startsWith("Mocap");
+          el("path", { d: `M290 ${y} H910`, stroke: "#f1f3f5", "stroke-width": 1 }, g);
+          txt(g, 278, y + 5, n, "pline", { "text-anchor": "end", style: `fill:#1d1d1f;${me ? "font-weight:800" : ""}` });
+          if (lo < 0) el("path", { d: `M${X(0)} ${y} H${X(v)}`, stroke: me ? "#3b5bdb" : "#ced4da", "stroke-width": 3 }, g);
+          const c = el("circle", { cx: X(v), cy: y, r: me ? 10 : 8, fill: ref ? "#fff" : me ? "#3b5bdb" : "#adb5bd", stroke: ref ? "#495057" : "#fff", "stroke-width": 2, "stroke-dasharray": ref ? "3 2" : "" }, g);
+          el("title", {}, c).textContent = `${n}: ${f ? f(v) : v.toFixed(2)}`;
+          txt(g, X(v) + (v >= 0 || lo >= 0 ? 16 : -16), y + 5, f ? f(v) : v.toFixed(2).replace(".", ","), "pline", { "text-anchor": v >= 0 || lo >= 0 ? "start" : "end", style: "fill:#1d1d1f;font-weight:600" });
+        });
+      } }));
+      comps.push({ t: "raw", id: "abl", draw: g => {
+        const R = [["Estratégia de decodificação", "FGD ↓", "Jerk → GT", "BAS ↑"], ["Ground truth", "–", "0,184", "0,872"], ["RVQ padrão", "0,290", "0,221", "0,834"], ["Contínua direta (κ = 0)", "0,207", "0,290", "0,845"], ["Contínua + suave (κ = 3)", "0,184", "0,082", "0,763"], ["Contínua + suave (κ = 5)", "0,252", "0,051", "0,734"], ["Contínua + suave (κ = 7)", "0,332", "0,037", "0,723"]];
+        R.forEach((r, i) => { if (i === 4) el("rect", { x: 80, y: 40 + i * 46, width: 840, height: 40, rx: 6, fill: "#e8edff" }, g); r.forEach((c, j) => txt(g, [100, 520, 660, 800][j], 66 + i * 46, c, i ? "pline" : "ptitle", { style: `font-size:16px;fill:#1d1d1f;${i === 0 ? "font-weight:700" : ""}` })); el("path", { d: `M80 ${82 + i * 46} H920`, stroke: "#e9ecef" }, g); });
+      } });
+      makeBlock("res", comps, [
+        { chip: "T1 · Realismo", on: ["c0"], text: "<b>Realismo do movimento</b> (vídeos sem som, preferências → Elo). UNICAMP <b>1109</b>, empatado com UM-FERI (1107, intervalos de confiança sobrepostos) e acima dos demais. Ainda há distância para a captura real (1211)." },
+        { chip: "T2 · Fala", on: ["c1"], text: "<b>Alinhamento com a fala</b>: UNICAMP <b>0,33</b>, a vantagem significativa sobre os outros sistemas. Atribuída ao CFG desacoplado com modulação por VAD. Mocap: 0,62." },
+        { chip: "T3 · Interlocutor", on: ["c2"], text: "<b>Reação ao interlocutor</b>: todos os sistemas ficam perto de zero (UNICAMP 0,06, empate com o baseline) contra 0,65 da captura real. Comportamento diádico reativo segue como <b>problema aberto</b>." },
+        { chip: "T4 · Semântica", on: ["c3"], text: "<b>Gestos semânticos</b>: UNICAMP <b>0,08</b>, o maior entre os sistemas (sem diferença significativa para MTAvatar-sem), sem re-treino. Mas a captura real tem 0,77: gestos semânticos explícitos ainda estão longe." },
+        { chip: "Ablação", on: ["abl"], text: "<b>Decodificação contínua</b> (validação monádica): pular o RVQ melhora o FGD (0,290 → 0,207); suavizar o latente com κ = 3 equilibra fidelidade (FGD 0,184) e reduz o <i>jerk</i> pela metade." },
+      ]);
+    })();
+
   })();
 
   // ===== Navegação das diapositivas (mesmo motor do deck DiEmo-TTS) =====
@@ -1205,7 +2221,7 @@
     const bar = document.querySelector(".progress");
     let idx = 0, current = null;
     const fit = () => document.documentElement.style.setProperty("--s", Math.min(innerWidth / 1280, innerHeight / 720));
-    const animOf = s => { for (const svg of s.querySelectorAll("svg")) { const a = ANIMS.get(svg); if (a) return a; } return null; };
+    const animOf = s => { for (const h of s.querySelectorAll("svg, [data-anim]")) { const a = ANIMS.get(h); if (a) return a; } return null; };
     function show(n, fromBack) {
       n = Math.max(0, Math.min(MAIN.length - 1, n));
       if (current) { const oa = animOf(current); if (oa) oa.stop(); current.classList.remove("active"); }
