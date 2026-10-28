@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diffusion Transformers · AIMS Camaleão</title>
+<style>
+  :root {
+    --bg: #f7f6f2; --card: #ffffff; --ink: #1d1d1f; --muted: #5f6368; --line: #e3e1da;
+    --accent: #3b5bdb; --accent-soft: #e8edff;
+    --emo: #d9480f; --emo-soft: #fff0e6;
+    --spk: #2b8a3e; --spk-soft: #e6f6ea;
+    --code: #f1efe8;
+  }
+  
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 17px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 0 16px 80px; }
+  header.hero { padding: 56px 0 28px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+  .kicker { color: var(--accent); font-weight: 600; letter-spacing: .04em; text-transform: uppercase; font-size: 13px; }
+  h1 { font-size: clamp(28px, 5vw, 42px); line-height: 1.15; margin: 8px 0 12px; }
+  .sub { color: var(--muted); margin: 0; }
+  nav.toc { position: sticky; top: 0; z-index: 5; background: var(--bg); border-bottom: 1px solid var(--line);
+    display: flex; gap: 6px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; }
+  nav.toc a { white-space: nowrap; text-decoration: none; color: var(--muted); font-size: 14px;
+    padding: 5px 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); }
+  nav.toc a:hover { color: var(--accent); border-color: var(--accent); }
+  section { padding-top: 36px; }
+  h2 { font-size: 26px; margin: 0 0 4px; }
+  h2 .num { color: var(--accent); margin-right: 8px; }
+  h3 { font-size: 19px; margin: 28px 0 8px; }
+  p { margin: 10px 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin: 16px 0; }
+  .note { border-left: 4px solid var(--accent); background: var(--accent-soft); border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  .listen { border-left: 4px solid var(--emo); background: var(--emo-soft); border-radius: 8px; padding: 12px 16px; margin: 16px 0; }
+  .emo { color: var(--emo); font-weight: 600; }
+  .spk { color: var(--spk); font-weight: 600; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .9em; }
+  code { background: var(--code); padding: 1px 6px; border-radius: 5px; }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 15.5px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 13.5px; text-transform: uppercase; letter-spacing: .03em; }
+  .table-scroll { overflow-x: auto; }
+
+  /* flujo de cajas */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0; }
+  .box { background: var(--card); border: 1.5px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: 15px; text-align: center; }
+  .box small { display: block; color: var(--muted); font-size: 12.5px; }
+  .box.model { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+  .box.e { border-color: var(--emo); background: var(--emo-soft); }
+  .box.s { border-color: var(--spk); background: var(--spk-soft); }
+  .arrow { color: var(--muted); font-size: 20px; }
+  .stack { display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 440px; margin: 18px auto; }
+  .stack .box { width: 100%; }
+  .stack .down { color: var(--muted); }
+
+  .pieces { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin: 16px 0; }
+  .piece { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .piece b { display: block; color: var(--accent); margin-bottom: 4px; }
+
+  pre.diagram { background: var(--code); border-radius: 10px; padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.45; }
+
+  .steps { counter-reset: s; list-style: none; padding: 0; }
+  .steps > li { counter-increment: s; position: relative; padding-left: 40px; margin: 12px 0; }
+  .steps > li::before { content: counter(s); position: absolute; left: 0; top: 1px; width: 26px; height: 26px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-size: 14px; font-weight: 700; display: grid; place-items: center; }
+
+  /* audios */
+  .audio-ctrl { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
+  .audio-ctrl button { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); }
+  .audio-ctrl button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .sample { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin: 12px 0; }
+  .sample .meta { font-size: 14px; color: var(--muted); margin-bottom: 8px; }
+  .sample .meta strong { color: var(--ink); }
+  .players { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px 14px; }
+  .player label { display: block; font-size: 13px; color: var(--muted); }
+  .player.hl label { color: var(--accent); font-weight: 700; }
+  .player audio { width: 100%; height: 36px; }
+
+  /* figura k-means */
+  :root { --k1: #3b5bdb; --k2: #d9480f; --k3: #2b8a3e; --k4: #ae3ec9; --k5: #e8a400; --kgray: #a5a7ad; }
+  
+  .kfig { margin: 16px 0 6px; }
+  .kpanels { display: flex; align-items: center; gap: 10px; }
+  .kpanel { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .kpanel svg { width: 100%; height: auto; display: block; }
+  .ktitle { font-weight: 600; font-size: 14.5px; }
+  .kcap { color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .karrow { text-align: center; color: var(--accent); font-size: 26px; font-weight: 700; line-height: 1.1; }
+  .karrow small { display: block; font-size: 12px; font-weight: 600; }
+  .kctrl { margin-top: 10px; }
+  .kctrl button { font: inherit; font-size: 14px; padding: 6px 12px; border-radius: 999px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .kfig figcaption { color: var(--muted); font-size: 13px; margin-top: 8px; font-style: italic; }
+  .kpt { transition: fill .5s ease; }
+
+  /* animación ECAPA-TDNN */
+  .ecfig { margin: 16px 0 22px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .ectitle { font-weight: 600; font-size: 15px; }
+  .ecchips { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
+  .ecchips button { font: inherit; font-size: 12.5px; padding: 3px 10px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: transparent; color: var(--muted); }
+  .ecchips button.done { color: var(--accent); border-color: var(--accent); }
+  .ecchips button.on { background: var(--accent); border-color: var(--accent); color: var(--bg); font-weight: 600; }
+  #ec-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #ec-svg text { font-family: inherit; font-size: 14px; fill: var(--muted); }
+  #ec-svg .cell { transition: opacity .35s ease, fill-opacity .9s ease; }
+  #ec-svg .fade { transition: opacity .5s ease; }
+  .ectext { min-height: 6.5em; font-size: 15.5px; line-height: 1.55; margin-top: 10px; }
+  .ectext b { color: var(--accent); }
+  .ecctrl { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  /* cubo VAD */
+  #vad-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); cursor: grab; touch-action: pan-y; user-select: none; }
+  #vad-svg:active { cursor: grabbing; }
+  #vad-svg text { font-family: inherit; font-size: 14px; fill: var(--muted); }
+  #hun-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #hun-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+  #dino-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #dino-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+  #chg-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #chg-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+  #fs2-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #fs2-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+  .met-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  .met-svg { margin: 0 auto; }
+  .gl-title { margin: 14px 0 6px; color: var(--ink); }
+  .gloss { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 6px 0 14px; }
+  .gl { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .gl-top { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+  .gl-sig { font-size: 22px; font-weight: 800; color: var(--accent); letter-spacing: .02em; }
+  .gl-dir { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .gl-dir.up { color: var(--spk); background: var(--spk-soft); }
+  .gl-dir.down { color: var(--emo); background: var(--emo-soft); }
+  .gl-en { font-size: 13px; font-style: italic; color: var(--muted); margin-top: 2px; }
+  .gl-es { font-size: 15px; margin-top: 4px; }
+  .gl-how { font-size: 13.5px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+  @media (min-width: 1000px) {
+    .ecfig.wide { width: min(1240px, calc(100vw - 48px)); position: relative; left: 50%; transform: translateX(-50%); }
+  }
+  .met-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+  #dct-svg { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  #dct-svg text { font-family: inherit; font-size: 13px; fill: var(--muted); }
+
+  /* ecuación */
+  .eqbox { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 16px 0; }
+  .eqtitle { font-weight: 600; font-size: 15px; color: var(--muted); }
+  .eqrow { display: flex; align-items: center; justify-content: center; gap: 18px; overflow-x: auto; padding: 6px 0; }
+  .eqrow math { font-size: 1.45em; margin: 6px 0; }
+  .eqnum { color: var(--muted); }
+  .eqread { text-align: center; color: var(--muted); }
+  .t-pn { color: var(--accent); font-weight: 600; }
+  .t-arg { color: var(--emo); }
+  .t-area { color: var(--k5); font-weight: 600; }
+  .t-hull { color: var(--k4); }
+  .t-set { color: var(--spk); }
+  @media (prefers-color-scheme: light) { .t-area { color: #b07d00; } }
+  table.terms td:first-child { white-space: nowrap; font-weight: 600; }
+  @media (max-width: 560px) { .kpanels { flex-direction: column; align-items: stretch; } .karrow { transform: none; } .karrow small { display: inline; } }
+
+  .summary { font-size: 19px; line-height: 1.6; background: var(--card); border: 2px solid var(--accent); border-radius: 14px; padding: 20px 22px; }
+  footer { color: var(--muted); font-size: 14px; margin-top: 48px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media (max-width: 560px) { body { font-size: 16px; } .flow { flex-direction: column; align-items: stretch; } .arrow { transform: rotate(90deg); text-align: center; } }
+
+  /* ===== Diapositivas ===== */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #16171a; }
+  body { font-size: 20px; }
+  .slide { display: none; position: absolute; left: 50%; top: 50%; width: 1280px; height: 720px; box-sizing: border-box;
+    transform: translate(-50%, -50%) scale(var(--s, 1)); background: var(--bg); color: var(--ink);
+    padding: 34px 52px 30px; overflow: hidden; line-height: 1.5; border-radius: 4px; }
+  .slide.active { display: flex; flex-direction: column; }
+  .sh { margin-bottom: 12px; flex: none; }
+  .kick { color: var(--accent); font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: .06em; }
+  .sh h2 { font-size: 36px; line-height: 1.15; margin: 2px 0 0; }
+  .lead { margin: 4px 0 16px; font-size: 25px; }
+  .title-slide { justify-content: center; align-items: flex-start; padding: 70px 90px; }
+  .title-slide h1 { font-size: 84px; line-height: 1; margin: 10px 0 18px; }
+  .t-kicker { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 16px; }
+  .t-sub { font-size: 30px; line-height: 1.35; margin: 0 0 22px; max-width: 1000px; }
+  .t-authors { font-size: 22px; margin: 0 0 6px; }
+  .t-ref { font-size: 17px; color: var(--muted); margin: 0 0 6px; max-width: 1050px; }
+  .t-presenters { margin-top: 26px; padding-top: 18px; border-top: 2px solid var(--line); display: flex; gap: 34px; align-items: baseline; flex-wrap: wrap; }
+  .t-presenters span { color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; font-size: 15px; }
+  .t-presenters b { font-size: 26px; }
+  .t-hint { position: absolute; bottom: 26px; left: 90px; font-size: 14px; color: var(--muted); }
+  /* Logo AIMS: pequeno no canto inferior esquerdo de cada slide, grande na capa e no final */
+  .slide:not(.title-slide)::after, .aims-logo { background: #000 url(data:image/png;base64,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) center / contain no-repeat; border-radius: 8px; }
+  .slide:not(.title-slide)::after { content: ""; position: absolute; left: 14px; bottom: 10px; width: 28px; height: 28px; border-radius: 6px; opacity: .9; }
+  .aims-logo { width: 84px; height: 84px; flex: none; border-radius: 14px; }
+  .t-brand { display: flex; align-items: center; gap: 18px; }
+  .t-brand .t-kicker { line-height: 1.35; }
+  /* Modal: arquitetura da ECAPA-TDNN (opcional, abre com clique na caixa) */
+  .ec-modal { position: fixed; inset: 0; z-index: 50; display: none; align-items: center; justify-content: center;
+    background: rgba(10, 11, 14, .62); padding: 2vh 2vw; box-sizing: border-box; }
+  .ec-modal.open { display: flex; }
+  .ec-dialog { position: relative; width: min(1060px, 96vw); max-height: 96vh; overflow: auto; box-sizing: border-box;
+    background: var(--bg); color: var(--ink); border-radius: 14px; padding: 20px 26px 16px; box-shadow: 0 20px 60px rgba(0,0,0,.4); font-size: 18px; line-height: 1.5; }
+  .ec-dialog .kick { display: block; }
+  .ec-dialog h3 { font-size: 26px; margin: 2px 0 10px; }
+  .ec-close { position: absolute; top: 12px; right: 14px; width: 36px; height: 36px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--ink); font-size: 18px; line-height: 1; }
+  .ec-close:hover { border-color: var(--accent); color: var(--accent); }
+  .ec-dialog #ec-svg { max-height: 46vh; }
+  .ec-dialog .ectext { min-height: 5.5em; font-size: 16.5px; }
+  .ec-dialog .kctrl button { font-size: 14px; }
+  .ec-dialog figcaption { color: var(--muted); font-size: 13px; margin-top: 8px; font-style: italic; }
+  .ecapa-link { cursor: pointer; }
+  .ecapa-link:hover rect:first-child { fill-opacity: .26; }
+  #vad-chips { flex-wrap: nowrap; gap: 4px; }
+  #vad-chips button { padding: 3px 7px; font-size: 11.5px; white-space: nowrap; }
+  .agenda { font-size: 27px; line-height: 1.45; margin: 6px 0 0; padding-left: 34px; }
+  .agenda li { margin: 6px 0; }
+  .agenda li.done { color: var(--muted); opacity: .5; }
+  .agenda li.now { color: var(--accent); background: var(--accent-soft); border-radius: 10px; width: fit-content; padding-right: 16px;
+    box-shadow: -44px 0 0 0 var(--accent-soft); }
+  .agenda li.now::marker { font-weight: 700; }
+  .cards { display: grid; gap: 16px; margin: 10px 0 14px; }
+  .cards.c2 { grid-template-columns: 1fr 1fr; }
+  .cards.c3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card2 { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; font-size: 22px; line-height: 1.45; }
+  .card2 > b:first-child { display: block; color: var(--accent); margin-bottom: 6px; font-size: 21px; }
+  .card2 small { display: block; color: var(--muted); font-size: 13px; margin-top: 6px; }
+  .card2 ul { margin: 4px 0 0; padding-left: 20px; }
+  .card2.wide { margin-top: 2px; }
+  .crit .card2 { font-size: 20px; }
+  .tbl { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 20px; }
+  .tbl th { text-align: left; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; padding: 6px 10px; border-bottom: 2px solid var(--line); }
+  .tbl td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .tbl.big td { font-size: 22px; padding: 11px 12px; }
+  .tbl.terms td { font-size: 18px; padding: 7px 10px; }
+  .tbl.terms td:nth-child(odd) { font-weight: 700; white-space: nowrap; }
+  .tbl.abl th, .tbl.abl td { text-align: center; font-size: 19px; padding: 9px 6px; }
+  .tbl.abl td:first-child { text-align: left; }
+  .tbl.abl td.x { background: var(--line); }
+  .tbl.abl tr.hl td { background: var(--accent-soft); }
+  .bul { font-size: 20px; margin: 4px 0 0; padding-left: 22px; }
+  .bul li { margin: 4px 0; }
+  .note.warn { border-left-color: var(--emo); background: var(--emo-soft); }
+  .slide .flow { margin: 10px 0; }
+  .slide .box { font-size: 21px; padding: 12px 16px; }
+  .slide .note { font-size: 22px; padding: 16px 20px; }
+  .slide .listen { font-size: 17px; }
+  .slide .eqrow math { font-size: 1.75em; }
+  .slide .eqread { font-size: 20px; }
+  .slide .eqread { margin: 4px 0 10px; }
+  .slide .summary { font-size: 22px; }
+  /* animaciones */
+  .anim { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 370px; gap: 22px; }
+  .a-left { display: flex; flex-direction: column; min-height: 0; }
+  .slide .a-left > svg, .slide .anim.astack > svg { flex: 1; min-height: 0; width: 100% !important; height: 100% !important; max-width: none !important; border: 1px solid var(--line); border-radius: 10px; background: var(--card); }
+  .a-right { display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .slide .ectext { font-size: 17.5px; line-height: 1.5; margin: 0; flex: 1; min-height: 0; overflow: auto; }
+  .slide .ecchips { margin: 0 0 8px; flex: none; }
+  .slide .ecchips button { font-size: 12px; padding: 3px 9px; }
+  .slide .ecctrl button { font-size: 13px; padding: 5px 11px; }
+  .cap { font-size: 12.5px; color: var(--muted); margin: 0; font-style: italic; line-height: 1.4; }
+  .anim.astack { display: flex; flex-direction: column; }
+  .a-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; margin-top: 8px; flex: none; }
+  .slide .anim.astack > svg.met-svg { flex: none !important; width: 100% !important; height: 385px !important; }
+  .anim.astack .ectext { max-height: 112px; font-size: 15.5px; }
+  .ecctrl.col { flex-direction: column; justify-content: flex-start; gap: 4px; margin-right: 70px; }
+  .ecctrl.col button { padding: 3px 12px; font-size: 12.5px; }
+  /* k-means */
+  .slide .kfig { margin: 0; }
+  .slide .kpanel svg { max-height: 330px; }
+  /* glosario */
+  .slide .gloss { grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 4px; }
+  .slide .gl { padding: 12px 14px; position: relative; }
+  .slide .gl-sig { font-size: 25px; font-weight: 800; color: var(--accent); }
+  .slide .gl-dir { position: absolute; right: 10px; top: 12px; font-size: 13px; font-weight: 700; padding: 1px 8px; border-radius: 999px; }
+  .slide .gl-en { font-size: 14px; font-style: italic; color: var(--muted); }
+  .slide .gl-es { font-size: 18px; }
+  /* audio */
+  .audio-top { flex: none; display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .audio-top .listen { margin: 0; padding: 8px 14px; font-size: 15px; }
+  .audio-scroll { flex: 1; min-height: 0; overflow: auto; margin-top: 10px; padding-right: 6px; }
+  .slide .sample { padding: 10px 14px; margin: 8px 0; }
+  .slide .sample .meta { font-size: 14px; }
+  /* HUD */
+  .hud { opacity: .35; transition: opacity .2s; }
+  .hud:hover { opacity: 1; }
+  .hud { position: fixed; right: 14px; bottom: 10px; display: flex; gap: 8px; align-items: center; font: 13px -apple-system, system-ui, sans-serif; color: #b9bcc3; z-index: 10; }
+  .hud button { font: inherit; background: #2a2c31; color: #e6e7ea; border: 1px solid #3a3d44; border-radius: 6px; padding: 3px 9px; cursor: pointer; }
+  .progress { position: fixed; top: 0; left: 0; height: 3px; background: #6c8cff; z-index: 10; transition: width .2s; }
+
+  .emb { font-size: 18px; color: var(--muted); margin: 2px 0 10px; }
+  .snum { display: inline-grid; place-items: center; min-width: 46px; height: 46px; margin-right: 14px; border-radius: 12px; background: var(--accent); color: #fff; font-size: 28px; font-weight: 800; vertical-align: 3px; }
+  .src { flex: none; font-size: 12.5px; line-height: 1.4; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
+  .src > b { color: var(--ink); font-size: 13px; }
+  .src p { margin: 4px 0; }
+  .src .refs { font-size: 11.5px; }
+  .tr { margin-top: 6px; }
+  .tr-h { display: inline-block; font-weight: 700; font-size: 18px; color: var(--ink); background: var(--accent-soft); border-radius: 6px; padding: 1px 8px; }
+  .tr ul { margin: 3px 0 0; }
+  .tr-pre { margin-top: 8px; font-size: 18px; color: var(--muted); }
+  .cmp-sub { font-size: 17px; color: var(--muted); margin-left: 8px; }
+  .cmp { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 8px; }
+  .cmp-i { border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; background: var(--bg); line-height: 1.3; }
+  .cmp-i b { display: block; font-size: 19px; color: var(--ink); }
+  .cmp-i span { font-size: 14px; color: var(--muted); }
+  .cmp-i small { display: block; font-size: 15px; margin-top: 2px; }
+  .cmp-i.ref { border-style: dashed; }
+  .cmp-i.me { border: 2px solid var(--accent); background: var(--accent-soft); }
+  .cmp-i.me b { color: var(--accent); }
+  .cmp-card { padding: 12px 18px; }
+  .cmp-head { display: flex; align-items: baseline; gap: 10px; }
+  .cmp-head b { color: var(--accent); font-size: 21px; }
+  .cmp-head .cmp-sub { margin-left: 0; }
+  .cmp { margin-top: 6px; }
+  .cmp-i { padding: 6px 12px; }
+  .cmp-i b { display: inline; font-size: 18px; }
+  .cmp-i span { margin-left: 6px; }
+  .cmp-i small { font-size: 14.5px; }
+  .cmp-i b { white-space: nowrap; }
+
+
+  /* ===== Figuras do PPT (deck DiTs) ===== */
+  .fig { margin: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 0; }
+  .fig img { display: block; max-width: 100%; object-fit: contain; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 6px; box-sizing: border-box; }
+  .fig img.photo { padding: 0; }
+  .fig figcaption { font-size: 13.5px; color: var(--muted); font-style: italic; margin-top: 6px; text-align: center; line-height: 1.4; }
+  .grow { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; }
+  .split { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 26px; align-items: center; }
+  .split.wl { grid-template-columns: 1.4fr 1fr; }
+  .split.wr { grid-template-columns: 1fr 1.4fr; }
+  .split.blk { grid-template-columns: 300px 1fr; gap: 34px; }
+  .col { display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+  .col .card2, .col .note { margin: 0; }
+  .vide { flex: none; margin: 10px 0 0 30px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 7px; line-height: 1.4; }
+  .vide b { color: var(--ink); }
+  .icards .card2 { display: grid; grid-template-columns: 70px 1fr; gap: 18px; align-items: center; }
+  .icards .card2 img { width: 70px; height: 70px; }
+  .icards .card2 b { display: block; color: var(--accent); font-size: 21px; margin-bottom: 2px; }
+  .qcards .card2 { font-size: 25px; line-height: 1.45; }
+  .qcards .card2 > b:first-child { font-size: 30px; }
+  .agenda-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 30px; align-items: center; flex: 1; min-height: 0; }
+  .agenda-wrap .agenda { font-size: 25px; }
+  .slide .agenda { font-size: 25px; line-height: 1.4; }
+  .slide .agenda li { margin: 4px 0; }
+  .slide .steps { margin: 6px 0; font-size: 20px; }
+  .slide .steps > li { margin: 10px 0; padding-left: 42px; }
+  .slide .lead.sm { font-size: 22px; }
+  .big-q { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 18px; }
+  .big-q p { font-size: 52px; line-height: 1.2; font-weight: 700; margin: 0; max-width: 1000px; }
+  .big-q .kick { font-size: 16px; }
+  .ov-wrap { position: relative; display: inline-block; max-width: 100%; }
+  .ov-unet { position: absolute; left: 42.5%; top: 38%; width: 18%; height: 29%; border: 3px dashed var(--accent); border-radius: 10px;
+    background: rgba(232, 237, 255, .93); display: grid; place-items: center; color: var(--accent); font-weight: 800; font-size: 20px; line-height: 1.15; text-align: center; }
+  .ov-unet small { display: block; font-size: 13px; font-weight: 600; color: var(--muted); text-decoration: line-through; }
+  .scale-grid { display: grid; grid-template-columns: 36px auto; grid-template-rows: auto auto; gap: 8px; align-items: center; justify-content: center; }
+  .scale-grid .ax-top { grid-column: 2; text-align: center; color: var(--accent); font-weight: 700; font-size: 18px; }
+  .scale-grid .ax-left { writing-mode: vertical-rl; transform: rotate(180deg); text-align: center; color: var(--emo); font-weight: 700; font-size: 18px; }
+  .patch-row { display: grid; grid-template-columns: 220px 40px 1fr; gap: 14px; align-items: center; width: 100%; }
+  .patch-row .arrow { font-size: 30px; text-align: center; }
+  .tbl.size td, .tbl.size th { text-align: center; }
+  .tbl.size td:first-child, .tbl.size th:first-child { text-align: left; }
+  .tbl.size td { font-size: 22px; }
+  .slide .eqbox { margin: 0; }
+  .slide .eqbox .eqrow math { font-size: 1.35em; }
+  .grow > img, .grow > .ov-wrap { max-width: 1176px; }
+  .grow .card2 { font-size: 24px; line-height: 1.5; }
+  .grow .card2 > b:first-child { font-size: 23px; }
+  .grow .icards .card2 b { font-size: 23px; }
+  .grow .qcards .card2 { font-size: 27px; }
+  .grow .qcards .card2 > b:first-child { font-size: 30px; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 1px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); vertical-align: 3px; }
+
+</style>
+</head>
+<body>
+<div class="progress"></div>
+<!-- Capa -->
+<section class="slide title-slide">
+  <div class="t-brand"><div class="aims-logo" role="img" aria-label="Logo AIMS"></div><div class="t-kicker">[AIMS] Artificial Intelligence through<br>Multimodal Signal Processing</div></div>
+  <h1>Diffusion Transformers</h1>
+  <p class="t-sub">Introdução aos <b>DiTs</b>: modelos de difusão que trocam a U-Net por um Transformer</p>
+  <p class="t-authors">Inspirado no artigo <i>Scalable Diffusion Models with Transformers</i> · William Peebles, Saining Xie</p>
+  <p class="t-ref">ICCV 2023, pp. 4195–4205 · UC Berkeley · New York University · Meta AI (FAIR)</p>
+  <div class="t-presenters"><span>Apresentação</span><b>Johsac Isbac Gomez Sanchez</b></div>
+  <p class="t-ref">Grupo de Estudos Camaleão</p>
+  <p class="t-hint">→ / espaço: avançar · ← voltar · F: tela cheia</p>
+</section>
+
+<!-- Roteiro -->
+<section class="slide">
+  <header class="sh"><h2>Roteiro</h2></header>
+  <div class="agenda-wrap">
+    <ol class="agenda">
+    <li><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+    </ol>
+    <figure class="fig"><img src="img/sora-runway.webp" alt="Quadros de vídeo gerados por Sora e por Runway" class="photo" style="max-height:520px"><figcaption>Geração de vídeo: Sora (OpenAI) × Runway. O Sora é construído sobre Diffusion Transformers.</figcaption></figure>
+  </div>
+</section>
+
+<!-- 1 · Problemas em aberto -->
+<section class="slide">
+  <header class="sh"><span class="kick">Problemas em aberto</span><h2><span class="snum">1</span>Problemas em aberto em modelos de geração</h2></header>
+  <div class="grow">
+  <div class="cards c2 icards" style="width:100%">
+    <div class="card2"><img src="img/icon-rede.webp" alt=""><div><b>Arquiteturas</b>Reduzir a dependência de arquiteturas consolidadas</div></div>
+    <div class="card2"><img src="img/icon-global.webp" alt=""><div><b>Novas áreas</b>Criar novas oportunidades para descobertas em diferentes áreas: texto, imagem e sinais</div></div>
+    <div class="card2"><img src="img/icon-gpu.webp" alt=""><div><b>Eficiência</b>Oferecer uma abordagem mais eficiente em termos computacionais</div></div>
+    <div class="card2"><img src="img/icon-barreira.webp" alt=""><div><b>Barreiras entre áreas</b>Superar barreiras de descobertas cruzadas entre áreas como texto, imagem e sinais</div></div>
+  </div>
+  </div>
+</section>
+
+<!-- Roteiro · seção 2 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 2 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="now"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- U-Net -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · U-Net</span><h2><span class="snum">2</span>U-Net: segmentação de imagens</h2></header>
+  <p class="lead sm"><b>U-Net (2015)</b> é uma rede convolucional com estrutura em “U”, usada para segmentação de imagens, com um <b>encoder</b> e um <b>decoder</b> simétricos conectados por saltos (<i>skip connections</i>).</p>
+  <div class="split">
+    <figure class="fig"><img src="img/unet-geral.webp" alt="Diagrama geral da U-Net" style="max-height:380px"><figcaption>Braço de codificação, braço de decodificação e conexões de salto</figcaption></figure>
+    <figure class="fig"><img src="img/segmentacao.webp" alt="Exemplo de segmentação de uma cena urbana" class="photo" style="max-height:380px"><figcaption>Exemplo de segmentação</figcaption></figure>
+  </div>
+  <p class="vide"><b>Vide</b> O. Ronneberger, P. Fischer, T. Brox. <i>U-Net: Convolutional Networks for Biomedical Image Segmentation.</i> MICCAI 2015.</p>
+</section>
+
+<!-- U-Net encoder/decoder -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · U-Net</span><h2><span class="snum">2</span>U-Net: encoder e decoder</h2></header>
+  <div class="split wl">
+    <figure class="fig"><img src="img/unet-original.webp" alt="Arquitetura original da U-Net" style="max-height:520px"></figure>
+    <div class="col">
+      <div class="card2"><b>Encoder</b>Comprime a informação da imagem, extraindo características abstratas.</div>
+      <div class="card2"><b>Decoder</b>Expande essas características, restaurando a resolução para segmentação ou geração.</div>
+    </div>
+  </div>
+  <p class="vide"><b>Vide</b> O. Ronneberger, P. Fischer, T. Brox. <i>U-Net: Convolutional Networks for Biomedical Image Segmentation.</i> MICCAI 2015.</p>
+</section>
+
+<!-- Difusão -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Difusão</span><h2><span class="snum">2</span>Geração de imagens com modelos de difusão</h2></header>
+  <p class="lead sm"><b>Modelo de difusão (2020)</b>: modelo generativo que adiciona ruído progressivamente às imagens e usa uma U-Net para aprender a reverter o ruído, passo a passo.</p>
+  <div class="grow"><img src="img/difusao-forward-reverse.webp" alt="Difusão direta e reversa" style="max-height:330px"></div>
+  <div class="cards c2">
+    <div class="card2"><b>Forward diffusion</b>Do <i>input</i> x₀ ao ruído puro x_T: adiciona ruído gaussiano em cada passo.</div>
+    <div class="card2"><b>Reverse diffusion</b>Do ruído x_T ao <i>output</i> x₀: a U-Net prevê e remove o ruído em cada passo.</div>
+  </div>
+  <p class="vide"><b>Vide</b> J. Ho, A. Jain, P. Abbeel. <i>Denoising Diffusion Probabilistic Models.</i> NeurIPS 2020.</p>
+</section>
+
+<!-- Difusão: geração -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Difusão</span><h2><span class="snum">2</span>Gerando uma amostra por remoção de ruído</h2></header>
+  <div class="grow"><img src="img/difusao-geracao.webp" alt="Geração por difusão reversa a partir do ruído" style="max-height:280px"><p class="cap">Reverse diffusion</p></div>
+  <div class="cards c2">
+    <div class="card2"><b>Reverse diffusion</b>A geração começa no ruído e o reverte passo a passo, guiada pela U-Net e pelo <i>timestep</i>.</div>
+    <div class="card2"><b>Timestep t</b>Indica quanto ruído remover em cada passo: informa quanto ruído está presente na imagem naquele momento.</div>
+  </div>
+  <p class="vide"><b>Vide</b> J. Ho, A. Jain, P. Abbeel. <i>Denoising Diffusion Probabilistic Models.</i> NeurIPS 2020.</p>
+</section>
+
+<!-- Transformer -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Transformer em Processamento de Linguagem Natural</h2></header>
+  <p class="lead sm"><b>Transformer (2017)</b> revolucionou o NLP ao processar longas sequências de texto com <b>autoatenção</b>, eliminando a necessidade de redes recorrentes.</p>
+  <div class="split wl">
+    <div class="col">
+      <figure class="fig"><img src="img/positional-encoding.webp" alt="Positional encoding somado aos embeddings de Eu, sou, estudante" style="max-height:290px"><figcaption>Por exemplo, o input: “Eu sou estudante”</figcaption></figure>
+      <div class="note">O <b>positional encoding</b> introduz a ordem dos tokens na sequência, permitindo capturar relações posicionais entre eles.</div>
+    </div>
+    <figure class="fig"><img src="img/transformer.webp" alt="Arquitetura do Transformer" style="max-height:470px"></figure>
+  </div>
+  <p class="vide"><b>Vide</b> A. Vaswani et al. <i>Attention Is All You Need.</i> NeurIPS 2017.</p>
+</section>
+
+<!-- RNN x autoatenção -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>RNNs × mecanismo de autoatenção</h2></header>
+  <div class="split">
+    <div class="col" style="align-items:center">
+      <figure class="fig"><img src="img/rnn.webp" alt="RNN processa a sequência passo a passo" style="max-height:210px"><figcaption>RNNs: um token de cada vez</figcaption></figure>
+      <figure class="fig"><img src="img/self-attention.webp" alt="Autoatenção conecta todos os tokens" style="max-height:210px"><figcaption>Autoatenção: todos os tokens ao mesmo tempo</figcaption></figure>
+    </div>
+    <div class="card2"><b>O mecanismo de atenção supera limitações como:</b>
+      <ul>
+        <li>Processa as sequências simultaneamente</li>
+        <li>Captura relações distantes</li>
+        <li>Paralelismo</li>
+        <li>Interações complexas</li>
+      </ul></div>
+  </div>
+  <p class="vide"><b>Vide</b> A. Vaswani et al. <i>Attention Is All You Need.</i> NeurIPS 2017.</p>
+</section>
+
+<!-- Encoder / decoder -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · Transformer</span><h2><span class="snum">2</span>Encoder e decoder: aplicações</h2></header>
+  <div class="split wr">
+    <figure class="fig"><img src="img/transformer.webp" alt="Arquitetura do Transformer: encoder à esquerda, decoder à direita" style="max-height:540px"><figcaption>Encoder (esquerda) · Decoder (direita)</figcaption></figure>
+    <div class="col">
+      <div class="card2"><b>Encoder</b>Classificação (ex.: BERT), segmentação de imagens, detecção de objetos, análise de sentimentos, <b>DiTs</b>, entre outras.</div>
+      <div class="card2"><b>Decoder</b>Tradução automática, geração de texto (ex.: GPT), resumo automático e modelos de texto para imagem (ex.: DALL·E).</div>
+    </div>
+  </div>
+</section>
+
+<!-- ViT -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · ViT</span><h2><span class="snum">2</span>Transformers em visão computacional (ViT)</h2></header>
+  <p class="lead sm"><b>ViTs (2020)</b> aplicam Transformers às imagens: dividem a imagem em fragmentos (<i>patches</i>), processam cada um como um token e usam atenção para capturar relações espaciais de longo alcance.</p>
+  <div class="grow"><img src="img/vit.webp" alt="Arquitetura do Vision Transformer" style="max-height:410px"></div>
+  <p class="vide"><b>Vide</b> A. Dosovitskiy et al. <i>An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale.</i> ICLR 2021.</p>
+</section>
+
+<!-- LDM -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>Modelos de difusão latente (LDM)</h2></header>
+  <p class="lead sm"><b>LDM (2022)</b> treinam a difusão num <b>espaço latente comprimido</b>, em vez do espaço de pixels, e introduzem um mecanismo de <b>condicionamento</b> para controlar a geração com informações adicionais.</p>
+  <div class="grow"><img src="img/ldm.webp" alt="Difusão no espaço latente com condicionamento" style="max-height:400px"></div>
+  <p class="vide"><b>Vide</b> R. Rombach et al. <i>High-Resolution Image Synthesis with Latent Diffusion Models.</i> CVPR 2022.</p>
+</section>
+
+<!-- LDM condicionamento -->
+<section class="slide">
+  <header class="sh"><span class="kick">Revisão da literatura · LDM</span><h2><span class="snum">2</span>Gerando uma amostra com condicionamento</h2></header>
+  <p class="lead sm">Com o condicionamento, o modelo gera imagens a partir de entradas adicionais específicas, usando técnicas de amostragem como o <i>Classifier-Free Diffusion Guidance</i>.</p>
+  <div class="grow"><img src="img/ldm-condicionamento.webp" alt="U-Net com atenção cruzada para condicionamento" style="max-height:340px"></div>
+  <div class="note">Para permitir o condicionamento, a U-Net usa <b>atenção cruzada</b> (<i>cross-attention</i>) durante o <i>denoising</i>.</div>
+  <p class="vide"><b>Vide</b> J. Ho, T. Salimans. <i>Classifier-Free Diffusion Guidance.</i> 2021.</p>
+</section>
+
+<!-- Perguntas em aberto -->
+<section class="slide">
+  <header class="sh"><span class="kick">Perguntas em aberto</span><h2><span class="snum">2</span>Tudo foi resolvido com modelos de difusão?</h2></header>
+  <div class="grow">
+  <div class="cards c2 qcards" style="width:100%">
+    <div class="card2"><b>Flexibilidade</b>Até que ponto os modelos de difusão são flexíveis o suficiente para se adaptar a diferentes áreas e tarefas?</div>
+    <div class="card2"><b>Escalabilidade</b>A eficiência computacional dos modelos de difusão propostos é adequada para uma escalabilidade real?</div>
+  </div>
+  </div>
+</section>
+
+<!-- Roteiro · seção 3 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 3 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="now"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Impacto -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>O artigo e seu impacto</h2></header>
+  <div class="split">
+    <figure class="fig"><img src="img/dit-artigo.webp" alt="Cabeçalho do artigo Scalable Diffusion Models with Transformers" style="max-width:560px"></figure>
+    <div class="col">
+      <table class="tbl big">
+        <tr><td><b>Publicado em</b></td><td>Proceedings of the IEEE/CVF International Conference on Computer Vision (<b>ICCV</b>), 2023, pp. 4195–4205</td></tr>
+        <tr><td><b>Qualis CAPES</b></td><td>A1 (nota máxima)</td></tr>
+        <tr><td><b>Citações</b></td><td>800 (até 26/09/2024)</td></tr>
+        <tr><td><b>Organização</b></td><td>Meta AI, equipe FAIR</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Autores -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>Os autores</h2></header>
+  <div class="grow">
+  <div class="cards c2" style="width:100%">
+    <div class="card2" style="display:flex;flex-direction:column;gap:14px;align-items:center"><img src="img/autor-peebles.webp" alt="Bill Peebles, Research Scientist na OpenAI" style="max-width:520px"><img src="img/cit-peebles.webp" alt="Citações de Bill Peebles" style="max-width:300px"></div>
+    <div class="card2" style="display:flex;flex-direction:column;gap:14px;align-items:center"><img src="img/autor-xie.webp" alt="Saining Xie, Assistant Professor no Courant Institute, NYU" style="max-width:520px"><img src="img/cit-xie.webp" alt="Citações de Saining Xie" style="max-width:300px"></div>
+  </div>
+  <p class="cap">Perfis do Google Scholar no momento da preparação da apresentação (setembro de 2024).</p>
+  </div>
+</section>
+
+<!-- Motivações -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>Principais motivações dos DiTs</h2></header>
+  <div class="grow">
+  <div class="cards c2 icards" style="width:100%">
+    <div class="card2"><img src="img/icon-rede.webp" alt=""><div><b>U-Net</b>Dependência da arquitetura U-Net nos modelos de difusão</div></div>
+    <div class="card2"><img src="img/icon-global.webp" alt=""><div><b>Transformers</b>O sucesso dos Transformers em outras áreas: texto, imagem e sinais</div></div>
+    <div class="card2"><img src="img/icon-gpu.webp" alt=""><div><b>Eficiência</b>Buscar modelos de difusão mais eficientes computacionalmente</div></div>
+    <div class="card2"><img src="img/icon-barreira.webp" alt=""><div><b>Escalabilidade</b>Falta de escalabilidade nos modelos de difusão baseados em U-Net</div></div>
+  </div>
+  </div>
+</section>
+
+<!-- Proposta -->
+<section class="slide">
+  <header class="sh"><span class="kick">Motivação e impacto</span><h2><span class="snum">3</span>Proposta do artigo</h2></header>
+  <div class="grow">
+  <div class="cards c2 qcards" style="width:100%">
+    <div class="card2"><b>1 · Nova classe de modelos</b>Modelos de difusão baseados em <b>Transformers</b>, substituindo a arquitetura U-Net.</div>
+    <div class="card2"><b>2 · Escalabilidade</b>Mostrar que a qualidade das imagens melhora quando o modelo cresce: Transformer mais profundo/largo ou <b>mais tokens</b> de entrada.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Roteiro · seção 4 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 4 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="now"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Proposta da arquitetura -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>A ideia: trocar a U-Net por um Transformer</h2></header>
+  <p class="lead sm"><b>Diffusion Transformers (DiTs, 2023)</b> substituem a U-Net dos modelos de difusão dentro do <b>espaço latente</b>.</p>
+  <div class="grow"><div class="ov-wrap"><img src="img/ldm.webp" alt="Difusão latente com a U-Net substituída por um Transformer" style="max-height:430px"><div class="ov-unet"><div><small>U-Net</small>Transformer</div></div></div></div>
+  <p class="vide"><b>Vide</b> W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
+</section>
+
+<!-- Arquitetura interna -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Arquitetura interna dos DiTs</h2></header>
+  <p class="lead sm">Substituição da U-Net pelo Transformer: o ruído latente é fragmentado, recebe <i>positional encoding</i> e passa por N blocos DiT, condicionados pelo <i>timestep</i> e pelo rótulo.</p>
+  <div class="grow"><img src="img/dit-espaco-latente.webp" alt="Fluxo do DiT no espaço latente" style="max-height:380px"></div>
+  <p class="vide"><b>Vide</b> W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
+</section>
+
+<!-- Patchify -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Fragmentação da imagem: o bloco “fragment or patch”</h2></header>
+  <figure class="fig"><img src="img/patches-imagem.webp" alt="Imagem original e versões fragmentadas com patches cada vez menores" style="max-height:210px"></figure>
+  <div class="patch-row" style="margin-top:14px">
+    <figure class="fig"><img src="img/patches-latente.webp" alt="Latente com ruído de tamanho I×I×C dividido em patches p×p" style="max-height:200px"></figure>
+    <span class="arrow">→</span>
+    <div class="col">
+      <figure class="fig"><img src="img/patches-tokens.webp" alt="Sequência de T tokens, com T = (I/p)²" style="max-height:110px"></figure>
+      <figure class="fig"><img src="img/patches-flatten.webp" alt="Fragmentos achatados com positional embedding" style="max-height:60px"><figcaption>Patch + positional embedding</figcaption></figure>
+    </div>
+  </div>
+  <div class="note" style="margin-bottom:0">Patches menores (p menor) → <b>mais tokens</b>: T = (I/p)². Mais tokens = mais custo, mas também mais detalhe.</div>
+</section>
+
+<!-- Três blocos -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Três variantes do bloco DiT</h2></header>
+  <p class="lead sm">Os autores propõem três variantes: <b>1) adaLN-Zero</b>, <b>2) Cross-Attention</b> e <b>3) In-Context Conditioning</b>, para abordar diferentes aspectos da geração de imagens.</p>
+  <div class="grow"><img src="img/dit-blocos.webp" alt="Transformer de difusão latente e as três variantes de bloco DiT" style="max-height:440px"></div>
+  <p class="vide"><b>Vide</b> W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
+</section>
+
+<!-- adaLN-Zero -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo · bloco 1</span><h2><span class="snum">4</span>Bloco DiT: adaLN-Zero</h2></header>
+  <div class="split blk">
+    <figure class="fig"><img src="img/bloco-adaln.webp" alt="Bloco DiT com adaLN-Zero" style="max-height:540px"></figure>
+    <div class="col">
+      <p class="lead sm" style="margin:0">Adapta dinamicamente a informação condicional e modifica diretamente a <b>camada normalizada</b> da entrada por meio de parâmetros.</p>
+      <ol class="steps">
+        <li><b>Conditioning:</b> recebe informação adicional (<i>timestep</i>, rótulos) que influencia a geração.</li>
+        <li><b>MLP:</b> processa o condicionamento e gera os parâmetros γ, α (escala) e β (deslocamento, <i>shift</i>).</li>
+        <li><b>γ e β:</b> após a normalização, ajustam os tokens normalizados às condições específicas.</li>
+      </ol>
+      <div class="note"><b>adaLN</b> = <i>Adaptive Layer Normalization</i>. “Zero”: os α começam em zero, e cada bloco começa como a identidade.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Cross-Attention -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo · bloco 2</span><h2><span class="snum">4</span>Bloco DiT: Cross-Attention</h2></header>
+  <div class="split blk">
+    <figure class="fig"><img src="img/bloco-cross.webp" alt="Bloco DiT com atenção cruzada" style="max-height:540px"></figure>
+    <div class="col">
+      <p class="lead sm" style="margin:0">O modelo presta atenção não só aos próprios tokens (autoatenção), mas também à informação de <b>condicionamento</b> (atenção cruzada).</p>
+      <ol class="steps">
+        <li><b>Input Tokens e Conditioning:</b> os tokens entram junto com a informação condicional.</li>
+        <li><b>Self-Attention:</b> atenção entre os tokens, capturando relações internas.</li>
+        <li><b>Cross-Attention:</b> os tokens prestam atenção à informação condicional externa (texto, rótulos etc.).</li>
+        <li><b>Feedforward:</b> cada token é transformado de forma independente para melhorar sua representação.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- In-Context -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo · bloco 3</span><h2><span class="snum">4</span>Bloco DiT: In-Context Conditioning</h2></header>
+  <div class="split blk">
+    <figure class="fig"><img src="img/bloco-incontext.webp" alt="Bloco DiT com condicionamento em contexto" style="max-height:540px"></figure>
+    <div class="col">
+      <p class="lead sm" style="margin:0">Mecanismo eficiente: <b>concatena</b> a informação condicional diretamente aos tokens, sem processamento adicional custoso.</p>
+      <ol class="steps">
+        <li><b>Input Tokens e Conditioning:</b> os tokens de entrada são concatenados com a informação condicional na dimensão da sequência.</li>
+        <li><b>Self-Attention:</b> atenção sobre os tokens concatenados, capturando relações entre tokens e condições.</li>
+        <li><b>Feedforward:</b> cada token é transformado individualmente.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- Tamanhos -->
+<section class="slide">
+  <header class="sh"><span class="kick">Arquitetura do modelo</span><h2><span class="snum">4</span>Tamanhos dos DiTs</h2></header>
+  <p class="lead sm">Os autores propõem <b>4 tamanhos</b>: Small (S), Base (B), Large (L) e XLarge (XL).</p>
+  <table class="tbl size">
+    <tr><th>Modelo</th><th>Camadas N</th><th>Dimensão oculta d</th><th>Cabeças de atenção</th><th>Gflops <span style="text-transform:none">(I = 32, p = 4)</span></th></tr>
+    <tr><td><b>DiT-S</b></td><td>12</td><td>384</td><td>6</td><td>1.4</td></tr>
+    <tr><td><b>DiT-B</b></td><td>12</td><td>768</td><td>12</td><td>5.6</td></tr>
+    <tr><td><b>DiT-L</b></td><td>24</td><td>1024</td><td>16</td><td>19.7</td></tr>
+    <tr class="hl" style="background:var(--accent-soft)"><td><b>DiT-XL</b></td><td>28</td><td>1152</td><td>16</td><td>29.1</td></tr>
+  </table>
+  <div class="note">Cada tamanho varia em: 1) número de camadas do Transformer, 2) dimensionalidade dos tokens, 3) número de cabeças de atenção e 4) <b>Gflops</b>: bilhões de operações de ponto flutuante por passada (<i>forward pass</i>) da rede.</div>
+  <p class="vide"><b>Fonte</b> Tabela 1 de W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
+</section>
+
+<!-- Roteiro · seção 5 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 5 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li class="now"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- FID x Gflops -->
+<section class="slide">
+  <header class="sh"><span class="kick">Resultados obtidos</span><h2><span class="snum">5</span>Avaliação: FID × Gflops</h2></header>
+  <div class="split">
+    <figure class="fig"><img src="img/fid-gflops.webp" alt="Gráfico de FID-50K contra Gflops do Transformer, correlação −0,93" style="max-height:470px"><figcaption>Os Gflops do Transformer estão fortemente correlacionados com o FID (correlação −0,93).</figcaption></figure>
+    <div class="col">
+      <div class="eqbox"><div class="eqtitle">Métrica quantitativa: FID (Fréchet Inception Distance) ↓</div>
+        <div class="eqrow"><math display="block"><mrow>
+          <mtext>FID</mtext><mo>=</mo>
+          <msup><mrow><mo>‖</mo><msub><mi>μ</mi><mi>r</mi></msub><mo>−</mo><msub><mi>μ</mi><mi>g</mi></msub><mo>‖</mo></mrow><mn>2</mn></msup>
+          <mo>+</mo><mi>Tr</mi><mo stretchy="false">(</mo><msub><mi>Σ</mi><mi>r</mi></msub><mo>+</mo><msub><mi>Σ</mi><mi>g</mi></msub><mo>−</mo><mn>2</mn>
+          <msup><mrow><mo stretchy="false">(</mo><msub><mi>Σ</mi><mi>r</mi></msub><msub><mi>Σ</mi><mi>g</mi></msub><mo stretchy="false">)</mo></mrow><mrow><mn>1</mn><mo>/</mo><mn>2</mn></mrow></msup>
+          <mo stretchy="false">)</mo></mrow></math></div>
+        <p class="eqread" style="font-size:17px">Mede a qualidade das imagens geradas comparando a distribuição estatística das imagens <b>reais (r)</b> e <b>geradas (g)</b>: médias μ e covariâncias Σ. Quanto menor, melhor.</p>
+      </div>
+      <div class="note"><b>S/8, S/4, S/2…</b> A letra é o tamanho do modelo; o número depois da barra é o <b>tamanho do fragmento p</b>. Patch menor → mais tokens → mais Gflops → FID menor.</div>
+    </div>
+  </div>
+  <p class="vide"><b>Fonte</b> Figura 1 de W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023.</p>
+</section>
+
+<!-- Escalabilidade -->
+<section class="slide">
+  <header class="sh"><span class="kick">Resultados obtidos</span><h2><span class="snum">5</span>Resultados da escalabilidade dos DiTs</h2></header>
+  <div class="grow">
+    <div class="scale-grid">
+      <div class="ax-top">Aumentando o tamanho do Transformer →</div>
+      <div class="ax-left">Diminuindo o tamanho dos fragmentos →</div>
+      <figure class="fig"><img src="img/escalabilidade.webp" alt="Grade de cacatuas geradas: a qualidade melhora com modelos maiores e patches menores" class="photo" style="max-height:520px"></figure>
+    </div>
+  </div>
+</section>
+
+<!-- Conclusões do artigo -->
+<section class="slide">
+  <header class="sh"><span class="kick">Resultados obtidos</span><h2><span class="snum">5</span>Conclusões do artigo</h2></header>
+  <div class="grow" style="align-items:stretch">
+  <ol class="steps" style="font-size:24px">
+    <li>Os Transformers podem <b>substituir efetivamente a U-Net</b> em modelos de difusão.</li>
+    <li>Os DiTs se adaptam bem ao aumento da complexidade do Transformer e à tokenização em <b>fragmentos menores</b>, melhorando os resultados.</li>
+    <li>Os autores propõem que os DiTs se tornem a <b>arquitetura padrão</b> para trabalhos futuros em modelos de difusão.</li>
+  </ol>
+  </div>
+</section>
+
+<!-- Roteiro · seção 6 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 6 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li class="now"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Perguntas filosóficas -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas</span><h2><span class="snum">6</span>Perguntas filosóficas</h2></header>
+  <div class="grow">
+  <div class="cards c3" style="width:100%">
+    <div class="card2"><b>Outras áreas</b>Podemos aplicar os DiTs a outras áreas, como áudio, vídeo e gestos?</div>
+    <div class="card2"><b>Modificações</b>Que modificações ou extensões à arquitetura DiT seriam necessárias para alcançar desempenho comparável ou superior aos métodos existentes nessas áreas?</div>
+    <div class="card2"><b>Condicionamento</b>Qual seria o papel do condicionamento na geração de áudio ou gestos, onde as condições mudam ao longo do tempo? Ex.: tom, estilo, prosódia e ritmo no áudio; postura, expressões e movimentos nos gestos.</div>
+  </div>
+  </div>
+</section>
+
+<!-- DiT-3D -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas · 3D</span><h2><span class="snum">6</span>DiT-3D: geração de formas 3D</h2></header>
+  <p class="lead sm"><b>DiT-3D (2023)</b> aplica os DiTs à geração de formas 3D, usando nuvens de pontos voxelizadas para produzir geometrias detalhadas, com Transformers no lugar da U-Net.</p>
+  <div class="grow"><img src="img/dit3d.webp" alt="Arquitetura do DiT-3D" style="max-height:400px"></div>
+  <p class="vide"><b>Vide</b> S. Mo et al. <i>DiT-3D: Exploring Plain Diffusion Transformers for 3D Shape Generation.</i> NeurIPS 2023.</p>
+</section>
+
+<!-- DiT-3D resultados -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas · 3D</span><h2><span class="snum">6</span>Resultados do DiT-3D</h2></header>
+  <div class="grow"><img src="img/dit3d-resultados.webp" alt="Exemplos de nuvens de pontos 3D geradas pelo DiT-3D" style="max-height:470px"><p class="cap">Exemplos de nuvens de pontos 3D diversas produzidas pelo DiT-3D.</p></div>
+  <p class="vide"><b>Vide</b> S. Mo et al. <i>DiT-3D: Exploring Plain Diffusion Transformers for 3D Shape Generation.</i> NeurIPS 2023.</p>
+</section>
+
+<!-- Pergunta gestos -->
+<section class="slide">
+  <div class="big-q"><span class="kick">Extensão para outras áreas</span><p>E os DiTs para <span style="color:var(--accent)">gestos corporais</span>, como seriam?</p></div>
+</section>
+
+<!-- Gestos corporais -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas · gestos</span><h2><span class="snum">6</span>Gestos corporais: o corpo fala através dos gestos!</h2></header>
+  <div class="split">
+    <div class="col">
+      <div class="card2"><b>O que são gestos corporais?</b>São conjuntos de gestos, expressões faciais, olhares, posturas e outros movimentos, conscientes ou não, sutis ou explícitos, que transmitem informações relevantes num diálogo <b>sem palavras</b>.</div>
+    </div>
+    <figure class="fig"><img src="img/gestos.webp" alt="Ilustração de comunicação não verbal" class="photo" style="max-height:470px"><figcaption>Figura obtida em: pnliafi/comunicacion-no-verbal</figcaption></figure>
+  </div>
+</section>
+
+<!-- Persona-Gestor -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">6</span>DiT para gestos guiados pela fala</h2></header>
+  <div class="split wr">
+    <div class="col"><p class="lead sm" style="margin:0"><b>DiT Gesture Synthesis (2024)</b> gera gestos <b>personalizados</b> a partir da fala, usando inferência automática de características <i>fuzzy</i> para sincronizar os movimentos do corpo com o áudio em tempo real.</p></div>
+    <figure class="fig"><img src="img/persona-gestor.webp" alt="Persona-Gestor: áudio de fala, extrator de características fuzzy e AdaLN Transformer gerando gestos" style="max-height:500px"></figure>
+  </div>
+  <p class="vide"><b>Vide</b> F. Zhang et al. <i>Speech-Driven Personalized Gesture Synthetics: Harnessing Automatic Fuzzy Feature Inference.</i> 2024.</p>
+</section>
+
+<!-- Persona-Gestor arquitetura -->
+<section class="slide">
+  <header class="sh"><span class="kick">Extensão para outras áreas · fala e gestos</span><h2><span class="snum">6</span>Arquitetura do Persona-Gestor</h2></header>
+  <div class="grow"><img src="img/persona-gestor-arq.webp" alt="Esquema geral, extrator de características fuzzy e bloco AdaLN Transformer" style="max-height:500px"></div>
+  <p class="vide"><b>Vide</b> F. Zhang et al. <i>Speech-Driven Personalized Gesture Synthetics: Harnessing Automatic Fuzzy Feature Inference.</i> 2024.</p>
+</section>
+
+<!-- Roteiro · seção 7 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 7 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li class="now"><b>Conclusões</b> — e limitações</li>
+    <li><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Limitações -->
+<section class="slide">
+  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">7</span>Limitações</h2></header>
+  <div class="grow">
+  <div class="cards c2" style="width:100%">
+    <div class="card2"><b>Foco em imagens</b>A maioria das pesquisas com DiTs se concentra na geração de imagens e não se aprofunda em áudio, vídeo e gestos.</div>
+    <div class="card2"><b>Reprodutibilidade</b>Não foram encontrados trabalhos públicos (GitHub) reproduzíveis, ao menos para áudio e gestos.</div>
+    <div class="card2"><b>Tokens</b>A qualidade dos resultados depende em grande parte da escalabilidade dos tokens.</div>
+    <div class="card2"><b>Custo</b>Apesar das melhorias na escalabilidade, os DiTs ainda têm um alto custo computacional.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Conclusões -->
+<section class="slide">
+  <header class="sh"><span class="kick">Conclusões</span><h2><span class="snum">7</span>Conclusões</h2></header>
+  <div class="grow">
+  <div class="cards c3" style="width:100%">
+    <div class="card2"><b>Arquitetura padrão</b>Os DiTs podem se tornar a arquitetura padrão em modelos de difusão, pela adaptabilidade e pelo desempenho em áreas multimodais.</div>
+    <div class="card2"><b>Fala e gesto</b>Têm potencial para capturar relações complexas entre fala e gesto, com grande flexibilidade para dinâmicas complexas.</div>
+    <div class="card2"><b>Oportunidade</b>Há espaço para pesquisa de mestrado e doutorado: ainda existem poucos trabalhos desenvolvidos.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Roteiro · seção 8 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 8 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li class="done"><b>Conclusões</b> — e limitações</li>
+    <li class="now"><b>Trabalhos futuros</b></li>
+    <li><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Trabalhos futuros -->
+<section class="slide">
+  <header class="sh"><span class="kick">Trabalhos futuros</span><h2><span class="snum">8</span>Trabalhos futuros</h2></header>
+  <div class="grow">
+  <div class="cards c3" style="width:100%">
+    <div class="card2"><b>Tempo real</b>Melhorar os tempos de processamento de dados sequenciais e multimodais, como áudio e gestos, para geração em tempo real.</div>
+    <div class="card2"><b>Eficiência</b>Desenvolver versões mais eficientes de DiTs que reduzam o custo computacional, especialmente em aplicações de grande escala.</div>
+    <div class="card2"><b>Novas abordagens</b>Integrar, por exemplo, <b>MoEs</b> (<i>Mixture of Experts</i>) para tarefas específicas ou <b>agentes autônomos</b> para controlar a dinâmica: uma solução mais flexível e adaptável.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Roteiro · seção 9 -->
+<section class="slide">
+  <header class="sh"><span class="kick">Seção 9 de 9</span><h2>Roteiro</h2></header>
+  <ol class="agenda">
+    <li class="done"><b>Problemas em aberto</b> — o que falta nos modelos generativos</li>
+    <li class="done"><b>Revisão da literatura</b> — U-Net, difusão, Transformer, ViT, LDM</li>
+    <li class="done"><b>Motivação e impacto dos DiTs</b> — o artigo, os autores, a proposta</li>
+    <li class="done"><b>Arquitetura do modelo</b> — patches, blocos DiT, tamanhos</li>
+    <li class="done"><b>Resultados obtidos</b> — FID, Gflops e escalabilidade</li>
+    <li class="done"><b>Extensão para outras áreas</b> — 3D, fala e gestos</li>
+    <li class="done"><b>Conclusões</b> — e limitações</li>
+    <li class="done"><b>Trabalhos futuros</b></li>
+    <li class="now"><b>Dificuldades encontradas</b> — na pesquisa</li>
+  </ol>
+</section>
+
+<!-- Dificuldades -->
+<section class="slide">
+  <header class="sh"><span class="kick">Dificuldades encontradas</span><h2><span class="snum">9</span>Dificuldades que encontrei na pesquisa</h2></header>
+  <div class="grow">
+  <div class="cards c2 qcards" style="width:100%">
+    <div class="card2"><b>Rigor</b>Muitos artigos técnicos, com pouco rigor matemático e estatístico, o que dificultou entender a fundo os diferentes modelos.</div>
+    <div class="card2"><b>Material didático</b>Pouco material introdutório (referências, trabalhos, vídeos, blogs) para uma introdução mais simples aos DiTs.</div>
+  </div>
+  </div>
+</section>
+
+<!-- Obrigado -->
+<section class="slide title-slide">
+  <div class="aims-logo" role="img" aria-label="Logo AIMS" style="width:110px;height:110px;border-radius:18px;margin-bottom:8px"></div>
+  <h1>Obrigado!</h1>
+  <p class="t-sub">Perguntas?</p>
+  <p class="t-ref">W. Peebles, S. Xie. <i>Scalable Diffusion Models with Transformers.</i> ICCV 2023, pp. 4195–4205.</p>
+  <p class="t-ref">Projeto: wpeebles.com/DiT · Código: github.com/facebookresearch/DiT</p>
+</section>
+
+<div class="hud"><button type="button" id="hud-prev" aria-label="Anterior">◀</button><span id="hud-n">1 / 1</span><button type="button" id="hud-next" aria-label="Próximo">▶</button></div>
+<script>
+  // ===== Navegação das diapositivas (mesmo motor do deck DiEmo-TTS, sem animações) =====
+  (function () {
+    const MAIN = [...document.querySelectorAll(".slide")];
+    const counter = document.getElementById("hud-n");
+    const bar = document.querySelector(".progress");
+    let idx = 0, current = null;
+    const fit = () => document.documentElement.style.setProperty("--s", Math.min(innerWidth / 1280, innerHeight / 720));
+    function show(n) {
+      n = Math.max(0, Math.min(MAIN.length - 1, n));
+      if (current) current.classList.remove("active");
+      idx = n; current = MAIN[idx];
+      current.classList.add("active");
+      counter.textContent = `${idx + 1} / ${MAIN.length}`;
+      bar.style.width = `${(idx + 1) / MAIN.length * 100}%`;
+      history.replaceState(null, "", "#" + (idx + 1));
+    }
+    const next = () => show(idx + 1);
+    const prev = () => show(idx - 1);
+    document.addEventListener("keydown", e => {
+      const k = e.key;
+      if (k === "ArrowRight" || k === " " || k === "Enter" || k === "PageDown" || k === "ArrowDown") { e.preventDefault(); next(); }
+      else if (k === "ArrowLeft" || k === "Backspace" || k === "PageUp" || k === "ArrowUp") { e.preventDefault(); prev(); }
+      else if (k === "Home") show(0);
+      else if (k === "End") show(MAIN.length - 1);
+      else if (k === "f" || k === "F") { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); }
+    });
+    document.addEventListener("click", e => { const b = e.target.closest("button"); if (b) b.blur(); });
+    document.getElementById("hud-prev").addEventListener("click", prev);
+    document.getElementById("hud-next").addEventListener("click", next);
+    addEventListener("resize", fit);
+    fit();
+    const start = parseInt(location.hash.slice(1), 10);
+    show(Number.isFinite(start) ? start - 1 : 0);
+  })();
+</script>
+</body>
+</html>
