@@ -450,13 +450,13 @@
   .dn2.train .dn-arr { color: var(--emo); }
   .dn2.infer .dn-arr { color: var(--accent); }
   .dn2.infer .dn-arr i { transform: scaleX(-1); }
-  .dn-bottom { flex: 1; min-height: 0; display: grid; grid-template-columns: 372px 1fr; gap: 20px; align-items: start; }
+  .dn-bottom { flex: 1; min-height: 0; display: block; margin-top: 8px; }
   .dn-bottom .live { margin: 0; }
   .dn-bottom .live canvas { width: 372px; height: 200px; display: block; border-radius: 8px; outline: 3px solid var(--accent); outline-offset: 2px; }
   .dn-bottom .live figcaption { display: flex; gap: 8px; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); margin-top: 6px; }
   .dn-bottom .live input { width: 120px; }
   .dn-bottom .live button { font: inherit; font-size: 13px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--accent); background: var(--accent-soft); color: var(--accent); cursor: pointer; }
-  .dn-algo { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 16px; font-size: 17px; line-height: 1.45; }
+  .dn-algo { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 20px; font-size: 19px; line-height: 1.5; }
   .dn-algo b.h { display: block; color: var(--accent); margin-bottom: 2px; }
   .dn-algo ol { margin: 0; padding-left: 22px; }
   .dn-algo code { font-size: .92em; }
@@ -588,8 +588,6 @@
         <figure><canvas width="480" height="258" data-s="1"></canvas><figcaption><b>x<sub>T</sub></b> · ruído puro</figcaption><p class="ans">só ruído</p></figure>
       </div>
       <div class="dn-bottom">
-        <figure class="live"><canvas id="dn-live" width="480" height="258"></canvas>
-          <figcaption><span id="dn-live-lab">ruído: 100%</span> <input type="range" id="dn-slider" min="0" max="100" value="100" aria-label="nível de ruído"> <button type="button" id="dn-anim">▶ Animar</button></figcaption></figure>
         <div class="dn-algo" id="dn-algo"></div>
       </div>
     </div>
@@ -1689,9 +1687,7 @@
       if (!host) return;
       const src = new Image();
       const W = 480, H = 258;
-      let x0 = null, eps = null;
-      const paint = (cv, s) => {
-        if (!x0) return;
+      const paint = (cv, s, x0, eps) => {
         const ctx = cv.getContext("2d"), im = ctx.createImageData(W, H);
         const a = Math.sqrt(1 - s), b = Math.sqrt(s);
         for (let i = 0, j = 0; i < W * H * 4; i += 4, j += 3) {
@@ -1700,78 +1696,46 @@
         }
         ctx.putImageData(im, 0, 0);
       };
-      const cvs = [...host.querySelectorAll("canvas[data-s]")];
-      const live = document.getElementById("dn-live");
-      const slider = document.getElementById("dn-slider");
-      const lab = document.getElementById("dn-live-lab");
-      const btn = document.getElementById("dn-anim");
-      const mode = document.getElementById("dn-mode");
-      const algo = document.getElementById("dn-algo");
-      const arrs = [...host.querySelectorAll(".dn-arr span")];
-      const setLive = s => { slider.value = Math.round(s * 100); lab.textContent = `ruído: ${Math.round(s * 100)}%`; paint(live, s); };
       src.onload = () => {
         const c = document.createElement("canvas"); c.width = W; c.height = H;
         const ctx = c.getContext("2d"); ctx.drawImage(src, 0, 0, W, H);
         const d = ctx.getImageData(0, 0, W, H).data;
-        x0 = new Float32Array(W * H * 3); eps = new Float32Array(W * H * 3);
+        const x0 = new Float32Array(W * H * 3), eps = new Float32Array(W * H * 3);
         let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
         for (let i = 0, j = 0; i < d.length; i += 4, j += 3) for (let k = 0; k < 3; k++) {
           x0[j + k] = d[i + k] / 127.5 - 1;
           eps[j + k] = Math.sqrt(-2 * Math.log(rnd() + 1e-9)) * Math.cos(2 * Math.PI * rnd());
         }
-        cvs.forEach(cv => paint(cv, +cv.dataset.s));
-        setLive(+slider.value / 100);
+        host.querySelectorAll("canvas[data-s]").forEach(cv => paint(cv, +cv.dataset.s, x0, eps));
       };
       src.src = host.dataset.src;
-      // dir: +1 adiciona ruído (treino) · −1 remove ruído (inferência) · 0 parado
-      let dir = 0, cur = 0, tNow = 0, tOff = 0;
-      const run = loop(host, t => {
-        tNow = t;
-        if (!dir) return;
-        const u = Math.min(1, ((t - tOff) % 4.2) / 3.2);
-        setLive(dir > 0 ? u : 1 - u);
-      });
-      slider.addEventListener("input", () => { dir = 0; setLive(+slider.value / 100); });
-      btn.addEventListener("click", () => {
-        if (cur === 1) {
-          dir = 0;
-          const s = .05 + .9 * Math.random();
-          setLive(s);
-          const p = algo.querySelector(".tsort");
-          if (p) p.textContent = `exemplo sorteado: ${Math.round(s * 100)}% de ruído → a rede deve prever o ε usado`;
-          return;
-        }
-        dir = cur === 2 ? -1 : 1; tOff = tNow; run();
-      });
+      const mode = document.getElementById("dn-mode");
+      const algo = document.getElementById("dn-algo");
+      const arrs = [...host.querySelectorAll(".dn-arr span")];
       const MODE = [
-        ['<span class="tr">Treino · processo direto</span>: adiciona ruído gaussiano passo a passo', "train", "+ ruído", 1, "▶ Animar"],
-        ['<span class="tr">Treino · o que a rede aprende</span>: ver xₜ e t, prever o ruído ε', "train", "+ ruído", 0, "Sortear t"],
-        ['<span class="inf">Inferência · processo reverso</span>: parte do ruído; a U-Net remove um pouco a cada passo', "infer", "U-Net", -1, "▶ Animar"],
-        ["O que cada nível de ruído decide", "reveal", "", 0, "▶ Animar"],
+        ['<span class="tr">Treino · processo direto</span>: adiciona ruído gaussiano passo a passo', "train", "+ ruído"],
+        ['<span class="tr">Treino · o que a rede aprende</span>: ver xₜ e t, prever o ruído ε', "train", "+ ruído"],
+        ['<span class="inf">Inferência · processo reverso</span>: parte do ruído; a U-Net remove um pouco a cada passo', "infer", "U-Net"],
+        ["O que cada nível de ruído decide", "reveal", ""],
       ];
       const ALGO = [
         '<b class="h">Processo direto q (fixo, sem rede)</b><ol><li>pegue uma imagem real x₀</li><li>sorteie t e um ruído ε ~ 𝒩(0, I)</li><li>x<sub>t</sub> = √ᾱ<sub>t</sub> · x₀ + √(1 − ᾱ<sub>t</sub>) · ε</li><li>t grande → quase só ruído</li></ol>',
-        '<b class="h">Um passo de treino</b><ol><li>a U-Net recebe (x<sub>t</sub>, t) e prevê ε̂</li><li>perda: ‖ε − ε̂‖²</li><li>repete para milhões de trios (x₀, t, ε)</li></ol><p class="tsort" style="margin:6px 0 0;color:var(--emo);font-weight:700"></p>',
+        '<b class="h">Um passo de treino</b><ol><li>sorteie t e gere x<sub>t</sub> a partir de x₀ e ε</li><li>a U-Net recebe (x<sub>t</sub>, t) e prevê ε̂</li><li>perda: ‖ε − ε̂‖²; repete para milhões de trios (x₀, t, ε)</li></ol>',
         '<b class="h">Geração (processo reverso p<sub>θ</sub>)</b><ol><li>comece de x<sub>T</sub> ~ 𝒩(0, I): ruído puro</li><li>para t = T, …, 1: ε̂ = U-Net(x<sub>t</sub>, t) → x<sub>t−1</sub></li><li>devolva x₀</li></ol>',
         '<b class="h">Alto × baixo ruído</b><ol><li><b>t alto</b>: só as baixas frequências sobrevivem → composição global</li><li><b>t baixo</b>: altas frequências → texturas e detalhes</li><li>o Wan 2.2 (2025) usa um expert para cada faixa</li></ol>',
       ];
       makeStepper("dn", [
         { chip: "Treino: adicionar ruído", text: "<b>Treino, processo direto</b> (<i>forward</i>): pegamos uma imagem real x₀ e adicionamos ruído gaussiano até virar ruído puro x<sub>T</sub>. Esse caminho é <b>fixo</b> (não tem rede) e tem fórmula fechada: dá para pular direto para qualquer t." },
-        { chip: "Treino: prever o ruído", text: "<b>Treino, o que a U-Net aprende</b>: sorteamos t, geramos x<sub>t</sub> e pedimos à rede que <b>adivinhe o ruído ε</b> que foi adicionado. Clique em <b>Sortear t</b>: cada clique é um exemplo de treino." },
-        { chip: "Inferência: remover ruído", text: "<b>Inferência, processo reverso</b> (<i>reverse</i>): começamos do ruído puro e, a cada passo, a U-Net prevê o ruído e removemos uma parte, de t = T até t = 0. É o mesmo caminho, de trás para a frente (aqui ilustrado com a imagem original)." },
-        { chip: "O que cada nível decide", text: "Cada faixa de ruído decide coisas diferentes: <b>t alto</b> (muito ruído) → <b>composição global</b>; <b>t baixo</b> (pouco ruído) → <b>texturas finas</b>. Use o controle para percorrer x<sub>t</sub>." },
+        { chip: "Treino: prever o ruído", text: "<b>Treino, o que a U-Net aprende</b>: sorteamos um t, geramos x<sub>t</sub> e pedimos à rede que <b>adivinhe o ruído ε</b> que foi adicionado. Cada imagem da sequência acima é um possível exemplo de treino." },
+        { chip: "Inferência: remover ruído", text: "<b>Inferência, processo reverso</b> (<i>reverse</i>): começamos do ruído puro e, a cada passo, a U-Net prevê o ruído e removemos uma parte, de t = T até t = 0. É o mesmo caminho, de trás para a frente." },
+        { chip: "O que cada nível decide", text: "Cada faixa de ruído decide coisas diferentes: <b>t alto</b> (muito ruído) → <b>composição global</b>; <b>t baixo</b> (pouco ruído) → <b>texturas finas</b>." },
       ], i => {
-        cur = i;
-        const [m, cls, arrTxt, d, b] = MODE[i];
+        const [m, cls, arrTxt] = MODE[i];
         mode.innerHTML = m;
         host.classList.remove("train", "infer", "reveal");
         host.classList.add(cls);
         arrs.forEach(a => { a.textContent = arrTxt; });
         algo.innerHTML = ALGO[i];
-        btn.textContent = b;
-        dir = d; tOff = tNow;
-        if (d) run();
-        if (i === 3) setLive(.5);
       });
     })();
 
@@ -1947,13 +1911,13 @@
       const hint = g => txt(g, 980, 18, "clique em uma palavra para mudar a consulta", "hint", { "text-anchor": "end" });
       api = makeScene("att", [
         { chip: "Q, K, V", text: "Cada vetor x (embedding + posição) gera três vetores por projeções aprendidas: <b>q</b> (<i>query</i>: o que eu procuro), <b>k</b> (<i>key</i>: o que eu ofereço) e <b>v</b> (<i>value</i>: o conteúdo que passo adiante). Clique em uma palavra para escolher a consulta." },
-        { chip: "Pontuações", text: "A consulta q da palavra escolhida é comparada com a chave k de <b>todas</b> as palavras pelo produto escalar: pontuação<sub>j</sub> = q · k<sub>j</sub> / √d. Pontuação alta = “essa palavra me interessa”." },
-        { chip: "Softmax", text: "<b>Softmax</b> transforma as pontuações em <b>pesos</b> positivos que somam 100%. Para “dormia”, quem mais importa é “gato”: o sujeito, cinco palavras antes. (Valores ilustrativos.)" },
+        { chip: "Pontuações e softmax", text: "A consulta q da palavra escolhida é comparada com a chave k de <b>todas</b> as palavras: pontuação<sub>j</sub> = q · k<sub>j</sub> / √d. Depois, o <b>softmax</b> transforma as pontuações em <b>pesos</b> positivos que somam 100%. Para “dormia”, quem mais importa é “gato”, o sujeito. (Valores ilustrativos.)" },
         { chip: "Soma ponderada", text: "A saída é a <b>média ponderada dos v</b>: z = Σ<sub>j</sub> w<sub>j</sub> · v<sub>j</sub>. A espessura de cada arco é o peso. Agora o vetor de “dormia” carrega a informação de “gato”." },
         { chip: "Todos de uma vez", text: "Isso é feito para <b>todas as consultas ao mesmo tempo</b>: Attention(Q, K, V) = softmax(QKᵀ / √d) · V. Uma linha da matriz por palavra (a destacada é a consulta escolhida). São produtos de matrizes: paralelos na GPU, mas com <b>N²</b> pares." },
         { chip: "RNN × atenção", text: "<b>RNN</b>: lê um token por vez; a informação de “gato” precisa atravessar 5 estados ocultos até “dormia” e vai se apagando (e não dá para paralelizar). <b>Atenção</b>: “dormia” consulta “gato” diretamente, em 1 passo, e todos os tokens são processados em paralelo." },
       ], (g, i) => {
         const svg = g.ownerSVGElement;
+        i = [0, 1, 3, 4, 5][i];
         if (i === 0) {
           tokens(g, q); hint(g);
           W.forEach((_, j) => { strip(g, XS[j] - 33, 346, rot(KC, j), { class: "fade-in", style: `animation-delay:${j * .06}s` }); strip(g, XS[j] - 33, 366, rot(VC, j), { class: "fade-in", style: `animation-delay:${.3 + j * .06}s` }); });
@@ -1962,20 +1926,18 @@
           panel(g, 20, 40, 620, 104, "Três projeções aprendidas de cada vetor x", ["q = x · W_Q    consulta: o que eu procuro?", "k = x · W_K    chave: o que eu ofereço?", "v = x · W_V    valor: o conteúdo que eu passo adiante"]);
         } else if (i === 1) {
           tokens(g, q); hint(g);
-          txt(g, 20, 40, `pontuaçãoⱼ = q(“${W[q]}”) · kⱼ / √d`, "ptitle", { style: "font-size:19px" });
-          line(g, "M20 220 H980", { stroke: "#adb5bd", "stroke-width": 1, "stroke-dasharray": "4 4" });
+          txt(g, 20, 30, `1) pontuaçãoⱼ = q(“${W[q]}”) · kⱼ / √d`, "ptitle", { style: "font-size:17px" });
+          line(g, "M20 112 H980", { stroke: "#adb5bd", "stroke-width": 1, "stroke-dasharray": "4 4" });
           W.forEach((_, j) => {
-            const s = score(q, j), h = Math.abs(s) * 42;
-            el("rect", { x: XS[j] - 22, y: s >= 0 ? 220 - h : 220, width: 44, height: h, rx: 3, fill: s >= 0 ? "#ffa94d" : "#91a7ff", class: s >= 0 ? "grow-y" : "grow-yd", style: `animation-delay:${j * .08}s` }, g);
-            txt(g, XS[j], s >= 0 ? 214 - h : 212, n2(s), "pline", { "text-anchor": "middle", class: "pline fade-in", style: `font-size:15px;fill:#1d1d1f;animation-delay:${.4 + j * .08}s` });
+            const s = score(q, j), h = Math.abs(s) * 30;
+            el("rect", { x: XS[j] - 20, y: s >= 0 ? 112 - h : 112, width: 40, height: h, rx: 3, fill: s >= 0 ? "#ffa94d" : "#91a7ff", class: s >= 0 ? "grow-y" : "grow-yd", style: `animation-delay:${j * .06}s` }, g);
+            txt(g, XS[j], s >= 0 ? 106 - h : 128 + h, n2(s), "pline", { "text-anchor": "middle", class: "pline fade-in", style: `font-size:14px;fill:#1d1d1f;animation-delay:${.3 + j * .06}s` });
           });
-        } else if (i === 2) {
-          tokens(g, q); hint(g);
-          txt(g, 20, 40, "pesos = softmax(pontuações): positivos, somam 100%", "ptitle", { style: "font-size:19px" });
+          txt(g, 20, 190, "2) pesos = softmax(pontuações): positivos, somam 100%", "ptitle", { class: "ptitle fade-in", style: "font-size:17px;animation-delay:.8s" });
           W.forEach((_, j) => {
-            const w = A[q][j], h = w * 300;
-            el("rect", { x: XS[j] - 26, y: 284 - h, width: 52, height: h, rx: 3, fill: "#3b5bdb", "fill-opacity": .25 + w, class: "grow-y", style: `animation-delay:${j * .06}s` }, g);
-            txt(g, XS[j], 278 - h, pct(w), "pline", { "text-anchor": "middle", class: "pline fade-in", style: `font-size:16px;font-weight:700;fill:#1d1d1f;animation-delay:.5s` });
+            const w = A[q][j], h = w * 130;
+            el("rect", { x: XS[j] - 26, y: 286 - h, width: 52, height: h, rx: 3, fill: "#3b5bdb", "fill-opacity": .25 + w, class: "grow-y", style: `animation-delay:${1 + j * .06}s` }, g);
+            txt(g, XS[j], 280 - h, pct(w), "pline", { "text-anchor": "middle", class: "pline fade-in", style: "font-size:15px;font-weight:700;fill:#1d1d1f;animation-delay:1.4s" });
           });
         } else if (i === 3) {
           tokens(g, q); hint(g);
@@ -2141,102 +2103,89 @@
       makeBlock("tfc", comps, ST.map(([chip, add, pnl, hot, flow, text]) => { acc.push(...add); return { chip, on: acc.concat(pnl), hot, flow, text }; }));
     })();
 
-    // ---------- Autoatenção × atenção cruzada ----------
+    // ---------- Autoatenção × atenção cruzada (exemplo da tradução) ----------
     (function () {
-      const SX = [70, 160, 250, 340, 430], SY = 300;
-      const QX = [560, 640, 720, 800, 880], QY = 300, KX = [620, 740, 860], KY = 140, KW = ["um", "gato", "laranja"];
-      const SW = [[.5, .2, .1, .1, .1], [.2, .4, .2, .1, .1], [.1, .25, .3, .25, .1], [.1, .1, .2, .4, .2], [.1, .1, .1, .2, .5]];
-      const XW = [[.6, .3, .1], [.2, .6, .2], [.1, .7, .2], [.1, .3, .6], [.2, .2, .6]];
-      const SUB = "₁₂₃₄₅";
-      let qs = 2, qc = 2, api = null;
-      const tok = (g, x, y, s, k, sel, onClick) => {
+      const SW = ["Eu", "sou", "estudante"], SX = [110, 250, 390], SY = 300;
+      const QW = ["I", "am", "a", "student"], QX = [570, 680, 790, 900], QY = 300;
+      const KX = [600, 740, 880], KY = 150;
+      // pesos ilustrativos (linha = consulta)
+      const SA = [[.6, .3, .1], [.3, .4, .3], [.1, .3, .6]];
+      const XA = [[.8, .1, .1], [.1, .8, .1], [.1, .3, .6], [.05, .1, .85]];
+      let qs = 1, qc = 3, api = null;
+      const tok = (g, x, y, s, k, sel, onClick, w = 100) => {
         const t = el("g", { class: onClick ? "tk" : "" }, g);
-        rbox(t, x - 32, y, 64, 34, k, s, { "stroke-width": sel ? 3 : 1.4, ls: "font-size:16px;font-weight:600" });
+        rbox(t, x - w / 2, y, w, 34, k, s, { "stroke-width": sel ? 3 : 1.4, ls: "font-size:16px;font-weight:600" });
         if (sel) t.querySelector("rect").setAttribute("stroke", "#d9480f");
         if (onClick) t.addEventListener("click", onClick);
       };
-      // diagrama de origem: de onde vêm Q, K e V
+      // de onde vêm Q, K e V
       function source(g, x0, cross) {
-        const qkv = [["Q", x0 + 40, "attn"], ["K", x0 + 150, "ff"], ["V", x0 + 260, "cross"]];
+        const A = { "marker-end": ah(g.ownerSVGElement) };
         if (cross) {
-          rbox(g, x0, 70, 110, 38, "attn", "X (imagem)", { ls: "font-size:15px" });
-          rbox(g, x0 + 150, 70, 150, 38, "cond", "C (texto)", { ls: "font-size:15px" });
-          line(g, `M${x0 + 55} 108 V170`, { "marker-end": ah(g.ownerSVGElement) });
-          line(g, `M${x0 + 225} 108 V134 H${x0 + 150} V170`, { "marker-end": ah(g.ownerSVGElement) });
-          line(g, `M${x0 + 225} 108 V134 H${x0 + 260} V170`, { "marker-end": ah(g.ownerSVGElement) });
+          rbox(g, x0, 60, 130, 48, "attn", "X (decoder)\nI am a student", { ls: "font-size:14.5px" });
+          rbox(g, x0 + 150, 60, 150, 48, "cond", "C (encoder)\nEu sou estudante", { ls: "font-size:14.5px" });
+          line(g, `M${x0 + 40} 108 V170`, A);
+          line(g, `M${x0 + 225} 108 V134 H${x0 + 150} V170`, A);
+          line(g, `M${x0 + 225} 108 V134 H${x0 + 260} V170`, A);
         } else {
-          rbox(g, x0 + 80, 70, 140, 38, "attn", "X (sequência)", { ls: "font-size:15px" });
-          [x0 + 40, x0 + 150, x0 + 260].forEach(x => line(g, `M${x0 + 150} 108 V134 H${x} V170`, { "marker-end": ah(g.ownerSVGElement) }));
+          rbox(g, x0 + 70, 60, 160, 48, "attn", "X\nEu sou estudante", { ls: "font-size:14.5px" });
+          [x0 + 40, x0 + 150, x0 + 260].forEach(x => line(g, `M${x0 + 150} 108 V134 H${x} V170`, A));
         }
-        qkv.forEach(([s, x, k]) => rbox(g, x - 30, 172, 60, 34, k, s));
-        qkv.forEach(([, x]) => line(g, `M${x} 206 V${244}`, { "marker-end": ah(g.ownerSVGElement) }));
+        [["Q", x0 + 40, "attn"], ["K", x0 + 150, "ff"], ["V", x0 + 260, "cross"]].forEach(([s, x, k]) => { rbox(g, x - 30, 172, 60, 34, k, s); line(g, `M${x} 206 V244`, A); });
         rbox(g, x0 + 10, 246, 280, 40, "norm", "softmax(QKᵀ/√d) · V", { ls: "font-size:16px" });
-        line(g, `M${x0 + 150} 286 V318`, { "marker-end": ah(g.ownerSVGElement) });
-        txt(g, x0 + 150, 340, "Z: um vetor por token de X", "pline", { "text-anchor": "middle", style: "font-size:15px;fill:#1d1d1f" });
+        line(g, `M${x0 + 150} 286 V318`, A);
+        txt(g, x0 + 150, 340, "Z: um vetor por palavra de X", "pline", { "text-anchor": "middle", style: "font-size:15px;fill:#1d1d1f" });
       }
       function selfGraph(g) {
         txt(g, 30, 34, "Autoatenção (self-attention)", "ptitle", { style: "font-size:19px" });
         SX.forEach((a, i) => SX.forEach((b, j) => {
           if (j <= i) return;
-          line(g, `M${a} ${SY} Q ${(a + b) / 2} ${SY - 30 - (j - i) * 24} ${b} ${SY}`, { stroke: "#f0a04b", "stroke-width": 1.2, opacity: .35, class: "draw", pathLength: 1 });
+          line(g, `M${a} ${SY} Q ${(a + b) / 2} ${SY - 50 - (j - i) * 40} ${b} ${SY}`, { stroke: "#f0a04b", "stroke-width": 1.2, opacity: .35, class: "draw", pathLength: 1 });
         }));
         SX.forEach((b, j) => {
-          const w = SW[qs][j];
-          if (j === qs) line(g, `M${b - 12} ${SY} C ${b - 34} ${SY - 60} ${b + 34} ${SY - 60} ${b + 12} ${SY}`, { stroke: "#d9480f", "stroke-width": 1 + w * 10, opacity: .8, class: "pulse" });
-          else line(g, `M${b} ${SY} Q ${(SX[qs] + b) / 2} ${SY - 30 - Math.abs(j - qs) * 24} ${SX[qs]} ${SY}`, { stroke: "#d9480f", "stroke-width": 1 + w * 10, opacity: .8, class: "pulse" });
+          const w = SA[qs][j], o = { stroke: "#d9480f", "stroke-width": 1 + w * 12, opacity: .8, class: "pulse" };
+          if (j === qs) line(g, `M${b - 14} ${SY} C ${b - 40} ${SY - 70} ${b + 40} ${SY - 70} ${b + 14} ${SY}`, o);
+          else line(g, `M${b} ${SY} Q ${(SX[qs] + b) / 2} ${SY - 50 - Math.abs(j - qs) * 40} ${SX[qs]} ${SY}`, o);
+          txt(g, j === qs ? b : (SX[qs] + b) / 2, j === qs ? SY - 62 : SY - 32 - Math.abs(j - qs) * 20, Math.round(w * 100) + "%", "pline", { "text-anchor": "middle", style: "font-size:14px;font-weight:700;fill:#1d1d1f" });
         });
-        SX.forEach((x, j) => tok(g, x, SY, `x${SUB[j]}`, "attn", j === qs, () => { qs = j; api.redraw(); }));
+        SX.forEach((x, j) => tok(g, x, SY, SW[j], "attn", j === qs, () => { qs = j; api.redraw(); }, 120));
         txt(g, 30, 372, "Q = X·W_Q    K = X·W_K    V = X·W_V", "pline", { style: "font-size:16px;fill:#1d1d1f" });
-        txt(g, 30, 396, "uma só sequência X (N tokens)", "pline");
+        txt(g, 30, 396, "uma só sequência: “Eu sou estudante” (N = 3)", "pline");
       }
       function crossGraph(g) {
         txt(g, 530, 34, "Atenção cruzada (cross-attention)", "ptitle", { style: "font-size:19px" });
-        txt(g, 530, 122, "K, V: texto (condição C, M = 3 tokens)", "pline", { style: "font-size:14px" });
+        txt(g, 530, 132, "K, V: encoder, “Eu sou estudante” (M = 3)", "pline", { style: "font-size:14px" });
         QX.forEach(a => KX.forEach(b => line(g, `M${b} ${KY + 34} L${a} ${QY}`, { stroke: "#91a7ff", "stroke-width": 1, opacity: .45, class: "draw", pathLength: 1 })));
-        KX.forEach((b, j) => line(g, `M${b} ${KY + 34} L${QX[qc]} ${QY}`, { stroke: "#d9480f", "stroke-width": 1 + XW[qc][j] * 10, opacity: .8, class: "pulse" }));
-        KX.forEach((x, j) => tok(g, x, KY, KW[j], "cond", false));
-        QX.forEach((x, j) => tok(g, x, QY, `p${SUB[j]}`, "attn", j === qc, () => { qc = j; api.redraw(); }));
-        txt(g, 530, 362, "Q: patches da imagem (X, N = 5 tokens)", "pline", { style: "font-size:14px" });
+        KX.forEach((b, j) => line(g, `M${b} ${KY + 34} L${QX[qc]} ${QY}`, { stroke: "#d9480f", "stroke-width": 1 + XA[qc][j] * 10, opacity: .8, class: "pulse" }));
+        KX.forEach((x, j) => tok(g, x, KY, SW[j], "cond", false, null, 120));
+        QX.forEach((x, j) => tok(g, x, QY, QW[j], "attn", j === qc, () => { qc = j; api.redraw(); }, 96));
+        txt(g, 530, 362, "Q: decoder, “I am a student” (N = 4)", "pline", { style: "font-size:14px" });
         txt(g, 530, 386, "Q = X·W_Q    K = C·W_K    V = C·W_V", "pline", { style: "font-size:16px;fill:#1d1d1f" });
       }
       function matrix(g, x0, y0, M, rows, cols, title, notes) {
-        const s = 44;
-        txt(g, x0 - 50, 40, title, "ptitle", { style: "font-size:19px" });
+        const s = 46;
+        txt(g, x0 - 70, 40, title, "ptitle", { style: "font-size:19px" });
         M.forEach((row, r) => {
-          txt(g, x0 - 8, y0 + r * s + 27, rows[r], "pline", { "text-anchor": "end", style: "font-size:15px" });
+          txt(g, x0 - 8, y0 + r * s + 28, rows[r], "pline", { "text-anchor": "end", style: "font-size:15px;fill:#1d1d1f" });
           row.forEach((v, c) => {
             el("rect", { x: x0 + c * s, y: y0 + r * s, width: s - 3, height: s - 3, rx: 4, fill: "#3b5bdb", "fill-opacity": .08 + v * 1.1, class: "fade-in", style: `animation-delay:${r * .1}s` }, g);
-            txt(g, x0 + c * s + 20, y0 + r * s + 26, Math.round(v * 100) + "%", "pline", { "text-anchor": "middle", style: `font-size:12px;fill:${v > .35 ? "#fff" : "#1d1d1f"}` });
+            txt(g, x0 + c * s + 21, y0 + r * s + 27, Math.round(v * 100) + "%", "pline", { "text-anchor": "middle", style: `font-size:12.5px;fill:${v > .35 ? "#fff" : "#1d1d1f"}` });
           });
         });
-        cols.forEach((c, k) => txt(g, x0 + k * s + 20, y0 - 8, c, "pline", { "text-anchor": "middle", style: "font-size:14px" }));
-        notes.forEach((s2, k) => txt(g, x0 - 50, y0 + M.length * s + 28 + k * 24, s2, "pline", { style: "font-size:16px;fill:#1d1d1f" }));
+        cols.forEach((c, k) => txt(g, x0 + k * s + 21, y0 - 8, c, "pline", { "text-anchor": "middle", style: "font-size:14px;fill:#1d1d1f" }));
+        notes.forEach((s2, k) => txt(g, x0 - 70, y0 + M.length * s + 30 + k * 24, s2, "pline", { style: "font-size:16px;fill:#1d1d1f" }));
       }
       api = makeScene("sxc", [
-        { chip: "Autoatenção", text: "<b>Autoatenção</b>: Q, K e V são projeções da <b>mesma</b> sequência X. Cada token se compara com todos os outros da própria sequência (clique em um token). Serve para as <b>relações internas</b>: palavras de uma frase, patches de uma imagem, quadros de um gesto." },
-        { chip: "Atenção cruzada", text: "<b>Atenção cruzada</b>: Q vem de uma sequência (ex.: os patches da imagem) e K, V de <b>outra</b> (ex.: o texto “um gato laranja”). Cada patch pergunta ao texto o que deve conter. É assim que uma <b>condição externa</b> entra no modelo." },
-        { chip: "Formas das matrizes", text: "Na autoatenção a matriz de pesos é <b>N × N</b>; na cruzada é <b>N × M</b> (N consultas, M chaves). Nos dois casos sai <b>um vetor por consulta</b>: X mantém seu tamanho e, na cruzada, recebe informação de C." },
-        { chip: "Onde aparece cada uma", text: "Onde aparece cada uma. Repare no DiT: a variante <b>adaLN-Zero</b> (a melhor do artigo) <b>não usa</b> atenção cruzada; a condição entra pela normalização. Já o Flow-DiT da UNICAMP usa as duas." },
+        { chip: "Autoatenção", text: "<b>Autoatenção</b>: Q, K e V são projeções da <b>mesma</b> sequência, “Eu sou estudante”. Cada palavra se compara com as outras da própria frase (clique em uma palavra). Serve para as <b>relações internas</b> da sequência." },
+        { chip: "Atenção cruzada", text: "<b>Atenção cruzada</b>, na tradução: Q vem do <b>decoder</b> (“I am a student”) e K, V vêm do <b>encoder</b> (“Eu sou estudante”). Cada palavra em inglês consulta a frase em português: “student” olha sobretudo para “estudante” (clique em uma palavra)." },
+        { chip: "Formas das matrizes", text: "Na autoatenção a matriz de pesos é <b>N × N</b> (3 × 3); na cruzada é <b>N × M</b> (4 × 3: 4 consultas do decoder, 3 chaves do encoder). Nos dois casos sai <b>um vetor por consulta</b>. (Pesos ilustrativos.)" },
       ], (g, i) => {
-        if (i === 0) { selfGraph(g); source(g, 600, false); txt(g, 980, 18, "clique em um token", "hint", { "text-anchor": "end" }); }
-        else if (i === 1) { source(g, 60, true); crossGraph(g); txt(g, 980, 18, "clique em um patch", "hint", { "text-anchor": "end" }); }
-        else if (i === 2) {
-          const xs = ["x₁", "x₂", "x₃", "x₄", "x₅"];
-          matrix(g, 120, 70, SW, xs, xs, "Autoatenção: N × N", ["saída: N vetores", "custo ∝ N²"]);
+        if (i === 0) { selfGraph(g); source(g, 600, false); txt(g, 980, 404, "clique em uma palavra", "hint", { "text-anchor": "end" }); }
+        else if (i === 1) { source(g, 60, true); crossGraph(g); txt(g, 980, 404, "clique em uma palavra", "hint", { "text-anchor": "end" }); }
+        else {
+          matrix(g, 160, 74, SA, SW, ["Eu", "sou", "estud."], "Autoatenção: N × N", ["saída: 3 vetores", "custo ∝ N²"]);
           line(g, "M500 30 V390", { stroke: "#dee2e6", "stroke-width": 1.5 });
-          matrix(g, 680, 70, XW, ["p₁", "p₂", "p₃", "p₄", "p₅"], ["um", "gato", "lar."], "Atenção cruzada: N × M", ["saída: N vetores (um por consulta)", "custo ∝ N · M"]);
-        } else {
-          txt(g, 30, 40, "Modelo", "ptitle"); txt(g, 560, 40, "Autoatenção", "ptitle"); txt(g, 740, 40, "Atenção cruzada", "ptitle");
-          [["Encoder do Transformer, BERT, ViT", "✓", "–"], ["Decoder do Transformer (tradução)", "✓ mascarada", "✓ Q decoder · K, V encoder"],
-            ["GPT, LLaMA (só decoder)", "✓ mascarada", "–"], ["U-Net do LDM (Stable Diffusion)", "✓", "✓ com o texto"],
-            ["DiT adaLN-Zero", "✓", "– (condição via adaLN)"], ["DiT Cross-Attention", "✓", "✓ com t e y"],
-            ["Flow-DiT UNICAMP (gestos)", "✓", "✓ fala e texto (Perceiver)"]].forEach(([a, b, c], k) => {
-            const y = 56 + k * 48;
-            el("rect", { x: 20, y, width: 960, height: 42, rx: 8, fill: k % 2 ? "#fff" : "#f8f9fa", stroke: "#e9ecef", class: "fade-in", style: `animation-delay:${k * .08}s` }, g);
-            txt(g, 34, y + 27, a, "pline", { style: "font-size:16.5px;fill:#1d1d1f;font-weight:600" });
-            txt(g, 560, y + 27, b, "pline", { style: `font-size:16px;fill:${b.startsWith("✓") ? "#2b8a3e" : "#868e96"}` });
-            txt(g, 740, y + 27, c, "pline", { style: `font-size:16px;fill:${c.startsWith("✓") ? "#2b8a3e" : "#868e96"}` });
-          });
+          matrix(g, 700, 74, XA, QW, ["Eu", "sou", "estud."], "Atenção cruzada: N × M", ["saída: 4 vetores (um por consulta)", "custo ∝ N · M"]);
         }
       });
     })();
@@ -2245,10 +2194,9 @@
     (function () {
       const MODES = [
         { m: "full", map: "(x₁…ₙ, y₁…ₜ) → yₜ₊₁", ex: [["Transformer original (2017)", "tradução automática"], ["T5, BART", "resumo, tradução, perguntas"], ["Whisper", "fala → texto"]] },
-        { m: "enc", map: "x₁…ₙ → h₁…ₙ  (ou ŷ)", ex: [["BERT", "classificação, sentimento, busca"], ["ViT", "classificação de imagens"], ["DiT", "patches com ruído → ruído previsto"]] },
+        { m: "enc", map: "x₁…ₙ → h₁…ₙ  (ou ŷ)", ex: [["BERT", "classificação, sentimento, busca"], ["ViT", "classificação de imagens"], ["CLIP (encoder de texto)", "texto → vetor para busca e geração"]] },
         { m: "dec", map: "x₁…ₜ → xₜ₊₁  (repete)", ex: [["GPT, LLaMA, Qwen", "geração de texto e chat"], ["modelos de código", "completar programas"], ["modelos de áudio e movimento", "autorregressivos, token a token"]] },
         { m: "sum" },
-        { m: "dit", map: "(xₜ, t, y) → ε̂", ex: [["sem máscara", "todos os patches se veem"], ["condição t, y", "entra por adaLN, sem decoder"], ["geração", "todos os tokens a cada passo"]] },
       ];
       function mask(g, x, y, s, causal, title, caps) {
         txt(g, x, y - 10, title, "pline", { style: "font-size:14px;fill:#1d1d1f;font-weight:700" });
@@ -2258,49 +2206,67 @@
           el("rect", { x: x + c * s, y: y + r * s, width: s - 2, height: s - 2, rx: 3, fill: ok ? "#3b5bdb" : "#e9ecef", "fill-opacity": ok ? .75 : 1, class: "fade-in", style: `animation-delay:${(r + c) * .05}s` }, g);
         }
       }
+      // arquitetura completa (Vaswani et al., Figura 1), com as partes apagadas conforme o modo
       function arch(g, m) {
         const svg = g.ownerSVGElement, A = { "marker-end": ah(svg) };
-        const encOp = m === "dec" ? .13 : 1, decOp = m === "enc" || m === "dit" ? .13 : 1, xOp = m === "full" ? 1 : .13;
+        const encOp = m === "dec" ? .13 : 1, decOp = m === "enc" ? .13 : 1, xOp = m === "full" ? 1 : .13;
+        const F = "font-size:14px", R = Object.assign({ stroke: "#868e96", "stroke-width": 1.4 }, A);
+        const pe = (gg, cx, cy) => {
+          el("circle", { cx, cy, r: 10, fill: "#fff", stroke: "#495057", "stroke-width": 1.8 }, gg);
+          label(gg, cx, cy - 1, "+", { style: "font-size:17px;font-weight:700" });
+          line(gg, `M${cx - 62} ${cy} q 5 -9 10 0 t 10 0 t 10 0`, { stroke: "#4c6ef5", "stroke-width": 1.8 });
+          line(gg, `M${cx - 28} ${cy} H${cx - 13}`, A);
+        };
         const gE = el("g", { opacity: encOp, class: "fade-in" }, g);
-        txt(gE, 120, 404, m === "dit" ? "patches com ruído + (t, y)" : "entrada x₁ … xₙ", "pline", { "text-anchor": "middle", style: "font-size:14.5px;fill:#1d1d1f" });
-        line(gE, "M120 390 V375", A); rbox(gE, 35, 340, 170, 32, "tok", "Embedding + posição", { ls: "font-size:15px" });
-        line(gE, "M120 340 V315", A); rbox(gE, 35, 270, 170, 42, "attn", m === "dit" ? "Autoatenção\n+ adaLN(t, y)" : "Autoatenção\nbidirecional", { ls: "font-size:15px" });
-        line(gE, "M120 270 V259", A); rbox(gE, 35, 224, 170, 34, "ff", "Feed-forward", { ls: "font-size:15px" });
-        el("rect", { x: 25, y: 214, width: 190, height: 108, rx: 10, fill: "none", stroke: "#868e96", "stroke-dasharray": "5 4" }, gE);
-        txt(gE, 222, 274, "N×", "ptitle", { style: "font-size:16px" });
-        line(gE, "M120 224 V198", A);
-        txt(gE, 120, 188, m === "dit" ? "ε̂: um vetor por patch" : "h₁ … hₙ: um vetor por token", "pline", { "text-anchor": "middle", style: `font-size:14.5px;${m === "enc" || m === "dit" ? "fill:#d9480f;font-weight:700" : "fill:#1d1d1f"}` });
+        txt(gE, 120, 410, "entrada x₁ … xₙ", "pline", { "text-anchor": "middle", style: "font-size:14.5px;fill:#1d1d1f" });
+        line(gE, "M120 397 V385", A); rbox(gE, 30, 356, 180, 26, "tok", "Input Embedding", { ls: F });
+        line(gE, "M120 356 V351", A); pe(gE, 120, 340);
+        line(gE, "M120 330 V319", A); rbox(gE, 30, 284, 180, 32, "attn", "Multi-Head Attention", { ls: F });
+        line(gE, "M120 284 V277", A); rbox(gE, 30, 254, 180, 20, "norm", "Add & Norm", { ls: "font-size:13px" });
+        line(gE, "M120 254 V247", A); rbox(gE, 30, 214, 180, 30, "ff", "Feed Forward", { ls: F });
+        line(gE, "M120 214 V207", A); rbox(gE, 30, 184, 180, 20, "norm", "Add & Norm", { ls: "font-size:13px" });
+        line(gE, "M120 324 H20 V264 H27", R); line(gE, "M120 250 H20 V194 H27", R);
+        el("rect", { x: 12, y: 176, width: 206, height: 152, rx: 10, fill: "none", stroke: "#868e96", "stroke-dasharray": "5 4" }, gE);
+        txt(gE, 228, 300, "N×", "ptitle", { style: "font-size:15px" });
+        line(gE, "M120 184 V168", A);
+        txt(gE, 120, 158, "h₁ … hₙ: um vetor por token", "pline", { "text-anchor": "middle", style: `font-size:14.5px;${m === "enc" ? "fill:#d9480f;font-weight:700" : "fill:#1d1d1f"}` });
         const gD = el("g", { opacity: decOp, class: "fade-in" }, g);
-        txt(gD, 350, 404, "y₁ … yₜ (já gerados)", "pline", { "text-anchor": "middle", style: "font-size:14.5px;fill:#1d1d1f" });
-        line(gD, "M350 390 V375", A); rbox(gD, 260, 340, 180, 32, "tok", "Embedding + posição", { ls: "font-size:15px" });
-        line(gD, "M350 340 V328", A); rbox(gD, 260, 286, 180, 40, "attn", "Autoatenção\nmascarada", { ls: "font-size:15px" });
-        line(gD, "M350 286 V276", A);
-        line(gD, "M350 234 V228", A); rbox(gD, 260, 194, 180, 32, "ff", "Feed-forward", { ls: "font-size:15px" });
-        line(gD, "M350 194 V178", A); rbox(gD, 260, 146, 180, 30, "norm", "Linear + Softmax", { ls: "font-size:15px" });
-        line(gD, "M350 146 V132", A);
-        txt(gD, 350, 122, "yₜ₊₁ (próximo token)", "pline", { "text-anchor": "middle", style: `font-size:14.5px;${m === "dec" ? "fill:#d9480f;font-weight:700" : "fill:#1d1d1f"}` });
-        el("rect", { x: 250, y: 184, width: 200, height: 150, rx: 10, fill: "none", stroke: "#868e96", "stroke-dasharray": "5 4" }, gD);
+        txt(gD, 350, 410, "y₁ … yₜ (já gerados)", "pline", { "text-anchor": "middle", style: "font-size:14.5px;fill:#1d1d1f" });
+        line(gD, "M350 397 V385", A); rbox(gD, 260, 356, 180, 26, "tok", "Output Embedding", { ls: F });
+        line(gD, "M350 356 V351", A); pe(gD, 350, 340);
+        line(gD, "M350 330 V321", A); rbox(gD, 260, 290, 180, 28, "attn", "Masked Multi-Head Att.", { ls: F });
+        line(gD, "M350 290 V283", A); rbox(gD, 260, 264, 180, 18, "norm", "Add & Norm", { ls: "font-size:13px" });
+        line(gD, "M350 264 V257", A);
+        line(gD, "M350 226 V219", A); rbox(gD, 260, 200, 180, 18, "norm", "Add & Norm", { ls: "font-size:13px" });
+        line(gD, "M350 200 V193", A); rbox(gD, 260, 166, 180, 26, "ff", "Feed Forward", { ls: F });
+        line(gD, "M350 166 V159", A); rbox(gD, 260, 140, 180, 18, "norm", "Add & Norm", { ls: "font-size:13px" });
+        line(gD, "M350 324 H448 V273 H443", R); line(gD, "M350 260 H448 V209 H443", R); line(gD, "M350 196 H448 V149 H443", R);
+        el("rect", { x: 252, y: 132, width: 204, height: 196, rx: 10, fill: "none", stroke: "#868e96", "stroke-dasharray": "5 4" }, gD);
+        txt(gD, 236, 145, "N×", "ptitle", { style: "font-size:15px" });
+        line(gD, "M350 140 V129", A); rbox(gD, 260, 106, 180, 22, "norm", "Linear", { ls: F });
+        line(gD, "M350 106 V99", A); rbox(gD, 260, 76, 180, 22, "norm", "Softmax", { ls: F });
+        line(gD, "M350 76 V62", A);
+        txt(gD, 350, 52, "yₜ₊₁ (próximo token)", "pline", { "text-anchor": "middle", style: `font-size:14.5px;${m === "dec" ? "fill:#d9480f;font-weight:700" : "fill:#1d1d1f"}` });
         if (m === "full" || m === "dec") {
-          line(gD, "M440 117 H466 V404 H446", { "stroke-dasharray": "5 4", "marker-end": ah(svg), class: "pulse" });
-          txt(gD, 478, 262, "autorregressivo", "pline", { transform: "rotate(-90 478 262)", "text-anchor": "middle", style: "font-size:13px" });
+          line(gD, "M432 47 H474 V406 H436", { "stroke-dasharray": "5 4", "marker-end": ah(svg), class: "pulse" });
+          txt(gD, 487, 230, "autorregressivo", "pline", { transform: "rotate(-90 487 230)", "text-anchor": "middle", style: "font-size:13px" });
         }
         const gX = el("g", { opacity: decOp === 1 ? xOp : .13, class: "fade-in" }, g);
-        rbox(gX, 260, 236, 180, 38, "cross", "Atenção cruzada", { ls: "font-size:15px" });
-        line(gX, "M215 245 H236 V255 H257", Object.assign({ stroke: "#e8787a", "stroke-width": 2.2 }, A, m === "full" ? { class: "pulse" } : {}));
-        txt(gX, 226, 238, "K, V", "glab", { style: "font-size:14px" });
+        rbox(gX, 260, 226, 180, 28, "cross", "Multi-Head Att. (cruzada)", { ls: F });
+        line(gX, "M218 194 H238 V240 H257", Object.assign({ stroke: "#e8787a", "stroke-width": 2.2 }, A, m === "full" ? { class: "pulse" } : {}));
+        txt(gX, 222, 228, "K, V", "glab", { style: "font-size:13px" });
       }
       makeScene("tfm", [
         { chip: "Encoder-decoder", text: "<b>Encoder-decoder</b> (Transformer original): o encoder lê a entrada inteira; o decoder gera a saída token a token e consulta o encoder pela <b>atenção cruzada</b>. Use quando é preciso <b>transformar uma sequência em outra</b>." },
         { chip: "Só encoder", text: "<b>Só encoder</b>: sem decoder e sem atenção cruzada. A atenção é <b>bidirecional</b> (todos veem todos) e sai <b>um vetor por token</b>. Use quando é preciso <b>entender ou representar</b> a entrada: classificar, buscar ou prever algo para cada token." },
-        { chip: "Só decoder", text: "<b>Só decoder</b>: sem encoder; a autoatenção é <b>causal</b> (cada token só vê o passado) e a saída volta como entrada: geração <b>autorregressiva</b>. Use para <b>gerar</b> sequências, como nos LLMs." },
+        { chip: "Só decoder", text: "<b>Só decoder</b>: sem encoder e sem atenção cruzada; a autoatenção é <b>causal</b> (cada token só vê o passado) e a saída volta como entrada: geração <b>autorregressiva</b>. Use para <b>gerar</b> sequências, como nos LLMs." },
         { chip: "Resumo", text: "Resumo das três configurações: a <b>máscara</b> e a presença da <b>atenção cruzada</b> definem o que cada uma consegue fazer." },
-        { chip: "E o DiT?", text: "O <b>DiT é “só encoder”</b>: entram T patches com ruído e saem T vetores (o ruído previsto), sem máscara causal. Ele não gera token a token: refina <b>todos os tokens juntos</b>, a cada passo de difusão. A condição (t, y) entra por adaLN." },
       ], (g, i) => {
         const M = MODES[i];
         if (M.m === "sum") {
           const H = ["Configuração", "Máscara", "Mapeamento", "Use quando é preciso…", "Exemplos"], XC = [30, 225, 400, 610, 830];
           H.forEach((h, k) => txt(g, XC[k], 52, h, "ptitle"));
-          [["Só encoder", ["bidirecional"], ["x₁…ₙ → h₁…ₙ", "(ou ŷ)"], ["entender ou representar", "a entrada inteira"], ["BERT, ViT,", "DiT"], "#3b5bdb"],
+          [["Só encoder", ["bidirecional"], ["x₁…ₙ → h₁…ₙ", "(ou ŷ)"], ["entender ou representar", "a entrada inteira"], ["BERT, ViT,", "CLIP"], "#3b5bdb"],
             ["Só decoder", ["causal"], ["x₁…ₜ → xₜ₊₁"], ["gerar uma sequência", "token a token"], ["GPT, LLaMA,", "Qwen"], "#d9480f"],
             ["Encoder-decoder", ["bidirecional + causal", "+ atenção cruzada"], ["(x, y₁…ₜ) → yₜ₊₁"], ["transformar uma", "sequência em outra"], ["tradução, T5,", "Whisper"], "#2b8a3e"]].forEach(([a, b, c, d, e, col], k) => {
             const y = 76 + k * 104;
@@ -2312,13 +2278,13 @@
           return;
         }
         arch(g, M.m);
-        txt(g, 505, 40, "Máscara de atenção", "ptitle");
-        if (M.m === "full") { mask(g, 505, 84, 18, false, "encoder", ["completa"]); mask(g, 608, 84, 18, true, "decoder", ["causal"]); }
-        else mask(g, 505, 84, 28, M.m === "dec", M.m === "dec" ? "causal" : "bidirecional", M.m === "dec" ? ["cada token só", "vê o passado"] : ["todos veem todos"]);
-        txt(g, 505, 300, "Mapeamento", "ptitle");
-        txt(g, 505, 334, M.map, "", { class: "fade-in", style: "font-size:21px;font-weight:700;fill:#1d1d1f" });
+        txt(g, 512, 40, "Máscara de atenção", "ptitle");
+        if (M.m === "full") { mask(g, 512, 84, 18, false, "encoder", ["completa"]); mask(g, 612, 84, 18, true, "decoder", ["causal"]); }
+        else mask(g, 512, 84, 28, M.m === "dec", M.m === "dec" ? "causal" : "bidirecional", M.m === "dec" ? ["cada token só", "vê o passado"] : ["todos veem todos"]);
+        txt(g, 512, 300, "Mapeamento", "ptitle");
+        txt(g, 512, 334, M.map, "", { class: "fade-in", style: "font-size:20px;font-weight:700;fill:#1d1d1f" });
         el("rect", { x: 712, y: 24, width: 276, height: 380, rx: 12, fill: "#fff", stroke: "#dee2e6" }, g);
-        txt(g, 730, 54, M.m === "dit" ? "No DiT" : "Exemplos", "ptitle");
+        txt(g, 730, 54, "Exemplos", "ptitle");
         M.ex.forEach(([a, b], k) => {
           const gg = el("g", { class: "fade-in", style: `animation-delay:${.2 + k * .15}s` }, g);
           txt(gg, 730, 98 + k * 76, a, "pline", { style: "font-size:17px;font-weight:700;fill:#1d1d1f" });
@@ -2361,7 +2327,6 @@
         { chip: "Posição + [class]", text: "Soma-se o <b>embedding de posição</b> (de qual lugar veio o patch) e coloca-se no início um token aprendível <b>[class]</b> (posição 0)." },
         { chip: "Encoder", text: "<b>Transformer Encoder</b>: L blocos de Norm → Multi-Head Attention → ⊕ → Norm → MLP → ⊕ (residuais). Atenção <b>bidirecional</b> entre todos os tokens; <b>não há decoder</b>." },
         { chip: "MLP Head", text: "Só a saída do token <b>[class]</b> vai para a <b>MLP Head</b>, que dá a classe da imagem. As outras saídas são descartadas." },
-        { chip: "ViT → DiT", text: "O DiT herda <b>patchify + posição + encoder</b> do ViT. Muda o fim: não há [class]; <b>todos os tokens</b> voltam a ser patches (Linear + Reshape) com o ruído previsto, e a condição (t, y) entra por adaLN." },
       ], (g, i) => {
         const A = { "marker-end": ah(svg) };
         for (let k = 0; k < N; k++) {
@@ -2563,11 +2528,11 @@
       const NC = 90, NR = 30, MX = 520, MY = 92, CWd = 5, RH = 7;
       const rowVal = (r, tau) => {
         const [a1, a2] = ang(tau);
-        if (r < 2) return .35 * Math.sin(.5 * tau + r);                 // translação da pelve
-        if (r < 4) return .3 * Math.sin(.7 * tau + r);                  // pelve
-        if (r === 6) return Math.cos(a1); if (r === 7) return Math.sin(a1);   // ombro (6D)
-        if (r === 8) return Math.cos(a2); if (r === 9) return Math.sin(a2);   // cotovelo (6D)
-        if (r < 16) return .3 * Math.sin(1.1 * tau + r * .9);           // resto do corpo
+        if (r < 3) return .35 * Math.sin(.5 * tau + r);                 // translação da pelve (X, Y, Z)
+        if (r < 6) return .3 * Math.sin(.7 * tau + r);                  // pelve
+        if (r === 8) return Math.cos(a1); if (r === 9) return Math.sin(a1);   // ombro (6D)
+        if (r === 10) return Math.cos(a2); if (r === 11) return Math.sin(a2); // cotovelo (6D)
+        if (r < 18) return .3 * Math.sin(1.1 * tau + r * .9);           // resto do corpo
         return .55 * Math.sin((2.5 + (r % 5) * .6) * tau + r);          // dedos
       };
       const fillCol = kk => { const c = kk % NC, tau = kk / 30; cols[c].forEach((rc, r) => rc.setAttribute("fill", vcol(rowVal(r, tau)))); return c; };
@@ -2609,12 +2574,13 @@
         { t: "raw", id: "vvec", draw: g => {
           txt(g, 440, 80, "Vetor de pose de um quadro: xₜ ∈ ℝ³¹⁵", "ptitle");
           let x = 440;
-          [["τ 3", 3, "#adb5bd"], ["pelve 6", 6, "#ffa94d"], ["corpo 21×6 = 126", 126, "#4dabf7"], ["mãos 30×6 = 180", 180, "#69db7c"]].forEach(([n, v, c], i) => {
-            const w = Math.max(14, v * 1.6); el("rect", { x, y: 96, width: w - 2, height: 40, fill: c, rx: 3 }, g);
-            txt(g, x + 2, 156 + (i % 2) * 20, n, "pline", { style: "font-size:14px;fill:#1d1d1f" }); x += w;
+          [["translação\nX, Y, Z: 3", 3, "#ced4da", 84], ["pelve\n1 × 6 = 6", 6, "#ffa94d", 76], ["corpo\n21 × 6 = 126", 126, "#4dabf7", 0], ["mãos\n30 × 6 = 180", 180, "#69db7c", 0]].forEach(([n, v, c, mw]) => {
+            const w = mw || v * 1.3; el("rect", { x, y: 94, width: w - 3, height: 50, fill: c, rx: 4 }, g);
+            label(g, x + (w - 3) / 2, 119, n, { style: "font-size:13.5px;font-weight:600" }); x += w;
           });
+          txt(g, 440, 176, "um único vetor de 315 números por quadro", "pline", { style: "font-size:14px" });
           txt(g, 440, 214, "cada junta = rotação relativa à junta-pai, em 6D (contínua)", "pline", { style: "font-size:16px;fill:#1d1d1f" });
-          txt(g, 440, 238, "52 juntas × 6 = 312  +  3 de translação da pelve = 315", "pline", { style: "font-size:16px;fill:#1d1d1f;font-weight:700" });
+          txt(g, 440, 238, "52 juntas × 6 = 312  +  translação da pelve X, Y, Z (3) = 315", "pline", { style: "font-size:16px;fill:#1d1d1f;font-weight:700" });
           txt(g, 440, 280, "ex.: cotovelo → 6 números = as 2 primeiras colunas da matriz de rotação", "pline", { style: "font-size:14.5px" });
           six = vecRow(g, 440, 292, [1, 0, 0, 0, 1, 0], { w: 44, h: 30 });
           txt(g, 440 + 6 * 44 + 10, 312, "← mudam com o braço", "pline", { style: "font-size:14px;fill:#d9480f" });
@@ -2623,7 +2589,7 @@
           txt(g, 440, 70, "X ∈ ℝᵀˣ³¹⁵: um quadro por coluna, 30 por segundo", "ptitle");
           for (let c = 0; c < NC; c++) { cols.push([]); for (let r = 0; r < NR; r++) cols[c].push(el("rect", { x: MX + c * CWd, y: MY + r * RH, width: CWd, height: RH, fill: "#f1f3f5" }, g)); }
           el("rect", { x: MX, y: MY, width: NC * CWd, height: NR * RH, fill: "none", stroke: "#868e96", "stroke-width": 1.2 }, g);
-          [["τ", 0, 2], ["pelve", 2, 4], ["corpo", 4, 16], ["mãos", 16, 30]].forEach(([s, a, b]) => {
+          [["X, Y, Z", 0, 3], ["pelve", 3, 6], ["corpo", 6, 18], ["mãos", 18, 30]].forEach(([s, a, b]) => {
             el("path", { d: `M${MX - 6} ${MY + a * RH + 1} H${MX - 10} V${MY + b * RH - 1} H${MX - 6}`, fill: "none", stroke: "#868e96", "stroke-width": 1.2 }, g);
             txt(g, MX - 14, MY + (a + b) / 2 * RH + 5, s, "pline", { "text-anchor": "end", style: "font-size:13.5px" });
           });
@@ -2633,40 +2599,10 @@
           txt(g, 440, 378, "10 s de fala → T = 300 quadros → X ∈ ℝ³⁰⁰ˣ³¹⁵ (aqui, janela de 3 s)", "pline", { style: "font-size:16px;fill:#1d1d1f;font-weight:700" });
           txt(g, 440, 402, "1 quadro = 1/30 s ≈ 33 ms · linhas: 315 números (agrupados)", "pline", { style: "font-size:14.5px" });
         } },
-        { t: "raw", id: "vdit", draw: g => {
-          const A = { stroke: "#495057", "stroke-width": 2, fill: "none", "marker-end": "url(#gst-svg-ah)" };
-          txt(g, 20, 40, "Do tensor X aos tokens que o DiT recebe", "ptitle", { style: "font-size:20px" });
-          txt(g, 20, 128, "X: 300 × 315", "ptitle");
-          el("rect", { x: 20, y: 140, width: 90, height: 100, fill: "#e7f5ff", stroke: "#4dabf7", "stroke-width": 1.5 }, g);
-          for (let i = 1; i < 15; i++) el("path", { d: `M${20 + i * 6} 140 V240`, stroke: "#a5d8ff", "stroke-width": 1 }, g);
-          txt(g, 20, 262, "10 s · 30 FPS", "pline", { style: "font-size:13.5px" });
-          el("path", Object.assign({ d: "M114 190 H140" }, A), g);
-          el("rect", { x: 145, y: 150, width: 120, height: 80, rx: 9, fill: "#e9ecef", stroke: "#adb5bd", "stroke-width": 1.5 }, g);
-          label(g, 205, 180, "[x, v, a]"); label(g, 205, 204, "300 × 945", { style: "font-weight:700" });
-          txt(g, 145, 254, "+ velocidade e", "pline", { style: "font-size:13.5px" }); txt(g, 145, 272, "aceleração", "pline", { style: "font-size:13.5px" });
-          el("path", Object.assign({ d: "M269 190 H294" }, A), g);
-          el("rect", { x: 298, y: 140, width: 130, height: 100, rx: 9, fill: "#dbe4ff", stroke: "#91a7ff", "stroke-width": 1.5 }, g);
-          label(g, 363, 168, "Encoder"); label(g, 363, 190, "RVQ-VAE"); label(g, 363, 214, "÷4 no tempo", { style: "font-weight:700" });
-          el("path", Object.assign({ d: "M432 190 H458" }, A), g);
-          txt(g, 462, 156, "75 × 512", "ptitle");
-          el("rect", { x: 462, y: 166, width: 60, height: 50, fill: "#d3f9d8", stroke: "#69c37b", "stroke-width": 1.5 }, g);
-          txt(g, 462, 238, "latente", "pline", { style: "font-size:13.5px" }); txt(g, 462, 256, "contínuo", "pline", { style: "font-size:13.5px" });
-          el("path", Object.assign({ d: "M526 190 H552" }, A), g);
-          txt(g, 556, 168, "75 tokens", "ptitle");
-          for (let i = 0; i < 6; i++) el("rect", { x: 556 + i * 19, y: 180, width: 16, height: 22, rx: 3, fill: "#ffe3bf", stroke: "#f0a04b" }, g);
-          txt(g, 556 + 6 * 19 + 2, 197, "…", "pline");
-          txt(g, 556, 226, "1 token ≈ 4 quadros", "pline", { style: "font-size:13.5px" });
-          txt(g, 556, 244, "≈ 133 ms", "pline", { style: "font-size:13.5px" });
-          el("path", Object.assign({ d: "M690 190 H716" }, A), g);
-          el("rect", { x: 720, y: 140, width: 260, height: 100, rx: 9, fill: "#ffe3bf", stroke: "#f0a04b", "stroke-width": 1.5 }, g);
-          label(g, 850, 166, "Flow-DiT", { style: "font-weight:700" }); label(g, 850, 190, "projeção para d = 768"); label(g, 850, 214, "+ posição · 12 blocos");
-          panel(g, 20, 300, 960, 96, "O “patch” de cada sinal", ["imagem (DiT): token = patch 2×2 do latente 32×32×4 → 256 tokens", "gesto (Flow-DiT): token = 1 instante do latente (≈ 4 quadros) → 10 s = 75 tokens"]);
-        } },
       ], [
         { chip: "Esqueleto", on: ["body", "vjoint"], text: "Para gerar gestos, a rede precisa de uma <b>parametrização</b>: um esqueleto SMPL-H com <b>52 juntas</b> (pelve + 21 do corpo + 30 das mãos), organizado em hierarquia." },
-        { chip: "Pose em 6D (315)", on: ["body", "varc", "vvec"], text: "Cada junta é uma <b>rotação relativa à junta-pai</b>, escrita em <b>6D</b> (as duas primeiras colunas da matriz de rotação: contínua, boa para redes). 52 × 6 = 312, mais 3 de translação da pelve: <b>x<sub>t</sub> ∈ ℝ<sup>315</sup></b> por quadro." },
+        { chip: "Pose em 6D (315)", on: ["body", "varc", "vvec"], text: "Cada junta é uma <b>rotação relativa à junta-pai</b>, escrita em <b>6D</b> (as duas primeiras colunas da matriz de rotação: contínua, boa para redes). 52 × 6 = 312, mais a translação da pelve em X, Y, Z (3): <b>x<sub>t</sub> ∈ ℝ<sup>315</sup></b> por quadro." },
         { chip: "Tensor no tempo", on: ["body", "vtens"], text: "A captura tem <b>30 quadros por segundo</b>: a cada 1/30 s o vetor de 315 números vira uma <b>coluna</b>. 10 s → 300 quadros → <b>X ∈ ℝ<sup>300×315</sup></b>: uma “imagem” em que o eixo horizontal é o tempo." },
-        { chip: "Para o DiT", on: ["vdit"], text: "Como o DiT recebe isso: somam-se velocidade e aceleração (300 × 945), o encoder do RVQ-VAE <b>comprime 4× no tempo</b> e entrega um latente <b>75 × 512</b>. Cada instante (≈ 4 quadros, 133 ms) é um <b>token</b>: é o “patch” do gesto." },
       ], () => runG());
     })();
   })();
